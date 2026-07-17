@@ -33,6 +33,23 @@ const PHOTO_BASE = "https://ci.encar.com"; // + location (ex: /carpicture02/.../
 // Pour restreindre a certaines marques, affine `q` (ex: Manufacturer).
 const ENCAR_QUERY = "(And.Hidden.N._.CarType.Y.)";
 
+// --- Prix affiche en FCFA -------------------------------------------
+// Encar exprime le prix en 만원 (man-won = 10 000 KRW).
+//   prix_fcfa = prix_manwon * 10000 * TAUX,  puis marge fixe.
+const KRW_PER_MANWON = 10000;
+const KRW_TO_FCFA = 0.45; // taux KRW -> FCFA (ajustable selon le cours)
+const MARGIN_THRESHOLD = 6000000; // FCFA
+const MARGIN_LOW = 1300000; // ajoute si prix converti < seuil
+const MARGIN_HIGH = 1500000; // ajoute si prix converti >= seuil
+
+function computePriceFcfa(priceManwon?: number): number | null {
+  if (!priceManwon || priceManwon <= 0) return null;
+  const raw = priceManwon * KRW_PER_MANWON * KRW_TO_FCFA;
+  const rounded = Math.round(raw / 10000) * 10000; // arrondi au 10 000
+  const margin = rounded < MARGIN_THRESHOLD ? MARGIN_LOW : MARGIN_HIGH;
+  return rounded + margin;
+}
+
 const HEADERS: HeadersInit = {
   "User-Agent":
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
@@ -47,6 +64,7 @@ interface ListItem {
   id: string;
   photos: string[];
   region: string | null;
+  priceManwon?: number; // prix Encar en 만원
 }
 
 function listUrl(offset: number): string {
@@ -77,6 +95,7 @@ async function fetchList(): Promise<ListItem[]> {
         id: String(it.Id),
         photos: photosFrom(it.Photos),
         region: tr(REGIONS, it.OfficeCityState),
+        priceManwon: typeof it.Price === "number" ? it.Price : undefined,
       });
     }
   }
@@ -103,6 +122,7 @@ interface VehicleRow {
   condition: string;
   description: string | null;
   photos: string[];
+  price_fcfa: number | null;
   is_active: boolean;
 }
 
@@ -144,6 +164,7 @@ async function fetchDetail(item: ListItem): Promise<VehicleRow | null> {
         .replace(/\s+/g, " ")
         .trim(),
     photos: item.photos,
+    price_fcfa: computePriceFcfa(item.priceManwon),
     is_active: true,
   };
 }

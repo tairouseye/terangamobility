@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme/app_theme.dart';
+import '../../core/utils/formatters.dart';
 import '../../models/vehicle_listing.dart';
 import '../../providers/auth_providers.dart';
 import '../../providers/vehicle_catalog_providers.dart';
@@ -203,17 +204,27 @@ class _VehicleCard extends StatelessWidget {
                   const SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text('Ref ${vehicle.reference}',
-                          style: const TextStyle(
-                              fontSize: 12, color: AppColors.gris)),
-                      const Row(children: [
-                        Text('Demander le prix',
-                            style: TextStyle(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.w700)),
-                        Icon(Icons.chevron_right, color: AppColors.primary),
-                      ]),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Ref ${vehicle.reference}',
+                              style: const TextStyle(
+                                  fontSize: 11, color: AppColors.gris)),
+                          const SizedBox(height: 2),
+                          Text(
+                            vehicle.priceFcfa != null
+                                ? Formatters.fcfa(vehicle.priceFcfa)
+                                : 'Prix sur demande',
+                            style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w800,
+                                color: AppColors.primary),
+                          ),
+                        ],
+                      ),
+                      const Icon(Icons.chevron_right, color: AppColors.primary),
                     ],
                   ),
                 ],

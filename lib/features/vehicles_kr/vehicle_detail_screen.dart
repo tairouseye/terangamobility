@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme/app_theme.dart';
+import '../../core/utils/formatters.dart';
 import '../../models/vehicle_listing.dart';
 import '../../providers/auth_providers.dart';
 import '../../providers/vehicle_catalog_providers.dart';
@@ -57,7 +58,7 @@ class _PriceCta extends ConsumerWidget {
               const Padding(
                 padding: EdgeInsets.only(bottom: 8),
                 child: Text(
-                  'Creez un compte en 1 minute pour recevoir votre devis.',
+                  'Creez un compte en 1 minute pour lancer votre commande.',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 12, color: AppColors.gris),
                 ),
@@ -72,10 +73,10 @@ class _PriceCta extends ConsumerWidget {
                   context.push('/login');
                 }
               },
-              icon: Icon(isLoggedIn ? Icons.request_quote : Icons.login),
+              icon: Icon(isLoggedIn ? Icons.directions_car : Icons.login),
               label: Text(isLoggedIn
-                  ? 'Demander le prix'
-                  : 'Se connecter pour demander le prix'),
+                  ? 'Commander ce vehicule'
+                  : 'Se connecter pour commander'),
             ),
           ],
         ),
@@ -105,6 +106,28 @@ class _Detail extends StatelessWidget {
                 Text(vehicle.version!,
                     style: const TextStyle(
                         color: AppColors.gris, fontSize: 15)),
+              const SizedBox(height: 12),
+              // Prix affiche (converti depuis le prix coreen + marge)
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    vehicle.priceFcfa != null
+                        ? Formatters.fcfa(vehicle.priceFcfa)
+                        : 'Prix sur demande',
+                    style: const TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.primary),
+                  ),
+                  const SizedBox(width: 8),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 5),
+                    child: Text('tout compris (hors dedouanement)',
+                        style: TextStyle(fontSize: 11, color: AppColors.gris)),
+                  ),
+                ],
+              ),
               const SizedBox(height: 16),
               const CustomsTermsNotice(),
               const SizedBox(height: 20),
@@ -247,52 +270,94 @@ class _GalleryState extends State<_Gallery> {
         ),
       );
     }
-    return AspectRatio(
-      aspectRatio: 16 / 10,
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          PageView.builder(
-            controller: _controller,
-            itemCount: widget.photos.length,
-            onPageChanged: (i) => setState(() => _index = i),
-            itemBuilder: (_, i) => Container(
-              color: AppColors.grisClair,
-              child: Image.network(
-                widget.photos[i],
-                fit: BoxFit.cover,
-                // Repli <img> HTML pour les images sans CORS (photos Encar).
-                webHtmlElementStrategy: WebHtmlElementStrategy.fallback,
-                errorBuilder: (_, _, _) => const Center(
-                    child: Icon(Icons.broken_image,
-                        size: 48, color: AppColors.gris)),
-                loadingBuilder: (c, child, p) => p == null
-                    ? child
-                    : const Center(child: CircularProgressIndicator()),
+    return Column(
+      children: [
+        AspectRatio(
+          aspectRatio: 16 / 10,
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              PageView.builder(
+                controller: _controller,
+                itemCount: widget.photos.length,
+                onPageChanged: (i) => setState(() => _index = i),
+                itemBuilder: (_, i) => _img(widget.photos[i], BoxFit.cover),
               ),
-            ),
-          ),
-          if (widget.photos.length > 1)
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  widget.photos.length,
-                  (i) => Container(
-                    width: 7,
-                    height: 7,
-                    margin: const EdgeInsets.symmetric(horizontal: 3),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: i == _index ? AppColors.primary : Colors.white70,
+              if (widget.photos.length > 1)
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(
+                      widget.photos.length,
+                      (i) => Container(
+                        width: 7,
+                        height: 7,
+                        margin: const EdgeInsets.symmetric(horizontal: 3),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color:
+                              i == _index ? AppColors.primary : Colors.white70,
+                        ),
+                      ),
                     ),
                   ),
                 ),
+            ],
+          ),
+        ),
+        // Bande de miniatures (les 4 photos visibles d'un coup).
+        if (widget.photos.length > 1)
+          SizedBox(
+            height: 66,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              itemCount: widget.photos.length,
+              separatorBuilder: (_, _) => const SizedBox(width: 8),
+              itemBuilder: (_, i) => GestureDetector(
+                onTap: () {
+                  _controller.animateToPage(i,
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeOut);
+                },
+                child: Container(
+                  width: 74,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: i == _index
+                          ? AppColors.primary
+                          : Colors.transparent,
+                      width: 2,
+                    ),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: _img(widget.photos[i], BoxFit.cover),
+                ),
               ),
             ),
-        ],
-      ),
+          ),
+      ],
     );
   }
+
+  Widget _img(String url, BoxFit fit) => Container(
+        color: AppColors.grisClair,
+        child: Image.network(
+          url,
+          fit: fit,
+          // Repli <img> HTML pour les images sans CORS (photos Encar).
+          webHtmlElementStrategy: WebHtmlElementStrategy.fallback,
+          errorBuilder: (_, _, _) => const Center(
+              child: Icon(Icons.broken_image, size: 32, color: AppColors.gris)),
+          loadingBuilder: (c, child, p) => p == null
+              ? child
+              : const Center(
+                  child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2))),
+        ),
+      );
 }

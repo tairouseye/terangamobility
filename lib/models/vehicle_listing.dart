@@ -23,6 +23,7 @@ class VehicleListing {
   final List<String> options;
   final String? description;
   final List<String> photos;
+  final num? priceFcfa; // prix affiche en FCFA (converti + marge)
   final bool isActive;
 
   const VehicleListing({
@@ -46,6 +47,7 @@ class VehicleListing {
     this.options = const [],
     this.description,
     this.photos = const [],
+    this.priceFcfa,
     this.isActive = true,
   });
 
@@ -96,6 +98,7 @@ class VehicleListing {
         options: _strList(j['options']),
         description: j['description'] as String?,
         photos: _strList(j['photos']),
+        priceFcfa: j['price_fcfa'] as num?,
         isActive: (j['is_active'] ?? true) as bool,
       );
 }
