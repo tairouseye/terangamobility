@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme/app_theme.dart';
+import '../../core/utils/encar_image.dart';
 import '../../core/utils/formatters.dart';
 import '../../models/vehicle_listing.dart';
 import '../../providers/auth_providers.dart';
@@ -243,7 +244,9 @@ class _Photo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final url = vehicle.photos.isNotEmpty ? vehicle.photos.first : null;
+    final raw = vehicle.photos.isNotEmpty ? vehicle.photos.first : null;
+    // Carte 16:9 : version legere haute nettete.
+    final url = raw == null ? null : encarPhoto(raw, height: 500, ratio: 16 / 9);
     return AspectRatio(
       aspectRatio: 16 / 9,
       child: Container(

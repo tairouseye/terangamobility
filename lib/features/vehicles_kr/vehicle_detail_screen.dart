@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme/app_theme.dart';
+import '../../core/utils/encar_image.dart';
 import '../../core/utils/formatters.dart';
 import '../../models/vehicle_listing.dart';
 import '../../providers/auth_providers.dart';
@@ -281,7 +282,10 @@ class _GalleryState extends State<_Gallery> {
                 controller: _controller,
                 itemCount: widget.photos.length,
                 onPageChanged: (i) => setState(() => _index = i),
-                itemBuilder: (_, i) => _img(widget.photos[i], BoxFit.cover),
+                itemBuilder: (_, i) => _img(
+                    // Image principale : haute qualite (recadrage 16:10).
+                    encarPhoto(widget.photos[i], height: 900, ratio: 16 / 10),
+                    BoxFit.cover),
               ),
               if (widget.photos.length > 1)
                 Padding(
@@ -333,7 +337,10 @@ class _GalleryState extends State<_Gallery> {
                     ),
                   ),
                   clipBehavior: Clip.antiAlias,
-                  child: _img(widget.photos[i], BoxFit.cover),
+                  // Miniature : petite version (bande sous la galerie).
+                  child: _img(
+                      encarPhoto(widget.photos[i], height: 200, ratio: 16 / 10),
+                      BoxFit.cover),
                 ),
               ),
             ),
