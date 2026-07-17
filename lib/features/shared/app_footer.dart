@@ -74,7 +74,9 @@ class _VersionChip extends StatelessWidget {
       future: PackageInfo.fromPlatform(),
       builder: (context, snap) {
         final v = snap.hasData ? 'v${snap.data!.version}' : 'v…';
-        return Text(v,
+        final date =
+            AppInfo.buildDate.isEmpty ? '' : ' · ${AppInfo.buildDate}';
+        return Text('$v$date',
             style: TextStyle(
                 fontSize: 11, color: color, fontWeight: FontWeight.w700));
       },

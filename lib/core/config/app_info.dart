@@ -12,7 +12,14 @@ class AppInfo {
 
   /// Editeur du logiciel.
   static const String publisher = 'GesPro Digital';
+  static const String publisherShort = 'GesPro';
   static const String publisherSite = 'https://gesprosn.org';
+
+  /// Date de deploiement, injectee au build :
+  ///   flutter build web --dart-define=BUILD_DATE=2026-07-17
+  /// Vide en dev -> on n'affiche que la version du pubspec.
+  static const String buildDate =
+      String.fromEnvironment('BUILD_DATE', defaultValue: '');
 
   /// Assistance.
   static const String supportPhone = '+221 77 343 59 28';

@@ -39,31 +39,32 @@ de choisir l'espace **Client / Partenaire Corée / Admin**. Les actions
 faire avancer une commande…) sont fonctionnelles et se répercutent entre écrans,
 mais rien n'est persisté : tout repart à zéro au redémarrage.
 
-## Déploiement (Netlify)
+## Déploiement (GitHub Pages)
 
-La **démo** est en ligne : **https://teranga-parts-demo.netlify.app**
-(site Netlify `teranga-parts-demo`, id `353d44d0-a7b5-4cc5-a9fa-51e76b494176`)
+- **Prod** : https://terangamobility.gesprosn.org
+  (dépôt https://github.com/tairouseye/terangamobility, branche `gh-pages`)
+- DNS : CNAME `terangamobility` → `tairouseye.github.io` (Cloudflare, **DNS only**)
 
-Le SDK Flutter n'existe pas dans l'image de build Netlify : on **build en local**
-puis on publie le dossier `build/web`.
+Le SDK Flutter n'est pas dans les CI par défaut : on **build en local** puis on
+pousse le dossier `build/web` sur la branche `gh-pages`.
 
-### Redéployer la démo
+### Redéployer l'app réelle
 ```bash
-flutter build web --release -t lib/main_demo.dart
-NETLIFY_AUTH_TOKEN=<ton_token> npx netlify-cli deploy --prod --no-build \
-  --dir=build/web --site=teranga-parts-demo
+flutter build web --wasm --release          # main.dart (build WASM, plus leger)
+cd build/web
+cp index.html 404.html                       # routage SPA sur GitHub Pages
+echo "terangamobility.gesprosn.org" > CNAME  # conserve le domaine
+git init -b gh-pages && git add -A && git commit -m "Deploy"
+git remote add origin https://github.com/tairouseye/terangamobility.git
+git push -f origin gh-pages
 ```
+> `404.html` = copie de `index.html` → indispensable pour que /vehicules, /client…
+> fonctionnent au rafraîchissement (GitHub Pages n'a pas de règle de redirection SPA).
+> `web/_redirects` / `web/_headers` (Netlify) sont ignorés par GitHub Pages.
 
-### Déployer l'app réelle (quand Supabase sera prêt)
-```bash
-flutter build web --release          # main.dart par defaut
-NETLIFY_AUTH_TOKEN=<ton_token> npx netlify-cli deploy --prod --no-build \
-  --dir=build/web --site=<site-de-l-app-reelle>
-```
-
-`web/_redirects` et `web/_headers` sont copiés automatiquement dans `build/web` :
-ils assurent le routage SPA (pas de 404 sur /client au refresh) et le `no-cache`
-sur `index.html` (sinon les utilisateurs restent bloqués sur une vieille version).
+### Ancienne démo (Netlify, historique)
+Démo restée en ligne : https://teranga-parts-demo.netlify.app
+(bascule GitHub faite le 2026-07-17 car limite de déploiement Netlify atteinte).
 
 > ⚠️ **Piège rencontré** : l'antivirus AVG intercepte le TLS sur ce poste
 > (`SSLKEYLOGFILE=\\.\avgMonFltProxy\...`). Résultat : `curl` échoue sur tous les

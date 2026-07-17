@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/teranga_logo.dart';
 import '../../providers/auth_providers.dart';
-import '../shared/app_footer.dart';
+import '../shared/gespro_credit.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -117,14 +117,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 11.5, color: AppColors.gris),
                   ),
+                  const SizedBox(height: 28),
+                  const Divider(),
+                  const SizedBox(height: 16),
+                  // Bloc editeur + assistance + version, en bas de l'accueil.
+                  const GesProCredit(),
+                  const SizedBox(height: 12),
                 ],
               ),
             ),
           ),
         ),
       ),
-      // Version + assistance en pied de page (visible sans compte).
-      bottomNavigationBar: const AppFooter(),
     );
   }
 }
