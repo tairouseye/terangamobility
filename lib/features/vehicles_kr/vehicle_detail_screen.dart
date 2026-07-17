@@ -49,37 +49,32 @@ class _PriceCta extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isLoggedIn = ref.watch(authServiceProvider).currentUser != null;
 
+    // Barre compacte : un seul bouton, centre et borne comme le contenu.
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (!isLoggedIn)
-              const Padding(
-                padding: EdgeInsets.only(bottom: 8),
-                child: Text(
-                  'Créez un compte en 1 minute pour lancer votre commande.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 12, color: AppColors.gris),
-                ),
+        padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 900),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  if (isLoggedIn) {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => RequestPriceScreen(vehicle: vehicle),
+                    ));
+                  } else {
+                    context.push('/login');
+                  }
+                },
+                icon: Icon(isLoggedIn ? Icons.directions_car : Icons.login),
+                label: Text(isLoggedIn
+                    ? 'Commander ce véhicule'
+                    : 'Se connecter pour commander'),
               ),
-            ElevatedButton.icon(
-              onPressed: () {
-                if (isLoggedIn) {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (_) => RequestPriceScreen(vehicle: vehicle),
-                  ));
-                } else {
-                  context.push('/login');
-                }
-              },
-              icon: Icon(isLoggedIn ? Icons.directions_car : Icons.login),
-              label: Text(isLoggedIn
-                  ? 'Commander ce véhicule'
-                  : 'Se connecter pour commander'),
             ),
-          ],
+          ),
         ),
       ),
     );
