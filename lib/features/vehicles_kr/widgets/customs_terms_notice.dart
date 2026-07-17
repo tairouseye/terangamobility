@@ -30,9 +30,9 @@ class CustomsTermsNotice extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          const _Point('Acompte de 70% a la commande, solde de 30% avant remise du vehicule.'),
-          const _Point('Expedition par container maritime : delai estime de 60 a 90 jours.'),
-          const _Point('Le dedouanement est entierement a la charge du client.'),
+          const _Point('Acompte de 70% à la commande, solde de 30% avant remise du véhicule.'),
+          const _Point('Expédition par container maritime : délai estimé de 60 à 90 jours.'),
+          const _Point('Le dédouanement est entièrement à la charge du client.'),
         ],
       ),
     );

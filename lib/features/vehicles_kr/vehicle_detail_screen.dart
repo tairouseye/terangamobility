@@ -20,13 +20,13 @@ class VehicleDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(vehicleByRefProvider(reference));
     return Scaffold(
-      appBar: AppBar(title: const Text('Fiche vehicule')),
+      appBar: AppBar(title: const Text('Fiche véhicule')),
       body: async.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Erreur : $e')),
         data: (v) {
           if (v == null) {
-            return const Center(child: Text('Vehicule introuvable'));
+            return const Center(child: Text('Véhicule introuvable'));
           }
           return _Detail(vehicle: v);
         },
@@ -58,7 +58,7 @@ class _PriceCta extends ConsumerWidget {
               const Padding(
                 padding: EdgeInsets.only(bottom: 8),
                 child: Text(
-                  'Creez un compte en 1 minute pour lancer votre commande.',
+                  'Créez un compte en 1 minute pour lancer votre commande.',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 12, color: AppColors.gris),
                 ),
@@ -75,7 +75,7 @@ class _PriceCta extends ConsumerWidget {
               },
               icon: Icon(isLoggedIn ? Icons.directions_car : Icons.login),
               label: Text(isLoggedIn
-                  ? 'Commander ce vehicule'
+                  ? 'Commander ce véhicule'
                   : 'Se connecter pour commander'),
             ),
           ],
@@ -123,7 +123,7 @@ class _Detail extends StatelessWidget {
                   const SizedBox(width: 8),
                   const Padding(
                     padding: EdgeInsets.only(bottom: 5),
-                    child: Text('tout compris (hors dedouanement)',
+                    child: Text('tout compris (hors dédouanement)',
                         style: TextStyle(fontSize: 11, color: AppColors.gris)),
                   ),
                 ],
@@ -131,7 +131,7 @@ class _Detail extends StatelessWidget {
               const SizedBox(height: 16),
               const CustomsTermsNotice(),
               const SizedBox(height: 20),
-              const Text('Caracteristiques',
+              const Text('Caractéristiques',
                   style:
                       TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
               const SizedBox(height: 10),
@@ -182,20 +182,20 @@ class _SpecGrid extends StatelessWidget {
     final v = vehicle;
     final specs = <(String, String?)>[
       ('Marque', v.brand),
-      ('Modele', v.model),
-      ('Annee', v.year?.toString()),
+      ('Modèle', v.model),
+      ('Année', v.year?.toString()),
       ('Version', v.version),
       ('Motorisation', v.engine),
-      ('Cylindree', v.displacement),
-      ('Kilometrage', v.mileageLabel),
+      ('Cylindrée', v.displacement),
+      ('Kilométrage', v.mileageLabel),
       ('Transmission', v.transmission),
       ('Carburant', v.fuel),
       ('Couleur', v.color),
       ('Portes', v.doors?.toString()),
       ('Volant', v.steeringLabel),
       ('Localisation', v.location),
-      ('Reference', v.reference),
-      ('Etat', v.condition),
+      ('Référence', v.reference),
+      ('État', v.condition),
     ].where((e) => e.$2 != null && e.$2!.isNotEmpty).toList();
 
     return Container(

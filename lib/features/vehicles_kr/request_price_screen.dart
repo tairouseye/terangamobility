@@ -84,10 +84,10 @@ class _RequestPriceScreenState extends ConsumerState<RequestPriceScreen> {
           builder: (_) => AlertDialog(
             icon: const Icon(Icons.check_circle,
                 color: AppColors.vert, size: 40),
-            title: const Text('Demande envoyee'),
+            title: const Text('Demande envoyée'),
             content: const Text(
-                'Votre demande de prix a bien ete transmise. Notre equipe '
-                'vous prepare un devis et vous recontacte rapidement.'),
+                'Votre demande de prix a bien été transmise. Notre équipe '
+                'vous prépare un devis et vous recontacte rapidement.'),
             actions: [
               TextButton(
                 onPressed: () {
@@ -145,7 +145,7 @@ class _RequestPriceScreenState extends ConsumerState<RequestPriceScreen> {
               ),
               const SizedBox(height: 20),
               _field(_name, 'Nom complet *', required: true),
-              _field(_phone, 'Telephone *',
+              _field(_phone, 'Téléphone *',
                   keyboard: TextInputType.phone, required: true),
               _field(_whatsapp, 'WhatsApp', keyboard: TextInputType.phone),
               _field(_email, 'Email (facultatif)',
@@ -167,7 +167,7 @@ class _RequestPriceScreenState extends ConsumerState<RequestPriceScreen> {
                 onChanged: (v) => setState(() => _accepted = v ?? false),
                 title: const Text(
                     'J\'ai lu et j\'accepte les conditions d\'importation '
-                    '(acompte 70% / solde 30%, dedouanement a ma charge).',
+                    '(acompte 70% / solde 30%, dédouanement à ma charge).',
                     style: TextStyle(fontSize: 13)),
               ),
               if (_error != null) ...[

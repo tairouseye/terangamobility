@@ -60,7 +60,7 @@ class _VehicleFilterSheetState extends ConsumerState<VehicleFilterSheet> {
                 TextButton(
                   onPressed: () =>
                       setState(() => _draft = const VehicleFilter()),
-                  child: const Text('Reinitialiser'),
+                  child: const Text('Réinitialiser'),
                 ),
               ],
             ),
@@ -77,7 +77,7 @@ class _VehicleFilterSheetState extends ConsumerState<VehicleFilterSheet> {
                   _draft = _draft.copyWith(brand: v, model: null)),
             ),
             _dropdown<String>(
-              label: 'Modele',
+              label: 'Modèle',
               value: _draft.model,
               hint: _draft.brand == null
                   ? 'Choisir une marque d\'abord'
@@ -90,11 +90,11 @@ class _VehicleFilterSheetState extends ConsumerState<VehicleFilterSheet> {
 
             // --- Annee a partir de ---
             _dropdown<int>(
-              label: 'Annee (a partir de)',
+              label: 'Année (à partir de)',
               value: _draft.year,
               hint: 'Toutes',
               items: years,
-              itemLabel: (y) => 'A partir de $y',
+              itemLabel: (y) => 'À partir de $y',
               onChanged: (v) => setState(() => _draft = _draft.copyWith(year: v)),
             ),
 
@@ -127,11 +127,11 @@ class _VehicleFilterSheetState extends ConsumerState<VehicleFilterSheet> {
 
             // --- Kilometrage max (paliers) ---
             _dropdown<int>(
-              label: 'Kilometrage maximum',
+              label: 'Kilométrage maximum',
               value: _draft.maxMileage,
-              hint: 'Illimite',
+              hint: 'Illimité',
               items: _mileageTiers,
-              itemLabel: (km) => 'Jusqu\'a ${_fmt(km)} km',
+              itemLabel: (km) => 'Jusqu\'à ${_fmt(km)} km',
               onChanged: (v) =>
                   setState(() => _draft = _draft.copyWith(maxMileage: v)),
             ),
@@ -143,7 +143,7 @@ class _VehicleFilterSheetState extends ConsumerState<VehicleFilterSheet> {
                 Navigator.of(context).pop();
               },
               child: Text(_draft.activeCount == 0
-                  ? 'Voir tous les vehicules'
+                  ? 'Voir tous les véhicules'
                   : 'Appliquer (${_draft.activeCount})'),
             ),
           ],

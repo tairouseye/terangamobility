@@ -37,7 +37,7 @@ class _VehicleTrackingScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text(
-                'Merci ! Notre equipe verifie votre paiement et confirme sous peu.')));
+                'Merci ! Notre équipe vérifie votre paiement et confirme sous peu.')));
       }
     } catch (e) {
       if (mounted) {
@@ -71,7 +71,7 @@ class _VehicleTrackingScreenState
     final tracking = ref.watch(vehicleTrackingProvider(o.id!));
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Suivi du vehicule')),
+      appBar: AppBar(title: const Text('Suivi du véhicule')),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(20),
@@ -105,8 +105,8 @@ class _VehicleTrackingScreenState
                     _info('N° de commande', o.id?.substring(0, 8).toUpperCase()),
                     _info('N° de tracking', o.trackingNumber),
                     _info('Compagnie maritime', o.shippingCompany),
-                    _info('Depart estime', Formatters.date(o.estimatedDeparture)),
-                    _info('Arrivee estimee', Formatters.date(o.estimatedArrival)),
+                    _info('Départ estimé', Formatters.date(o.estimatedDeparture)),
+                    _info('Arrivée estimée', Formatters.date(o.estimatedArrival)),
                   ],
                 ),
               ),
@@ -120,8 +120,8 @@ class _VehicleTrackingScreenState
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Text(
-                'Delai d\'acheminement par container : 60 a 90 jours. '
-                'Le dedouanement est a votre charge.',
+                'Délai d\'acheminement par container : 60 à 90 jours. '
+                'Le dédouanement est à votre charge.',
                 style: TextStyle(fontSize: 12, color: Color(0xFF7A5A00)),
               ),
             ),
@@ -210,13 +210,13 @@ class _VehicleTrackingScreenState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('$label a regler : ${Formatters.fcfa(amount)}',
+          Text('$label à régler : ${Formatters.fcfa(amount)}',
               style: const TextStyle(
                   fontWeight: FontWeight.w800, color: AppColors.primary)),
           const SizedBox(height: 6),
           const Text(
-            'Le paiement d\'un vehicule se fait par virement bancaire ou en '
-            'especes. Contactez-nous pour les coordonnees, puis confirmez ci-dessous.',
+            'Le paiement d\'un véhicule se fait par virement bancaire ou en '
+            'espèces. Contactez-nous pour les coordonnées, puis confirmez ci-dessous.',
             style: TextStyle(fontSize: 12.5, color: AppColors.anthracite),
           ),
           const SizedBox(height: 10),
@@ -239,7 +239,7 @@ class _VehicleTrackingScreenState
                         child: CircularProgressIndicator(
                             color: Colors.white, strokeWidth: 2))
                     : const Icon(Icons.check, size: 18),
-                label: const Text('J\'ai paye'),
+                label: const Text('J\'ai payé'),
               ),
             ),
           ]),
@@ -250,8 +250,8 @@ class _VehicleTrackingScreenState
 
   Future<void> _openWhatsapp(String subject) async {
     final url = AppInfo.whatsappUrl(
-        message: 'Bonjour, je souhaite regler le $subject de ma commande '
-            'vehicule (${widget.order.vehicleReference}).');
+        message: 'Bonjour, je souhaite régler le $subject de ma commande '
+            'véhicule (${widget.order.vehicleReference}).');
     await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
   }
 

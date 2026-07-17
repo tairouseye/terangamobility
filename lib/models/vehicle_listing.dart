@@ -55,8 +55,8 @@ class VehicleListing {
       '$brand $model${year != null ? ' $year' : ''}';
 
   String? get steeringLabel => switch (steering) {
-        'left' => 'Volant a gauche',
-        'right' => 'Volant a droite',
+        'left' => 'Volant à gauche',
+        'right' => 'Volant à droite',
         _ => null,
       };
 

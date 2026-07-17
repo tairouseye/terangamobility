@@ -20,7 +20,7 @@ class MyVehicleOrdersScreen extends ConsumerWidget {
     final orders = ref.watch(myVehicleOrdersProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Mes vehicules Coree')),
+      appBar: AppBar(title: const Text('Mes véhicules Corée')),
       body: RefreshIndicator(
         onRefresh: () async {
           ref.invalidate(myVehicleRequestsProvider);
@@ -74,7 +74,7 @@ class MyVehicleOrdersScreen extends ConsumerWidget {
                   return const Padding(
                     padding: EdgeInsets.symmetric(vertical: 40),
                     child: Center(
-                        child: Text('Aucune commande vehicule',
+                        child: Text('Aucune commande véhicule',
                             style: TextStyle(color: AppColors.gris))),
                   );
                 }
