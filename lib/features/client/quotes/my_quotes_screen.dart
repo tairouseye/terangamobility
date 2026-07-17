@@ -113,7 +113,7 @@ class _QuoteCardState extends ConsumerState<_QuoteCard> {
               child: Text('Mode de paiement de l\'acompte',
                   style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
             ),
-            for (final m in const ['Wave', 'Orange Money', 'Especes', 'Virement'])
+            for (final m in const ['Wave', 'Orange Money'])
               ListTile(
                 leading: const Icon(Icons.payments, color: AppColors.vert),
                 title: Text(m),

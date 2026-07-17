@@ -22,6 +22,26 @@ class StorageService {
     return _upload(SupabaseConfig.bucketParts, path, bytes);
   }
 
+  /// Upload un document (facture/contrat) vehicule dans le bucket prive
+  /// `contracts`. Retourne le CHEMIN de stockage (pas une URL) : les URLs
+  /// signees expirent, on en genere une fraiche a l'ouverture via [signedUrl].
+  Future<String> uploadContractDoc(
+      String clientId, String name, Uint8List bytes) async {
+    final path = '$clientId/$name.pdf';
+    await _client.storage.from(SupabaseConfig.bucketContracts).uploadBinary(
+          path,
+          bytes,
+          fileOptions:
+              const FileOptions(upsert: true, contentType: 'application/pdf'),
+        );
+    return path;
+  }
+
+  /// URL signee fraiche (1h) pour ouvrir un fichier prive par son chemin.
+  Future<String> signedUrl(String bucket, String path) {
+    return _client.storage.from(bucket).createSignedUrl(path, 60 * 60);
+  }
+
   Future<String> _upload(String bucket, String path, Uint8List bytes) async {
     await _client.storage.from(bucket).uploadBinary(
           path,

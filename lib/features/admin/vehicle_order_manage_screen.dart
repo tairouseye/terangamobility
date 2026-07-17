@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/formatters.dart';
@@ -27,6 +28,12 @@ class _VehicleOrderManageScreenState
   DateTime? _departure;
   DateTime? _arrival;
   bool _saving = false;
+  // Etat local (le widget.order passe est immuable).
+  late bool _depositPaid;
+  late bool _balancePaid;
+  late bool _hasInvoice;
+  late bool _hasContract;
+  bool _busyDoc = false;
 
   @override
   void initState() {
@@ -36,6 +43,96 @@ class _VehicleOrderManageScreenState
     _company = TextEditingController(text: widget.order.shippingCompany ?? '');
     _departure = widget.order.estimatedDeparture;
     _arrival = widget.order.estimatedArrival;
+    _depositPaid = widget.order.depositPaid;
+    _balancePaid = widget.order.balancePaid;
+    _hasInvoice = widget.order.hasInvoice;
+    _hasContract = widget.order.hasContract;
+  }
+
+  Future<String?> _pickPaymentMethod() {
+    return showModalBottomSheet<String>(
+      context: context,
+      builder: (_) => SafeArea(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          const Padding(
+            padding: EdgeInsets.all(16),
+            child: Text('Mode de paiement recu',
+                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+          ),
+          for (final m in const ['Virement', 'Especes'])
+            ListTile(
+              leading: const Icon(Icons.account_balance, color: AppColors.vert),
+              title: Text(m),
+              onTap: () => Navigator.pop(context, m),
+            ),
+        ]),
+      ),
+    );
+  }
+
+  Future<void> _confirmPayment({required bool deposit}) async {
+    final method = await _pickPaymentMethod();
+    if (method == null) return;
+    setState(() => _busyDoc = true);
+    try {
+      final svc = ref.read(vehicleOrderServiceProvider);
+      if (deposit) {
+        await svc.confirmDeposit(widget.order.id!, method);
+        setState(() {
+          _depositPaid = true;
+          _status = VehicleOrderStatus.commandeConfirmee;
+        });
+      } else {
+        await svc.confirmBalance(widget.order.id!, method);
+        setState(() {
+          _balancePaid = true;
+          _status = VehicleOrderStatus.pretRecuperation;
+        });
+      }
+      ref.invalidate(vehicleOrdersAdminProvider);
+      _snack(deposit ? 'Acompte confirme' : 'Solde confirme');
+    } catch (e) {
+      _snack('Erreur : $e');
+    } finally {
+      if (mounted) setState(() => _busyDoc = false);
+    }
+  }
+
+  Future<void> _generate({required bool invoice}) async {
+    setState(() => _busyDoc = true);
+    try {
+      final svc = ref.read(vehicleOrderServiceProvider);
+      if (invoice) {
+        await svc.generateInvoice(widget.order);
+        setState(() => _hasInvoice = true);
+      } else {
+        await svc.generateContract(widget.order);
+        setState(() => _hasContract = true);
+      }
+      ref.invalidate(vehicleOrdersAdminProvider);
+      _snack(invoice ? 'Facture generee' : 'Contrat genere');
+    } catch (e) {
+      _snack('Erreur : $e');
+    } finally {
+      if (mounted) setState(() => _busyDoc = false);
+    }
+  }
+
+  Future<void> _openDoc(String name) async {
+    try {
+      final path = '${widget.order.clientId}/$name-${widget.order.id}.pdf';
+      final url =
+          await ref.read(vehicleOrderServiceProvider).documentUrl(path);
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    } catch (e) {
+      _snack('Ouverture impossible : $e');
+    }
+  }
+
+  void _snack(String m) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m)));
+    }
   }
 
   @override
@@ -130,12 +227,86 @@ class _VehicleOrderManageScreenState
                 padding: const EdgeInsets.all(14),
                 child: Column(children: [
                   _row('Prix total', o.totalPrice),
-                  _row('Acompte (70%)', o.depositAmount,
-                      paid: o.depositPaid),
-                  _row('Solde (30%)', o.balanceAmount, paid: o.balancePaid),
+                  _row('Acompte (70%)', o.depositAmount, paid: _depositPaid),
+                  _row('Solde (30%)', o.balanceAmount, paid: _balancePaid),
                 ]),
               ),
             ),
+            const Divider(height: 32),
+            // --- Confirmation des paiements (virement/especes) ---
+            const Text('Paiements (virement / especes)',
+                style: TextStyle(fontWeight: FontWeight.w700)),
+            const SizedBox(height: 8),
+            if (!_depositPaid)
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _busyDoc ? null : () => _confirmPayment(deposit: true),
+                  icon: const Icon(Icons.check_circle),
+                  label: Text(
+                      'Confirmer l\'acompte recu (${Formatters.fcfa(o.depositAmount)})'),
+                ),
+              ),
+            if (_depositPaid && !_balancePaid) ...[
+              if (!_depositPaid) const SizedBox(height: 8),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: _busyDoc ? null : () => _confirmPayment(deposit: false),
+                  icon: const Icon(Icons.check_circle_outline),
+                  label: Text(
+                      'Confirmer le solde recu (${Formatters.fcfa(o.balanceAmount)})'),
+                ),
+              ),
+            ],
+            if (_depositPaid && _balancePaid)
+              const Text('Acompte et solde confirmes.',
+                  style: TextStyle(color: AppColors.vert, fontSize: 12.5)),
+            const Divider(height: 32),
+            // --- Documents : facture puis contrat ---
+            const Text('Documents',
+                style: TextStyle(fontWeight: FontWeight.w700)),
+            const SizedBox(height: 4),
+            const Text('Generez d\'abord la facture, puis le contrat.',
+                style: TextStyle(fontSize: 11.5, color: AppColors.gris)),
+            const SizedBox(height: 10),
+            Row(children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: _busyDoc ? null : () => _generate(invoice: true),
+                  icon: const Icon(Icons.description, size: 18),
+                  label: Text(_hasInvoice ? 'Regenerer facture' : 'Generer facture'),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: (_busyDoc || !_hasInvoice)
+                      ? null
+                      : () => _generate(invoice: false),
+                  icon: const Icon(Icons.assignment, size: 18),
+                  label:
+                      Text(_hasContract ? 'Regenerer contrat' : 'Generer contrat'),
+                ),
+              ),
+            ]),
+            if (_hasInvoice || _hasContract) ...[
+              const SizedBox(height: 8),
+              Row(children: [
+                if (_hasInvoice)
+                  TextButton.icon(
+                    onPressed: () => _openDoc('facture'),
+                    icon: const Icon(Icons.open_in_new, size: 16),
+                    label: const Text('Ouvrir facture'),
+                  ),
+                if (_hasContract)
+                  TextButton.icon(
+                    onPressed: () => _openDoc('contrat'),
+                    icon: const Icon(Icons.open_in_new, size: 16),
+                    label: const Text('Ouvrir contrat'),
+                  ),
+              ]),
+            ],
             const Divider(height: 32),
             const Text('Faire avancer le statut',
                 style: TextStyle(fontWeight: FontWeight.w700)),

@@ -60,7 +60,7 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
               child: Text('Mode de paiement du solde',
                   style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
             ),
-            for (final m in const ['Wave', 'Orange Money', 'Especes', 'Virement'])
+            for (final m in const ['Wave', 'Orange Money'])
               ListTile(
                 leading: const Icon(Icons.payments, color: AppColors.vert),
                 title: Text(m),

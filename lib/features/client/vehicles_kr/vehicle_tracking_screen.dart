@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/config/app_info.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../models/vehicle_enums.dart';
@@ -22,56 +24,43 @@ class VehicleTrackingScreen extends ConsumerStatefulWidget {
 
 class _VehicleTrackingScreenState
     extends ConsumerState<VehicleTrackingScreen> {
-  bool _paying = false;
+  bool _busy = false;
 
-  Future<void> _pay({required bool deposit}) async {
-    final method = await _pickMethod();
-    if (method == null) return;
-    setState(() => _paying = true);
+  /// Le client declare avoir effectue le virement/depot -> l'admin est notifie
+  /// et confirmera apres verification (pas d'auto-validation pour les vehicules).
+  Future<void> _declare({required bool deposit}) async {
+    setState(() => _busy = true);
     try {
-      final svc = ref.read(vehicleOrderServiceProvider);
-      if (deposit) {
-        await svc.payDeposit(widget.order.id!, method: method);
-      } else {
-        await svc.payBalance(widget.order.id!, method: method);
-      }
-      ref.invalidate(myVehicleOrdersProvider);
+      await ref
+          .read(vehicleOrderServiceProvider)
+          .declarePayment(widget.order.id!, deposit ? 'deposit' : 'balance');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(deposit
-                ? 'Acompte enregistre. Commande confirmee !'
-                : 'Solde regle. Vehicule pret a recuperer !')));
-        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text(
+                'Merci ! Notre equipe verifie votre paiement et confirme sous peu.')));
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Paiement impossible : $e')));
+            .showSnackBar(SnackBar(content: Text('Erreur : $e')));
       }
     } finally {
-      if (mounted) setState(() => _paying = false);
+      if (mounted) setState(() => _busy = false);
     }
   }
 
-  Future<String?> _pickMethod() {
-    return showModalBottomSheet<String>(
-      context: context,
-      builder: (_) => SafeArea(
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          const Padding(
-            padding: EdgeInsets.all(16),
-            child: Text('Mode de paiement',
-                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-          ),
-          for (final m in const ['Wave', 'Orange Money', 'Especes', 'Virement'])
-            ListTile(
-              leading: const Icon(Icons.payments, color: AppColors.vert),
-              title: Text(m),
-              onTap: () => Navigator.pop(context, m),
-            ),
-        ]),
-      ),
-    );
+  Future<void> _openDoc(String name) async {
+    try {
+      final path = '${widget.order.clientId}/$name-${widget.order.id}.pdf';
+      final url =
+          await ref.read(vehicleOrderServiceProvider).documentUrl(path);
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Ouverture impossible : $e')));
+      }
+    }
   }
 
   @override
@@ -137,17 +126,45 @@ class _VehicleTrackingScreenState
               ),
             ),
             const SizedBox(height: 16),
-            // Boutons de paiement selon le statut
+            // Paiement vehicule : par virement ou especes, confirme par l'equipe.
             if (o.status == VehicleOrderStatus.enAttenteAcompte &&
                 !o.depositPaid)
-              _payButton(
-                  'Payer l\'acompte (${Formatters.fcfa(o.depositAmount)})',
-                  () => _pay(deposit: true)),
+              _paymentBlock(
+                  label: 'Acompte (70%)',
+                  amount: o.depositAmount,
+                  deposit: true),
             if (o.status == VehicleOrderStatus.arrivePort && !o.balancePaid)
-              _payButton(
-                  'Payer le solde (${Formatters.fcfa(o.balanceAmount)})',
-                  () => _pay(deposit: false)),
-            const SizedBox(height: 12),
+              _paymentBlock(
+                  label: 'Solde (30%)',
+                  amount: o.balanceAmount,
+                  deposit: false),
+            // Documents (facture puis contrat) delivres par la structure.
+            if (o.hasInvoice || o.hasContract) ...[
+              const SizedBox(height: 12),
+              const Text('Mes documents',
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+              const SizedBox(height: 8),
+              Row(children: [
+                if (o.hasInvoice)
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _openDoc('facture'),
+                      icon: const Icon(Icons.description, size: 18),
+                      label: const Text('Ma facture'),
+                    ),
+                  ),
+                if (o.hasInvoice && o.hasContract) const SizedBox(width: 8),
+                if (o.hasContract)
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _openDoc('contrat'),
+                      icon: const Icon(Icons.assignment, size: 18),
+                      label: const Text('Mon contrat'),
+                    ),
+                  ),
+              ]),
+            ],
+            const SizedBox(height: 16),
             const Text('Suivi',
                 style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
             const SizedBox(height: 12),
@@ -178,20 +195,65 @@ class _VehicleTrackingScreenState
     );
   }
 
-  Widget _payButton(String label, VoidCallback onTap) => Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: ElevatedButton.icon(
-          onPressed: _paying ? null : onTap,
-          icon: _paying
-              ? const SizedBox(
-                  height: 18,
-                  width: 18,
-                  child: CircularProgressIndicator(
-                      color: Colors.white, strokeWidth: 2))
-              : const Icon(Icons.payments),
-          label: Text(label),
-        ),
-      );
+  /// Bloc d'instructions de paiement vehicule (virement/especes) +
+  /// bouton « J'ai effectue le paiement » qui notifie l'equipe.
+  Widget _paymentBlock(
+      {required String label, required num? amount, required bool deposit}) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 4),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.25)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('$label a regler : ${Formatters.fcfa(amount)}',
+              style: const TextStyle(
+                  fontWeight: FontWeight.w800, color: AppColors.primary)),
+          const SizedBox(height: 6),
+          const Text(
+            'Le paiement d\'un vehicule se fait par virement bancaire ou en '
+            'especes. Contactez-nous pour les coordonnees, puis confirmez ci-dessous.',
+            style: TextStyle(fontSize: 12.5, color: AppColors.anthracite),
+          ),
+          const SizedBox(height: 10),
+          Row(children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: () => _openWhatsapp(label),
+                icon: const Icon(Icons.chat, size: 18),
+                label: const Text('Nous contacter'),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: _busy ? null : () => _declare(deposit: deposit),
+                icon: _busy
+                    ? const SizedBox(
+                        height: 16,
+                        width: 16,
+                        child: CircularProgressIndicator(
+                            color: Colors.white, strokeWidth: 2))
+                    : const Icon(Icons.check, size: 18),
+                label: const Text('J\'ai paye'),
+              ),
+            ),
+          ]),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _openWhatsapp(String subject) async {
+    final url = AppInfo.whatsappUrl(
+        message: 'Bonjour, je souhaite regler le $subject de ma commande '
+            'vehicule (${widget.order.vehicleReference}).');
+    await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+  }
 
   Widget _row(String label, num? value, {bool bold = false, bool? paid}) =>
       Padding(

@@ -17,6 +17,8 @@ class VehicleOrder {
   final DateTime? estimatedArrival;
   final VehicleOrderStatus status;
   final bool termsAccepted;
+  final String? invoicePath; // facture PDF dans Storage
+  final String? contractPath; // contrat PDF dans Storage
   final DateTime? createdAt;
 
   const VehicleOrder({
@@ -35,8 +37,13 @@ class VehicleOrder {
     this.estimatedArrival,
     this.status = VehicleOrderStatus.enAttenteAcompte,
     this.termsAccepted = false,
+    this.invoicePath,
+    this.contractPath,
     this.createdAt,
   });
+
+  bool get hasInvoice => invoicePath != null && invoicePath!.isNotEmpty;
+  bool get hasContract => contractPath != null && contractPath!.isNotEmpty;
 
   factory VehicleOrder.fromJson(Map<String, dynamic> j) => VehicleOrder(
         id: j['id'] as String?,
@@ -58,6 +65,8 @@ class VehicleOrder {
             : null,
         status: VehicleOrderStatus.fromDb(j['status'] as String?),
         termsAccepted: (j['terms_accepted'] ?? false) as bool,
+        invoicePath: j['invoice_path'] as String?,
+        contractPath: j['contract_path'] as String?,
         createdAt: j['created_at'] != null
             ? DateTime.tryParse(j['created_at'] as String)
             : null,

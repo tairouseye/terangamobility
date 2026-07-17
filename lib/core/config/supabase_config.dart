@@ -27,6 +27,7 @@ class SupabaseConfig {
   /// Buckets Storage (crees par la migration 0006).
   static const String bucketDocuments = 'documents'; // cartes grises
   static const String bucketParts = 'parts'; // photos de pieces
+  static const String bucketContracts = 'contracts'; // factures & contrats vehicule
 
   static bool get isConfigured =>
       url.startsWith('https://') && publishableKey.isNotEmpty;

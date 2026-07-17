@@ -1,8 +1,12 @@
+import 'dart:typed_data';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../core/config/supabase_config.dart';
 import '../models/vehicle_enums.dart';
+import '../models/vehicle_listing.dart';
 import '../models/vehicle_order.dart';
 import '../models/vehicle_request.dart';
+import 'pdf/vehicle_documents.dart';
 
 /// Flux commande vehicule cote admin ET client.
 class VehicleOrderService {
@@ -131,13 +135,95 @@ class VehicleOrderService {
         .toList();
   }
 
-  Future<void> payDeposit(String orderId, {String? method}) async {
-    await _client.rpc('pay_vehicle_deposit',
-        params: {'p_order_id': orderId, 'p_method': method});
+  /// Client : declare avoir effectue le paiement (virement/especes) ->
+  /// notifie l'admin qui confirmera apres verification. kind = deposit|balance.
+  Future<void> declarePayment(String orderId, String kind) async {
+    await _client.rpc('declare_vehicle_payment',
+        params: {'p_order_id': orderId, 'p_kind': kind});
   }
 
-  Future<void> payBalance(String orderId, {String? method}) async {
-    await _client.rpc('pay_vehicle_balance',
-        params: {'p_order_id': orderId, 'p_method': method});
+  // --- ADMIN : confirmation des paiements (apres reception reelle) ---
+  Future<void> confirmDeposit(String orderId, String method) async {
+    await _client.from('vehicle_orders').update({
+      'deposit_paid': true,
+      'deposit_method': method,
+      'status': 'commande_confirmee',
+    }).eq('id', orderId);
+  }
+
+  Future<void> confirmBalance(String orderId, String method) async {
+    await _client.from('vehicle_orders').update({
+      'balance_paid': true,
+      'balance_method': method,
+      'status': 'pret_recuperation',
+    }).eq('id', orderId);
+  }
+
+  // --- ADMIN : documents (facture puis contrat) ---
+  Future<VehicleListing?> _vehicle(String reference) async {
+    final row = await _client
+        .from('vehicle_listings')
+        .select()
+        .eq('reference', reference)
+        .maybeSingle();
+    return row == null ? null : VehicleListing.fromJson(row);
+  }
+
+  Future<VehicleRequest?> _request(String? id) async {
+    if (id == null) return null;
+    final row = await _client
+        .from('vehicle_requests')
+        .select()
+        .eq('id', id)
+        .maybeSingle();
+    return row == null ? null : VehicleRequest.fromJson(row);
+  }
+
+  Future<void> _saveDoc(
+      VehicleOrder order, String field, String name, Uint8List bytes) async {
+    final path = '${order.clientId}/$name-${order.id}.pdf';
+    await _client.storage.from(SupabaseConfig.bucketContracts).uploadBinary(
+          path,
+          bytes,
+          fileOptions:
+              const FileOptions(upsert: true, contentType: 'application/pdf'),
+        );
+    await _client.from('vehicle_orders').update({field: path}).eq('id', order.id!);
+  }
+
+  Future<void> generateInvoice(VehicleOrder order) async {
+    final vehicle = await _vehicle(order.vehicleReference);
+    final request = await _request(order.requestId);
+    final bytes = await VehicleDocuments.buildInvoice(
+        order: order, vehicle: vehicle, request: request);
+    await _saveDoc(order, 'invoice_path', 'facture', bytes);
+    await _notifyClient(order, 'Votre facture est disponible');
+  }
+
+  Future<void> generateContract(VehicleOrder order) async {
+    final vehicle = await _vehicle(order.vehicleReference);
+    final request = await _request(order.requestId);
+    final bytes = await VehicleDocuments.buildContract(
+        order: order, vehicle: vehicle, request: request);
+    await _saveDoc(order, 'contract_path', 'contrat', bytes);
+    await _notifyClient(order, 'Votre contrat est disponible');
+  }
+
+  Future<void> _notifyClient(VehicleOrder order, String title) async {
+    if (order.clientId == null) return;
+    await _client.from('notifications').insert({
+      'user_id': order.clientId,
+      'title': title,
+      'body': 'Vehicule ${order.vehicleReference}',
+      'type': 'quote',
+      'related_id': order.id,
+    });
+  }
+
+  /// URL signee fraiche (1h) pour ouvrir un document par son chemin Storage.
+  Future<String> documentUrl(String path) {
+    return _client.storage
+        .from(SupabaseConfig.bucketContracts)
+        .createSignedUrl(path, 60 * 60);
   }
 }
