@@ -126,6 +126,9 @@ interface VehicleRow {
   is_active: boolean;
 }
 
+// Regle metier : uniquement les vehicules de moins de 10 ans.
+const MIN_YEAR = new Date().getFullYear() - 10;
+
 async function fetchDetail(item: ListItem): Promise<VehicleRow | null> {
   const res = await fetch(
     `https://api.encar.com/v1/readside/vehicle/${item.id}`,
@@ -135,6 +138,10 @@ async function fetchDetail(item: ListItem): Promise<VehicleRow | null> {
   const d = await res.json();
   const cat = d.category ?? {};
   const spec = d.spec ?? {};
+
+  // On ignore les vehicules de 10 ans ou plus (ou d'annee inconnue).
+  const yr = cat.formYear ? parseInt(String(cat.formYear), 10) : null;
+  if (yr == null || yr < MIN_YEAR) return null;
 
   const version = [cat.gradeEnglishName, cat.gradeDetailEnglishName]
     .filter((x: string) => x && x.trim().length > 0)

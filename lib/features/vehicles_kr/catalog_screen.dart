@@ -255,9 +255,9 @@ class _Photo extends StatelessWidget {
             : Image.network(
                 url,
                 fit: BoxFit.cover,
-                // Repli sur un element <img> HTML si l'image externe (Encar)
-                // n'envoie pas d'en-tete CORS : evite les photos "cassees".
-                webHtmlElementStrategy: WebHtmlElementStrategy.fallback,
+                // Images externes (Encar) sans en-tete CORS : on affiche
+                // directement via un element <img> HTML (pas de fetch bloque).
+                webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
                 errorBuilder: (_, _, _) => const Center(
                     child: Icon(Icons.directions_car,
                         size: 48, color: AppColors.gris)),

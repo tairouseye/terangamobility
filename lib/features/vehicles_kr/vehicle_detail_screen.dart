@@ -347,8 +347,8 @@ class _GalleryState extends State<_Gallery> {
         child: Image.network(
           url,
           fit: fit,
-          // Repli <img> HTML pour les images sans CORS (photos Encar).
-          webHtmlElementStrategy: WebHtmlElementStrategy.fallback,
+          // Images externes (Encar) sans CORS : rendu direct via <img> HTML.
+          webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
           errorBuilder: (_, _, _) => const Center(
               child: Icon(Icons.broken_image, size: 32, color: AppColors.gris)),
           loadingBuilder: (c, child, p) => p == null

@@ -25,7 +25,13 @@ class SupabaseVehicleDataSource implements VehicleDataSource {
 
   @override
   Future<List<VehicleListing>> fetchListings(VehicleFilter filter) async {
-    var query = _client.from(_table).select().eq('is_active', true);
+    // Regle metier : uniquement les vehicules de moins de 10 ans.
+    final minYear = DateTime.now().year - 10;
+    var query = _client
+        .from(_table)
+        .select()
+        .eq('is_active', true)
+        .gte('year', minYear);
 
     if (filter.brand != null) query = query.eq('brand', filter.brand!);
     if (filter.model != null) query = query.eq('model', filter.model!);
