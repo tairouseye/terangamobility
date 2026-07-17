@@ -124,12 +124,43 @@ class _VehicleCatalogScreenState extends ConsumerState<VehicleCatalogScreen> {
                                   fontSize: 16, fontWeight: FontWeight.w600))),
                     ]);
                   }
-                  return ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 20),
-                    itemCount: vehicles.length,
-                    separatorBuilder: (_, _) => const SizedBox(height: 14),
-                    itemBuilder: (context, i) =>
-                        _VehicleCard(vehicle: vehicles[i]),
+                  return LayoutBuilder(
+                    builder: (context, cns) {
+                      // Grille responsive centree, largeur max 1200 :
+                      // telephone 1 colonne, tablette/laptop 2, desktop 3.
+                      const gap = 14.0;
+                      const hPad = 16.0;
+                      final contentW =
+                          cns.maxWidth > 1200 ? 1200.0 : cns.maxWidth;
+                      final cols = contentW >= 1040
+                          ? 3
+                          : contentW >= 700
+                              ? 2
+                              : 1;
+                      final cardW =
+                          (contentW - hPad * 2 - gap * (cols - 1)) / cols;
+                      return SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: const EdgeInsets.fromLTRB(hPad, 4, hPad, 20),
+                        child: Center(
+                          child: ConstrainedBox(
+                            constraints:
+                                const BoxConstraints(maxWidth: 1200),
+                            child: Wrap(
+                              spacing: gap,
+                              runSpacing: gap,
+                              children: [
+                                for (final v in vehicles)
+                                  SizedBox(
+                                    width: cardW,
+                                    child: _VehicleCard(vehicle: v),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   );
                 },
               ),
@@ -245,29 +276,39 @@ class _Photo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final raw = vehicle.photos.isNotEmpty ? vehicle.photos.first : null;
-    // Carte 16:9 : version legere haute nettete.
-    final url = raw == null ? null : encarPhoto(raw, height: 500, ratio: 16 / 9);
+    final dpr = MediaQuery.of(context).devicePixelRatio;
     return AspectRatio(
       aspectRatio: 16 / 9,
-      child: Container(
-        color: AppColors.grisClair,
-        child: url == null
-            ? const Center(
-                child: Icon(Icons.directions_car,
-                    size: 48, color: AppColors.gris))
-            : Image.network(
-                url,
-                fit: BoxFit.cover,
-                // Images externes (Encar) sans en-tete CORS : on affiche
-                // directement via un element <img> HTML (pas de fetch bloque).
-                webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
-                errorBuilder: (_, _, _) => const Center(
+      child: LayoutBuilder(
+        builder: (context, c) {
+          // Carte 16:9 : resolution ajustee a la largeur reelle de la carte.
+          final url = raw == null
+              ? null
+              : encarPhotoAdaptive(raw,
+                  logicalWidth: c.maxWidth,
+                  devicePixelRatio: dpr,
+                  ratio: 16 / 9);
+          return Container(
+            color: AppColors.grisClair,
+            child: url == null
+                ? const Center(
                     child: Icon(Icons.directions_car,
-                        size: 48, color: AppColors.gris)),
-                loadingBuilder: (c, child, progress) => progress == null
-                    ? child
-                    : const Center(child: CircularProgressIndicator()),
-              ),
+                        size: 48, color: AppColors.gris))
+                : Image.network(
+                    url,
+                    fit: BoxFit.cover,
+                    // Images externes (Encar) sans en-tete CORS : on affiche
+                    // directement via un element <img> HTML (pas de fetch).
+                    webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
+                    errorBuilder: (_, _, _) => const Center(
+                        child: Icon(Icons.directions_car,
+                            size: 48, color: AppColors.gris)),
+                    loadingBuilder: (c, child, progress) => progress == null
+                        ? child
+                        : const Center(child: CircularProgressIndicator()),
+                  ),
+          );
+        },
       ),
     );
   }

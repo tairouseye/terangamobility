@@ -92,14 +92,19 @@ class _Detail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        _Gallery(photos: vehicle.photos),
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+    // Contenu borne et centre : plein ecran sur telephone, largeur maitrisee
+    // sur laptop/desktop (evite une photo geante en pleine largeur).
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 900),
+        child: ListView(
+          children: [
+            _Gallery(photos: vehicle.photos),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
               Text(vehicle.title,
                   style: const TextStyle(
                       fontSize: 22, fontWeight: FontWeight.w800)),
@@ -169,7 +174,9 @@ class _Detail extends StatelessWidget {
             ],
           ),
         ),
-      ],
+          ],
+        ),
+      ),
     );
   }
 }
@@ -283,8 +290,13 @@ class _GalleryState extends State<_Gallery> {
                 itemCount: widget.photos.length,
                 onPageChanged: (i) => setState(() => _index = i),
                 itemBuilder: (_, i) => _img(
-                    // Image principale : haute qualite (recadrage 16:10).
-                    encarPhoto(widget.photos[i], height: 900, ratio: 16 / 10),
+                    // Image principale : resolution ajustee a la largeur ecran.
+                    encarPhotoAdaptive(widget.photos[i],
+                        logicalWidth:
+                            MediaQuery.of(context).size.width.clamp(0, 900),
+                        devicePixelRatio:
+                            MediaQuery.of(context).devicePixelRatio,
+                        ratio: 16 / 10),
                     BoxFit.cover),
               ),
               if (widget.photos.length > 1)
