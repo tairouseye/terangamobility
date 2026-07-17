@@ -15,7 +15,7 @@ enum UserRole {
 
   String get label => switch (this) {
         UserRole.client => 'Client',
-        UserRole.partnerKr => 'Partenaire Coree',
+        UserRole.partnerKr => 'Partenaire Corée',
         UserRole.admin => 'Administrateur',
       };
 
@@ -73,18 +73,18 @@ enum OrderStatus {
 
   String get label => switch (this) {
         OrderStatus.nouvelleDemande => 'Nouvelle demande',
-        OrderStatus.rechercheCoree => 'Recherche Coree',
-        OrderStatus.pieceTrouvee => 'Piece trouvee',
-        OrderStatus.devisEnvoye => 'Devis envoye',
-        OrderStatus.acomptePaye => 'Acompte paye',
-        OrderStatus.commandeConfirmee => 'Commande confirmee',
-        OrderStatus.pieceAchetee => 'Piece achetee',
-        OrderStatus.expediee => 'Expediee',
+        OrderStatus.rechercheCoree => 'Recherche Corée',
+        OrderStatus.pieceTrouvee => 'Pièce trouvée',
+        OrderStatus.devisEnvoye => 'Devis envoyé',
+        OrderStatus.acomptePaye => 'Acompte payé',
+        OrderStatus.commandeConfirmee => 'Commande confirmée',
+        OrderStatus.pieceAchetee => 'Pièce achetée',
+        OrderStatus.expediee => 'Expédiée',
         OrderStatus.enTransit => 'En transit',
-        OrderStatus.arriveeSenegal => 'Arrivee Senegal',
-        OrderStatus.soldeDemande => 'Solde demande',
-        OrderStatus.payee => 'Payee',
-        OrderStatus.livree => 'Livree',
+        OrderStatus.arriveeSenegal => 'Arrivée Sénégal',
+        OrderStatus.soldeDemande => 'Solde demandé',
+        OrderStatus.payee => 'Payée',
+        OrderStatus.livree => 'Livrée',
       };
 
   int get step => index + 1;

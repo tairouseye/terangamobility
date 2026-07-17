@@ -134,7 +134,7 @@ class TerangaLockup extends StatelessWidget {
         ),
         SizedBox(height: badgeSize * 0.07),
         Text(
-          'PARTS & VEHICULES',
+          'PARTS & VÉHICULES',
           style: TextStyle(
             fontSize: badgeSize * 0.13,
             letterSpacing: 2.5,
@@ -145,7 +145,7 @@ class TerangaLockup extends StatelessWidget {
         if (showTagline) ...[
           SizedBox(height: badgeSize * 0.07),
           Text(
-            'Pieces detachees & vehicules importes de Coree',
+            'Pièces détachées & véhicules importés de Corée',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: badgeSize * 0.125,

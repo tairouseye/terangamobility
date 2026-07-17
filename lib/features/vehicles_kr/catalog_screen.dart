@@ -44,7 +44,7 @@ class _VehicleCatalogScreenState extends ConsumerState<VehicleCatalogScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Vehicules Coree'),
+        title: const Text('Véhicules Corée'),
         actions: [
           if (!isLoggedIn)
             Padding(
@@ -69,7 +69,7 @@ class _VehicleCatalogScreenState extends ConsumerState<VehicleCatalogScreen> {
                     controller: _search,
                     textInputAction: TextInputAction.search,
                     decoration: InputDecoration(
-                      hintText: 'Rechercher (marque, modele, ref...)',
+                      hintText: 'Rechercher (marque, modèle, réf...)',
                       prefixIcon: const Icon(Icons.search),
                       isDense: true,
                       suffixIcon: _search.text.isEmpty
@@ -118,7 +118,7 @@ class _VehicleCatalogScreenState extends ConsumerState<VehicleCatalogScreen> {
                           size: 64, color: AppColors.gris),
                       SizedBox(height: 16),
                       Center(
-                          child: Text('Aucun vehicule ne correspond',
+                          child: Text('Aucun véhicule ne correspond',
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.w600))),
                     ]);

@@ -19,9 +19,9 @@ enum VehicleRequestStatus {
 
   String get label => switch (this) {
         VehicleRequestStatus.enAttenteDevis => 'En attente de devis',
-        VehicleRequestStatus.devisEnvoye => 'Devis envoye',
-        VehicleRequestStatus.accepte => 'Accepte',
-        VehicleRequestStatus.refuse => 'Refuse',
+        VehicleRequestStatus.devisEnvoye => 'Devis envoyé',
+        VehicleRequestStatus.accepte => 'Accepté',
+        VehicleRequestStatus.refuse => 'Refusé',
         VehicleRequestStatus.clos => 'Clos',
       };
 
@@ -56,14 +56,14 @@ enum VehicleOrderStatus {
 
   String get label => switch (this) {
         VehicleOrderStatus.enAttenteAcompte => 'En attente d\'acompte',
-        VehicleOrderStatus.commandeConfirmee => 'Commande confirmee',
-        VehicleOrderStatus.vehiculeAchete => 'Vehicule achete',
-        VehicleOrderStatus.preparation => 'Preparation du vehicule',
-        VehicleOrderStatus.chargeContainer => 'Charge dans le container',
+        VehicleOrderStatus.commandeConfirmee => 'Commande confirmée',
+        VehicleOrderStatus.vehiculeAchete => 'Véhicule acheté',
+        VehicleOrderStatus.preparation => 'Préparation du véhicule',
+        VehicleOrderStatus.chargeContainer => 'Chargé dans le container',
         VehicleOrderStatus.navireEnMer => 'Navire en mer',
-        VehicleOrderStatus.arrivePort => 'Arrive au port',
-        VehicleOrderStatus.pretRecuperation => 'Pret a etre recupere',
-        VehicleOrderStatus.livre => 'Livre',
+        VehicleOrderStatus.arrivePort => 'Arrivé au port',
+        VehicleOrderStatus.pretRecuperation => 'Prêt à être récupéré',
+        VehicleOrderStatus.livre => 'Livré',
       };
 
   int get step => index + 1;

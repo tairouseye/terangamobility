@@ -23,7 +23,7 @@ class AdminDashboard extends ConsumerWidget {
         Text('Bonjour ${profile?.fullName ?? ''} 👋',
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
         const SizedBox(height: 20),
-        const _SectionLabel('Pieces detachees'),
+        const _SectionLabel('Pièces détachées'),
         _Grid(children: [
           _AdminTile(Icons.people, 'Clients', AppColors.vert,
               onTap: () => _go(context, const ClientsScreen())),
@@ -33,7 +33,7 @@ class AdminDashboard extends ConsumerWidget {
               onTap: () => _go(context, const OrdersScreen())),
         ]),
         const SizedBox(height: 20),
-        const _SectionLabel('Vehicules Coree'),
+        const _SectionLabel('Véhicules Corée'),
         _Grid(children: [
           _AdminTile(
               Icons.request_quote, 'Demandes vehicule', AppColors.primary,

@@ -25,7 +25,7 @@ class ClientDashboard extends ConsumerWidget {
         Text('Bonjour ${profile?.fullName ?? ''} 👋',
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
         const SizedBox(height: 4),
-        const Text('Commandez vos pieces coreennes en toute confiance.',
+        const Text('Commandez vos pièces coréennes en toute confiance.',
             style: TextStyle(color: AppColors.gris)),
         const SizedBox(height: 24),
         // --- Nouveau : import de vehicules depuis la Coree ---
@@ -38,7 +38,7 @@ class ClientDashboard extends ConsumerWidget {
         _MenuCard(
           icon: Icons.directions_boat,
           color: AppColors.primary,
-          title: 'Mes commandes vehicule',
+          title: 'Mes commandes véhicule',
           subtitle: 'Devis, acompte, suivi maritime',
           onTap: () => Navigator.of(context).push(MaterialPageRoute(
             builder: (_) => const MyVehicleOrdersScreen(),
@@ -47,7 +47,7 @@ class ClientDashboard extends ConsumerWidget {
         const SizedBox(height: 8),
         const Padding(
           padding: EdgeInsets.only(bottom: 8, left: 4),
-          child: Text('Pieces detachees',
+          child: Text('Pièces détachées',
               style: TextStyle(
                   fontWeight: FontWeight.w700, color: AppColors.gris)),
         ),
@@ -176,13 +176,13 @@ class _FeatureBanner extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Vehicules Coree',
+                    Text('Véhicules Corée',
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.w800)),
                     SizedBox(height: 2),
-                    Text('Commandez votre vehicule directement de Coree',
+                    Text('Commandez votre véhicule directement de Corée',
                         style: TextStyle(color: Colors.white70, fontSize: 12.5)),
                   ],
                 ),

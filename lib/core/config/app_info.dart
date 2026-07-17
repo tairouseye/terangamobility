@@ -8,7 +8,7 @@ class AppInfo {
 
   /// Marque de l'application (activite).
   static const String appName = 'TerangaMobility';
-  static const String appTagline = 'Parts & Vehicules';
+  static const String appTagline = 'Parts & Véhicules';
 
   /// Editeur du logiciel.
   static const String publisher = 'GesPro Digital';
