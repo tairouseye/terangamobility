@@ -114170,7 +114170,7 @@ a6.eJ(g,m)}},
 eU(a){return!a.b.k(0,this.b)||!a.c.k(0,this.c)}}
 A.xE.prototype={
 e5(a,b){var s=this,r=null,q=b.aS($.E0(),t.uN).gq(),p=q==null?r:q.b,o=t.p
-return A.aZ9(A.b([A.S("Bonjour "+(p==null?"":p)+" \ud83d\udc4b",r,r,r,B.tx,r,r,r),B.cb,B.b1d,new A.N1(A.b([new A.rL(B.WX,"Clients",B.az,new A.acM(s,a),r),new A.rL(B.WL,"Valider devis",B.ai,new A.acN(s,a),r),new A.rL(B.q0,"Commandes",B.c1,new A.acO(s,a),r)],o),r),B.cb,B.b1c,new A.N1(A.b([new A.rL(B.X1,"Demandes vehicule",B.ai,new A.acP(s,a),r),new A.rL(B.x7,"Commandes vehicule",B.c1,new A.acQ(s,a),r)],o),r)],o),"Admin Teranga Parts")},
+return A.aZ9(A.b([A.S("Bonjour "+(p==null?"":p)+" \ud83d\udc4b",r,r,r,B.tx,r,r,r),B.cb,B.b1d,new A.N1(A.b([new A.rL(B.WX,"Clients",B.az,new A.acM(s,a),r),new A.rL(B.WL,"Valider devis",B.ai,new A.acN(s,a),r),new A.rL(B.q0,"Commandes",B.c1,new A.acO(s,a),r)],o),r),B.cb,B.b1c,new A.N1(A.b([new A.rL(B.X1,"Demandes vehicule",B.ai,new A.acP(s,a),r),new A.rL(B.x7,"Commandes vehicule",B.c1,new A.acQ(s,a),r)],o),r)],o),"Espace Admin")},
 yj(a,b){var s=t.z
 return A.bV(a,!1).dG(A.ew(new A.acL(b),null,s),s)}}
 A.acM.prototype={
@@ -114253,7 +114253,7 @@ case 7:h=$.aYt()
 if(k.e==null)A.Q(A.a6(u.w))
 k.gcF().cR(h)
 k=m.c
-if(k!=null){k.aa(t.J).f.eV(B.aQi)
+if(k!=null){k.aa(t.J).f.eV(B.aQj)
 k=m.c
 k.toString
 A.bV(k,!1).e6()}n.push(6)
@@ -114289,7 +114289,7 @@ q=A.yH(l,l,q,!1,p,l,new A.aGp(m),t.N)
 p=m.w==null||m.z?l:m.galI()
 o=m.z?B.aQ5:B.Y_
 n=t.p
-p=A.b([k,j,B.cb,B.aXK,B.aM,r,B.b1,B.aXY,B.aM,q,B.b1,A.lH(o,B.aWJ,p,A.WT(l,l,l,l,l,l,l,l,l,l,l,B.jI,l,l,l,l,l,l,l,l))],n)
+p=A.b([k,j,B.cb,B.aXJ,B.aM,r,B.b1,B.aXX,B.aM,q,B.b1,A.lH(o,B.aWJ,p,A.WT(l,l,l,l,l,l,l,l,l,l,l,B.jI,l,l,l,l,l,l,l,l))],n)
 k=m.y
 if(k!=null){j=m.Q
 r=j?l:m.gazW()
@@ -114330,7 +114330,7 @@ return A.S("Erreur : "+A.h(a),s,s,s,s,s,s,s)},
 $S:55}
 A.aGl.prototype={
 $1(a){var s,r,q=J.aK(a)
-if(q.ga1(a))return B.aXN
+if(q.ga1(a))return B.aXM
 s=this.a
 r=s.w
 if(r==null)r=s.w=q.ga9(a)
@@ -114706,7 +114706,7 @@ g=A.yH(o,o,g,!1,s,o,new A.aNe(p),t.ul)
 s=A.mw(B.Ol,p.z?o:p.gawH())
 r=A.jW(o,B.bh,!1,o,!0,B.a2,o,A.l5(),p.x,o,o,o,o,o,2,B.YD,B.aE,!0,o,!0,o,!1,o,B.bX,o,o,o,o,o,o,o,o,1,o,o,!1,"\u2022",o,o,o,o,o,!1,o,o,!1,o,!0,o,B.b9,o,o,o,o,o,o,o,o,o,o,o,o,!0,B.aS,o,B.bj,o,o,o,o)
 q=A.jW(o,B.bh,!1,o,!0,B.a2,o,A.l5(),p.y,o,o,o,o,o,2,B.YG,B.aE,!0,o,!0,o,!1,o,B.bX,o,o,o,o,o,o,o,o,1,o,o,!1,"\u2022",o,o,o,o,o,!1,o,o,!1,o,!0,o,B.b9,o,o,o,o,o,o,o,o,o,o,o,o,!0,B.aS,o,B.bj,o,o,o,o)
-return A.dH(m,o,A.eP(!0,A.e9(A.b([l,k,B.aM,h,B.ew,B.Ok,B.aM,g,B.aM,B.aXx,B.at,s,B.ew,B.aXM,B.aM,r,B.at,q,B.at,A.b5P(B.Oj,p.z?o:p.gaza()),B.ew,B.Of,B.at,new A.HQ(j.d,o)],i),o,B.b9,o,!1),B.aw,!0),o,o)},
+return A.dH(m,o,A.eP(!0,A.e9(A.b([l,k,B.aM,h,B.ew,B.Ok,B.aM,g,B.aM,B.aXw,B.at,s,B.ew,B.aXL,B.aM,r,B.at,q,B.at,A.b5P(B.Oj,p.z?o:p.gaza()),B.ew,B.Of,B.at,new A.HQ(j.d,o)],i),o,B.b9,o,!1),B.aw,!0),o,o)},
 Zg(a,b){var s,r=null,q=b?B.f7:B.X0
 q=A.fv(q,b?B.az:B.am,r,18)
 s=b?"paye":"en attente"
@@ -114781,7 +114781,7 @@ $1(a){return new A.qK(this.a,null)},
 $S:266}
 A.XJ.prototype={
 e5(a,b){var s=null,r=b.aS($.aYt(),t.hf)
-return A.dH(A.dV(s,B.aXR),s,A.kC(A.eU(r,new A.auT(),new A.auU(),new A.auV(),t.Ak,t.l),new A.auW(b)),s,s)}}
+return A.dH(A.dV(s,B.aXQ),s,A.kC(A.eU(r,new A.auT(),new A.auU(),new A.auV(),t.Ak,t.l),new A.auW(b)),s,s)}}
 A.auW.prototype={
 $0(){var s=0,r=A.t(t.H),q,p=this,o,n
 var $async$$0=A.o(function(a,b){if(a===1)return A.p(b,r)
@@ -115080,13 +115080,13 @@ n=i.r
 m=k.ax
 m===$&&A.a()
 l=t.p
-m=A.b([s,r,B.at,A.dX(new A.ao(B.dM,A.be(A.b([q,o,k.Ol("Solde (30%)",n,m)],l),B.R,B.J,B.N),j),j,j,j),B.ew,B.aXm,B.aM],l)
+m=A.b([s,r,B.at,A.dX(new A.ao(B.dM,A.be(A.b([q,o,k.Ol("Solde (30%)",n,m)],l),B.R,B.J,B.N),j),j,j,j),B.ew,B.aXl,B.aM],l)
 if(!k.at){s=k.CW?j:new A.aU1(k)
 m.push(A.cV(A.yK(B.xt,A.S("Confirmer l'acompte recu ("+A.d4(p)+")",j,j,j,j,j,j,j),s),j,1/0))}if(k.at&&!k.ax){s=A.b([],l)
 if(!k.at)s.push(B.aM)
 r=k.CW?j:new A.aU2(k)
 s.push(A.cV(A.lH(B.XN,A.S("Confirmer le solde recu ("+A.d4(n)+")",j,j,j,j,j,j,j),r,j),j,1/0))
-B.l.I(m,s)}if(k.at&&k.ax)m.push(B.aXe)
+B.l.I(m,s)}if(k.at&&k.ax)m.push(B.aXd)
 m.push(B.ew)
 m.push(B.aWn)
 m.push(B.dd)
@@ -115113,7 +115113,7 @@ r=t.d7
 r=A.X(new A.a_(B.qR,new A.aU7(),r),r.h("aa.E"))
 m.push(A.yH(j,j,s,!0,r,j,new A.aU8(k),t.ck))
 m.push(B.de)
-m.push(B.aXL)
+m.push(B.aXK)
 m.push(B.bJ)
 m.push(A.mw(B.Ol,k.as?j:k.gazc()))
 m.push(B.ew)
@@ -115373,7 +115373,7 @@ $0(){return this.a.yZ(this.b,this.c)},
 $S:0}
 A.aPX.prototype={
 $1(a){var s=null,r=this.a,q=t.p,p=A.be(A.b([B.aWF,B.at,A.jW(s,B.bh,!0,s,!0,B.a2,s,A.l5(),r,s,s,s,s,s,2,B.YL,B.aE,!0,s,!0,s,!1,s,B.bX,s,s,s,s,B.nu,s,s,s,1,s,s,!1,"\u2022",s,s,s,s,s,!1,s,s,!1,s,!0,s,B.b9,s,s,s,s,s,s,s,s,s,s,s,s,!0,B.aS,s,B.bj,s,s,s,s)],q),B.ao,B.J,B.bn)
-return A.aYI(A.b([A.kK(B.Oh,s,s,new A.aPV(a),s,s),A.mw(B.aY9,new A.aPW(r,a))],q),p,s,B.aXS)},
+return A.aYI(A.b([A.kK(B.Oh,s,s,new A.aPV(a),s,s),A.mw(B.aY9,new A.aPW(r,a))],q),p,s,B.aXR)},
 $S:154}
 A.aPV.prototype={
 $0(){A.bV(this.a,!1).kB(null)
@@ -115446,7 +115446,7 @@ p.push(A.kK(B.Oe,r,r,new A.aM5(a),r,r))
 p.push(B.aM)
 p.push(B.aNL)
 p.push(B.aM)
-p.push(A.lH(B.Xp,B.aXw,new A.aM6(a),A.WT(r,r,r,r,r,r,r,r,r,r,r,B.aQ_,r,r,r,r,r,r,r,r)))
+p.push(A.lH(B.Xp,B.aXv,new A.aM6(a),A.WT(r,r,r,r,r,r,r,r,r,r,r,B.aQ_,r,r,r,r,r,r,r,r)))
 p.push(B.de)
 p.push(B.aWj)
 p.push(B.no)
@@ -115558,7 +115558,7 @@ E(a){var s=null
 return A.dH(s,B.ai,A.c5(s,B.SD,B.P,s,s,B.Qj,s,s,s,s,s,s,s),B.Px,s)}}
 A.y9.prototype={
 e5(a,b){var s=null,r=b.aS($.E0(),t.uN).gq(),q=r==null?s:r.b
-return A.aZ9(A.b([A.S("Bonjour "+(q==null?"":q)+" \ud83d\udc4b",s,s,s,B.tx,s,s,s),B.dd,B.aXD,B.jK,new A.a3r(new A.aeT(a),s),B.at,new A.po(B.x7,B.ai,"Mes commandes vehicule","Devis, acompte, suivi maritime",new A.aeU(a),s),B.aM,B.aLp,new A.po(B.dq,B.az,"Mes vehicules","Enregistrer marque, modele, VIN, carte grise",new A.aeV(a),s),new A.po(B.Wz,B.ai,"Nouvelle demande de piece","Decrivez la piece recherchee + photo",new A.aeW(a),s),new A.po(B.q0,B.c1,"Mes demandes","Suivre l'etat de mes demandes de pieces",new A.aeX(a),s),new A.po(B.q1,B.az,"Mes devis","Consulter, valider et payer l'acompte (70%)",new A.aeY(a),s),new A.po(B.iL,B.c7,"Suivi de mes commandes","Suivre les 13 etapes jusqu'a la livraison",new A.aeZ(a),s)],t.p),"Espace Client")}}
+return A.aZ9(A.b([A.S("Bonjour "+(q==null?"":q)+" \ud83d\udc4b",s,s,s,B.tx,s,s,s),B.dd,B.aXC,B.jK,new A.a3r(new A.aeT(a),s),B.at,new A.po(B.x7,B.ai,"Mes commandes vehicule","Devis, acompte, suivi maritime",new A.aeU(a),s),B.aM,B.aLp,new A.po(B.dq,B.az,"Mes vehicules","Enregistrer marque, modele, VIN, carte grise",new A.aeV(a),s),new A.po(B.Wz,B.ai,"Nouvelle demande de piece","Decrivez la piece recherchee + photo",new A.aeW(a),s),new A.po(B.q0,B.c1,"Mes demandes","Suivre l'etat de mes demandes de pieces",new A.aeX(a),s),new A.po(B.q1,B.az,"Mes devis","Consulter, valider et payer l'acompte (70%)",new A.aeY(a),s),new A.po(B.iL,B.c7,"Suivi de mes commandes","Suivre les 13 etapes jusqu'a la livraison",new A.aeZ(a),s)],t.p),"Espace Client")}}
 A.aeT.prototype={
 $0(){var s=t.z
 return A.bV(this.a,!1).dG(A.ew(new A.aeS(),null,s),s)},
@@ -115718,7 +115718,7 @@ j=j.d
 if(j===B.IK&&!p){p=m.w
 n=p?l:m.gaxa()
 p=p?B.NF:B.xo
-o.push(new A.ao(B.Vq,A.yK(p,A.S("Payer le solde ("+A.d4(r-B.o.kE(q))+")",l,l,l,l,l,l,l),n),l))}o.push(B.aXv)
+o.push(new A.ao(B.Vq,A.yK(p,A.S("Payer le solde ("+A.d4(r-B.o.kE(q))+")",l,l,l,l,l,l,l),n),l))}o.push(B.aXu)
 o.push(B.at)
 o.push(new A.HQ(j,l))
 return A.dH(i,l,A.eP(!0,A.e9(o,l,B.b9,l,!1),B.aw,!0),l,l)},
@@ -115765,7 +115765,7 @@ return A.dX(A.hw(!1,p,p,p,!0,p,p,p,!0,p,B.XG,p,p,p,p,p,!1,p,p,p,A.S(B.l.be(r,"  
 $S:771}
 A.zO.prototype={
 e5(a,b){var s=null,r=b.aS($.aYq(),t.Fx)
-return A.dH(A.dV(s,B.aXf),s,A.kC(A.eU(r,new A.arn(),new A.aro(),new A.arp(),t.dJ,t.l),new A.arq(b)),s,s)}}
+return A.dH(A.dV(s,B.aXe),s,A.kC(A.eU(r,new A.arn(),new A.aro(),new A.arp(),t.dJ,t.l),new A.arq(b)),s,s)}}
 A.arq.prototype={
 $0(){var s=0,r=A.t(t.H),q,p=this,o,n
 var $async$$0=A.o(function(a,b){if(a===1)return A.p(b,r)
@@ -116105,7 +116105,7 @@ A.aF1.prototype={
 $1(a){return B.aZR},
 $S:278}
 A.AB.prototype={
-e5(a,b){var s=b.aS($.acd(),t.hf),r=A.dV(null,B.aWU),q=A.b4l(B.ai,B.q2,B.aXG,new A.awY(a))
+e5(a,b){var s=b.aS($.acd(),t.hf),r=A.dV(null,B.aWU),q=A.b4l(B.ai,B.q2,B.aXF,new A.awY(a))
 return A.dH(r,null,A.kC(A.eU(s,new A.awZ(),new A.ax_(),new A.ax0(),t.Ak,t.l),new A.ax1(b)),null,q)}}
 A.awY.prototype={
 $0(){var s=t.z
@@ -116301,7 +116301,7 @@ if(i!=null)B.l.I(o,A.b([B.at,A.S(i,k,k,k,B.eK,k,k,k)],n))
 o.push(B.jK)
 i=l.ay
 s=i?k:l.gaz8()
-o.push(A.mw(i?B.fu:B.aXn,s))
+o.push(A.mw(i?B.fu:B.aXm,s))
 return A.dH(j,k,A.eP(!0,A.UJ(k,A.e9(o,k,B.b9,k,!1),l.w),B.aw,!0),k,k)}}
 A.aTG.prototype={
 $0(){return this.a.ax=this.b},
@@ -116570,7 +116570,7 @@ if(p&&q.length!==0){q=f.ch
 q=q!=null&&q.length!==0}else q=!1
 if(q)o.push(B.dw)
 q=f.ch
-if(q!=null&&q.length!==0)o.push(A.cx(A.lH(B.xm,B.aXz,new A.aUh(j),i),1))
+if(q!=null&&q.length!==0)o.push(A.cx(A.lH(B.xm,B.aXy,new A.aUh(j),i),1))
 B.l.I(e,A.b([B.at,B.aYd,B.aM,A.by(o,B.R,B.J,B.N,0)],l))}e.push(B.b1)
 e.push(B.aWe)
 e.push(B.at)
@@ -116579,7 +116579,7 @@ e.push(B.aM)
 e.push(A.eU(r,new A.aUi(),new A.aUj(),new A.aUk(),t.ly,t.l))
 return A.dH(c,i,A.eP(!0,A.e9(e,i,B.b9,i,!1),B.aw,!0),i,i)},
 a18(a,b,c){var s=null,r=B.ai.cP(0.06),q=A.cn(14),p=A.mh(B.ai.cP(0.25),1),o=A.S(c+" a regler : "+A.d4(a),s,s,s,B.aT3,s,s,s),n=A.cx(A.lH(B.XH,B.aWu,new A.aUd(this,c),s),1),m=this.w,l=m?s:new A.aUe(this,b),k=t.p
-return A.c5(s,A.be(A.b([o,B.de,B.aXJ,B.bJ,A.by(A.b([n,B.dw,A.cx(A.yK(m?B.aQ6:B.Xr,B.aXb,l),1)],k),B.R,B.J,B.N,0)],k),B.ao,B.J,B.N),B.P,s,s,new A.bZ(r,s,p,q,s,s,B.aB),s,s,B.wn,B.dM,s,s,s)},
+return A.c5(s,A.be(A.b([o,B.de,B.aXI,B.bJ,A.by(A.b([n,B.dw,A.cx(A.yK(m?B.aQ6:B.Xr,B.aXb,l),1)],k),B.R,B.J,B.N,0)],k),B.ao,B.J,B.N),B.P,s,s,new A.bZ(r,s,p,q,s,s,B.aB),s,s,B.wn,B.dM,s,s,s)},
 Eu(a){return this.awG(a)},
 awG(a){var s=0,r=A.t(t.H),q=this
 var $async$Eu=A.o(function(b,c){if(b===1)return A.p(c,r)
@@ -116634,7 +116634,7 @@ $0(){return this.a.Dj(this.b)},
 $S:0}
 A.A3.prototype={
 e5(a,b){var s=null,r=b.aS($.E0(),t.uN).gq(),q=r==null?s:r.b
-return A.aZ9(A.b([A.S("Annyeong "+(q==null?"":q)+" \ud83d\udc4b",s,s,s,B.tx,s,s,s),B.dd,B.aXA,B.jK,A.dX(A.hw(!1,B.ey,s,s,!0,s,s,s,!0,s,A.ET(B.ai.cP(0.12),B.Xq,s),s,s,s,s,new A.asT(a),!1,s,s,s,B.aXs,s,B.aWv,s,B.he,s),s,s,s)],t.p),"Partenaire Coree")}}
+return A.aZ9(A.b([A.S("Annyeong "+(q==null?"":q)+" \ud83d\udc4b",s,s,s,B.tx,s,s,s),B.dd,B.aXz,B.jK,A.dX(A.hw(!1,B.ey,s,s,!0,s,s,s,!0,s,A.ET(B.ai.cP(0.12),B.Xq,s),s,s,s,s,new A.asT(a),!1,s,s,s,B.aXr,s,B.aWv,s,B.he,s),s,s,s)],t.p),"Partenaire Coree")}}
 A.asT.prototype={
 $0(){var s=t.z
 return A.bV(this.a,!1).dG(A.ew(new A.asS(),null,s),s)},
@@ -116715,7 +116715,7 @@ d=e.$1(d)
 if(f.e==null)A.Q(A.a6(u.w))
 f.gcF().cR(d)
 f=m.c
-if(f!=null){f.aa(t.J).f.eV(B.aQj)
+if(f!=null){f.aa(t.J).f.eV(B.aQi)
 f=m.c
 f.toString
 A.bV(f,!1).e6()}n.push(6)
@@ -116739,13 +116739,13 @@ return A.r($async$uY,r)},
 E(a){var s,r=this,q=null,p=r.a.d,o=A.dV(q,B.aX6),n=r.at,m=A.jX(!1,r.x,B.YE,q,q,1,q,q,B.bj,q),l=A.jX(!1,r.y,B.YO,q,B.nu,1,q,q,B.bj,new A.aOd()),k=A.jX(!1,r.z,B.YH,q,B.aRm,1,q,q,B.bj,new A.aOe()),j=A.jX(!1,r.Q,B.YA,q,q,1,q,q,B.bj,q),i=A.jX(!1,r.as,B.YK,q,B.nu,1,q,q,B.bj,q),h=r.ax,g=h!=null,f=g?B.f7:B.xa
 f=A.fv(f,g?B.az:B.am,q,q)
 s=t.p
-h=A.b([new A.a7l(p,q),B.cb,new A.a_m(n,new A.aOf(r),B.az,B.aXh,B.aw,q),B.iz,B.aM,m,B.at,l,B.at,k,B.at,j,B.at,i,B.b1,A.lH(f,A.S(g?h.b:"Ajouter une photo de la piece",q,q,q,q,q,q,q),r.gaxL(),A.WT(B.i3,q,q,q,q,q,q,q,q,q,q,B.jI,q,q,q,q,q,q,q,q))],s)
+h=A.b([new A.a7l(p,q),B.cb,new A.a_m(n,new A.aOf(r),B.az,B.aXg,B.aw,q),B.iz,B.aM,m,B.at,l,B.at,k,B.at,j,B.at,i,B.b1,A.lH(f,A.S(g?h.b:"Ajouter une photo de la piece",q,q,q,q,q,q,q),r.gaxL(),A.WT(B.i3,q,q,q,q,q,q,q,q,q,q,B.jI,q,q,q,q,q,q,q,q))],s)
 n=r.ch
 if(n!=null)B.l.I(h,A.b([B.at,A.S(n,q,q,q,B.eK,q,q,q)],s))
 h.push(B.jK)
 n=r.ay
 m=n?q:r.gaAQ()
-h.push(A.mw(n?B.fu:B.aXX,m))
+h.push(A.mw(n?B.fu:B.aXW,m))
 return A.dH(o,q,A.eP(!0,A.UJ(q,A.e9(h,q,B.b9,q,!1),r.w),B.aw,!0),q,q)}}
 A.aO8.prototype={
 $0(){return this.a.ax=this.b},
@@ -116867,8 +116867,8 @@ return A.n(A.DQ(A.c3(a,0,null),B.iP),$async$r7)
 case 2:if(!c&&q.c!=null)q.c.aa(t.J).f.eV(A.j7(null,null,null,null,null,B.a2,null,A.S("Impossible d'ouvrir : "+a,null,null,null,null,null,null,null),null,B.bC,null,null,null,null,null,null,null,null,null,null))
 return A.q(null,r)}})
 return A.r($async$r7,r)},
-E(a){var s=this,r=null,q="+221 77 343 59 28",p=A.dV(r,B.aXV),o=B.ai.cP(0.08),n=A.cn(20),m=t.p
-n=A.b([B.aM,B.Sw,B.tb,A.cU(A.c5(r,A.S(s.d,r,r,r,B.aUu,r,r,r),B.P,r,r,new A.bZ(o,r,r,n,r,r,B.aB),r,r,r,B.VC,r,r,r),r,r),B.no,B.aXF,B.dd,B.aXi,B.tb,new A.wD(B.kX,B.az,"WhatsApp",q,"Le plus rapide",new A.aET(s),r),new A.wD(B.WE,B.ai,"Telephone",q,r,new A.aEU(s),r)],m)
+E(a){var s=this,r=null,q="+221 77 343 59 28",p=A.dV(r,B.aXU),o=B.ai.cP(0.08),n=A.cn(20),m=t.p
+n=A.b([B.aM,B.Sw,B.tb,A.cU(A.c5(r,A.S(s.d,r,r,r,B.aUu,r,r,r),B.P,r,r,new A.bZ(o,r,r,n,r,r,B.aB),r,r,r,B.VC,r,r,r),r,r),B.no,B.aXE,B.dd,B.aXh,B.tb,new A.wD(B.kX,B.az,"WhatsApp",q,"Le plus rapide",new A.aET(s),r),new A.wD(B.WE,B.ai,"Telephone",q,r,new A.aEU(s),r)],m)
 n.push(new A.wD(B.WS,B.c7,"Email","gesprosn@gmail.com",r,new A.aEV(s),r))
 n.push(new A.wD(B.WP,B.iq,"Site web",B.n.qw("https://gesprosn.org","https://",""),r,new A.aEW(s),r))
 n.push(B.no)
@@ -116983,7 +116983,7 @@ return A.S(q+" \xb7 2026-07-17",s,s,s,B.aSn,s,s,s)},
 $S:280}
 A.zU.prototype={
 e5(a,b){var s=null,r=b.aS($.b2l(),t._Z),q=new A.as5(b)
-return A.dH(A.dV(A.b([A.kK(B.aXT,s,s,new A.as1(b,q),s,s)],t.p),B.aXu),s,A.kC(A.eU(r,new A.as2(b,q),new A.as3(),new A.as4(),t.CE,t.l),q),s,s)}}
+return A.dH(A.dV(A.b([A.kK(B.aXS,s,s,new A.as1(b,q),s,s)],t.p),B.aXt),s,A.kC(A.eU(r,new A.as2(b,q),new A.as3(),new A.as4(),t.CE,t.l),q),s,s)}}
 A.as5.prototype={
 $0(){var s=0,r=A.t(t.H),q=this,p,o
 var $async$$0=A.o(function(a,b){if(a===1)return A.p(b,r)
@@ -117062,7 +117062,7 @@ k=n?B.bb:B.a8
 return new A.uG(A.by(A.b([q,B.jJ,new A.ao(new A.an(0,1,0,p),A.S(l,s,s,s,A.cO(s,s,o?B.c7:B.am,s,s,s,s,s,s,s,s,s,s,s,k,s,s,!0,s,s,s,s,s,s,s,s),s,s,s),s)],i),B.ao,B.J,B.N,0),s)},
 $S:281}
 A.Is.prototype={
-E(a){var s=this,r=null,q=s.c,p=s.EG("Prix de la piece",q.a),o=s.EG("Transport FedEx",q.b),n=s.EG("Douane estimee",q.c),m=s.EG("Commission Teranga Parts",q.d),l=q.e,k=s.EH("TOTAL",l,!0,B.c7),j=A.cn(12),i=l*0.7,h=t.p
+E(a){var s=this,r=null,q=s.c,p=s.EG("Prix de la piece",q.a),o=s.EG("Transport FedEx",q.b),n=s.EG("Douane estimee",q.c),m=s.EG("Commission TerangaMobility",q.d),l=q.e,k=s.EH("TOTAL",l,!0,B.c7),j=A.cn(12),i=l*0.7,h=t.p
 return A.dX(new A.ao(B.bu,A.be(A.b([p,o,n,m,B.UV,k,B.at,A.c5(r,A.be(A.b([s.EH("Acompte a payer (70%)",B.o.kE(i),!0,B.ai),B.dd,s.ay3("Solde avant livraison (30%)",l-B.o.kE(i),B.az)],h),B.R,B.J,B.N),B.P,r,r,new A.bZ(B.bT,r,r,j,r,r,B.aB),r,r,r,B.ey,r,r,r)],h),B.R,B.J,B.N),r),r,r,r)},
 EH(a,b,c,d){var s=null,r=c?16:14,q=c?B.bb:B.a8,p=A.cO(s,s,d==null?B.am:d,s,s,s,s,s,s,s,s,r,s,s,q,s,s,!0,s,s,s,s,s,s,s,s)
 return new A.ao(B.iE,A.by(A.b([new A.hM(1,B.d9,A.S(a,s,s,s,p,s,s,s),s),A.S(A.d4(b),s,s,s,p,s,s,s)],t.p),B.R,B.cY,B.N,0),s)},
@@ -117275,7 +117275,7 @@ s.CW=null},
 $S:0}
 A.aQ4.prototype={
 $1(a){var s=null
-return A.aYI(A.b([A.kK(B.aWC,s,s,new A.aQ1(this.a),s,s)],t.p),B.aXr,B.Xu,B.aWE)},
+return A.aYI(A.b([A.kK(B.aWC,s,s,new A.aQ1(this.a),s,s)],t.p),B.aXq,B.Xu,B.aWE)},
 $S:154}
 A.aQ1.prototype={
 $0(){var s=this.a,r=s.c
@@ -117431,7 +117431,7 @@ E(a){var s=null,r=B.c1.cP(0.1),q=A.cn(14),p=A.mh(B.c1.cP(0.45),1)
 return A.c5(s,A.be(A.b([A.by(B.aGf,B.R,B.J,B.N,0),B.aM,B.b0X,B.b0Y,B.b0Z],t.p),B.ao,B.J,B.N),B.P,s,s,new A.bZ(r,s,p,q,s,s,B.aB),s,s,s,new A.an(14,14,14,14),s,s,s)}}
 A.CR.prototype={
 E(a){var s=null
-return new A.ao(B.kD,A.by(A.b([B.aXU,A.cx(A.S(this.c,s,s,s,B.Oa,s,s,s),1)],t.p),B.ao,B.J,B.N,0),s)}}
+return new A.ao(B.kD,A.by(A.b([B.aXT,A.cx(A.S(this.c,s,s,s,B.Oa,s,s,s),1)],t.p),B.ao,B.J,B.N,0),s)}}
 A.wv.prototype={
 a4(){return new A.aa5()}}
 A.aa5.prototype={
@@ -123216,8 +123216,8 @@ B.Sw=new A.cT(B.aj,null,null,B.aQT,null)
 B.b1V=new A.aEZ(0,"material")
 B.T3=new A.ke(null,null,null,null,null,null,null,null,null,null)
 B.cK=new A.cT(B.aj,null,null,B.T3,null)
-B.aXo=new A.a8("Vehicule introuvable",null,null,null,null,null,null,null,null,null)
-B.Sz=new A.cT(B.aj,null,null,B.aXo,null)
+B.aXn=new A.a8("Vehicule introuvable",null,null,null,null,null,null,null,null,null)
+B.Sz=new A.cT(B.aj,null,null,B.aXn,null)
 B.VO=new A.an(32,32,32,32)
 B.J=new A.qC(0,"start")
 B.bn=new A.We(0,"min")
@@ -123229,12 +123229,12 @@ B.Y2=new A.bk(B.X9,64,B.am,null,null)
 B.b1=new A.cm(null,16,null,null)
 B.c3=new A.iR(600)
 B.d1=new A.u(!0,null,null,null,null,null,16,B.c3,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.aXg=new A.a8("Aucun vehicule enregistre",null,B.d1,null,null,null,null,null,null,null)
+B.aXf=new A.a8("Aucun vehicule enregistre",null,B.d1,null,null,null,null,null,null,null)
 B.aM=new A.cm(null,8,null,null)
 B.cq=new A.u(!0,B.am,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
 B.cC=new A.p0(2,"center")
-B.aXP=new A.a8("Ajoutez votre vehicule pour commander des pieces adaptees.",null,B.cq,B.cC,null,null,null,null,null,null)
-B.aHa=s([B.Y2,B.b1,B.aXg,B.aM,B.aXP],t.p)
+B.aXO=new A.a8("Ajoutez votre vehicule pour commander des pieces adaptees.",null,B.cq,B.cC,null,null,null,null,null,null)
+B.aHa=s([B.Y2,B.b1,B.aXf,B.aM,B.aXO],t.p)
 B.U3=new A.tQ(B.ax,B.J,B.bn,B.R,null,B.cE,null,0,B.aHa,null)
 B.aLv=new A.ao(B.VO,B.U3,null)
 B.SA=new A.cT(B.aj,null,null,B.aLv,null)
@@ -123730,11 +123730,11 @@ B.h8=new A.Uz(0,"tight")
 B.N=new A.We(1,"max")
 B.ch=new A.iR(800)
 B.aVM=new A.u(!0,B.H,null,null,null,null,16,B.ch,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.aXy=new A.a8("Vehicules Coree",null,B.aVM,null,null,null,null,null,null,null)
+B.aXx=new A.a8("Vehicules Coree",null,B.aVM,null,null,null,null,null,null,null)
 B.tc=new A.cm(null,2,null,null)
 B.aVA=new A.u(!0,B.aP,null,null,null,null,12.5,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.aXq=new A.a8("Commandez votre vehicule directement de Coree",null,B.aVA,null,null,null,null,null,null,null)
-B.aF4=s([B.aXy,B.tc,B.aXq],t.p)
+B.aXp=new A.a8("Commandez votre vehicule directement de Coree",null,B.aVA,null,null,null,null,null,null,null)
+B.aF4=s([B.aXx,B.tc,B.aXp],t.p)
 B.U1=new A.tQ(B.ax,B.J,B.N,B.ao,null,B.cE,null,0,B.aF4,null)
 B.W3=new A.q7(1,B.h8,B.U1,null)
 B.W5=new A.G2(null,null,null,null,null,null,null,null,null,null,null,null,null)
@@ -124080,8 +124080,8 @@ B.yI=s([13,10],t.t)
 B.dx=new A.cm(null,120,null,null)
 B.Xd=new A.b_(61748,"MaterialIcons",null,!1)
 B.xu=new A.bk(B.Xd,64,B.am,null,null)
-B.aXE=new A.a8("Aucune commande",null,B.d1,null,null,null,null,null,null,null)
-B.Sr=new A.cT(B.aj,null,null,B.aXE,null)
+B.aXD=new A.a8("Aucune commande",null,B.d1,null,null,null,null,null,null,null)
+B.Sr=new A.cT(B.aj,null,null,B.aXD,null)
 B.a9Z=s([B.dx,B.xu,B.b1,B.Sr],t.p)
 B.aGd=s([1373.2198709594231,-1100.4251190754821,-7.278681089101213],t.n)
 B.aFK=s([-271.815969077903,559.6580465940733,-32.46047482791194],t.n)
@@ -124116,8 +124116,8 @@ B.Y6=new A.o8(B.auH,B.Yn,5,"bmp")
 B.asi=s([B.Ya,B.Y9,B.Y8,B.Yb,B.Y7,B.Y6],A.at("D<o8>"))
 B.WV=new A.b_(58449,"MaterialIcons",null,!1)
 B.XW=new A.bk(B.WV,64,B.am,null,null)
-B.aXC=new A.a8("Aucune notification",null,B.d1,null,null,null,null,null,null,null)
-B.Sy=new A.cT(B.aj,null,null,B.aXC,null)
+B.aXB=new A.a8("Aucune notification",null,B.d1,null,null,null,null,null,null,null)
+B.Sy=new A.cT(B.aj,null,null,B.aXB,null)
 B.atz=s([B.dx,B.XW,B.b1,B.Sy],t.p)
 B.uf=new A.OT(0,"named")
 B.Pk=new A.OT(1,"anonymous")
@@ -124133,8 +124133,8 @@ B.au0=s([62,62],t.t)
 B.aug=s([65533],t.t)
 B.auD=s([0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.333,0.555,0.5,0.5,1,0.833,0.278,0.333,0.333,0.5,0.57,0.25,0.333,0.25,0.278,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.333,0.333,0.57,0.57,0.57,0.5,0.93,0.722,0.667,0.722,0.722,0.667,0.611,0.778,0.778,0.389,0.5,0.778,0.667,0.944,0.722,0.778,0.611,0.778,0.722,0.556,0.667,0.722,0.722,1,0.722,0.722,0.667,0.333,0.278,0.333,0.581,0.5,0.333,0.5,0.556,0.444,0.556,0.444,0.333,0.5,0.556,0.278,0.333,0.556,0.278,0.833,0.556,0.5,0.556,0.556,0.444,0.389,0.333,0.556,0.5,0.722,0.5,0.5,0.444,0.394,0.22,0.394,0.52,0.35,0.5,0.35,0.333,0.5,0.5,1,0.5,0.5,0.333,1,0.556,0.333,1,0.35,0.667,0.35,0.35,0.333,0.333,0.5,0.5,0.35,0.5,1,0.333,1,0.389,0.333,0.722,0.35,0.444,0.722,0.25,0.333,0.5,0.5,0.5,0.5,0.22,0.5,0.333,0.747,0.3,0.5,0.57,0.333,0.747,0.333,0.4,0.57,0.3,0.3,0.333,0.556,0.54,0.25,0.333,0.3,0.33,0.5,0.75,0.75,0.75,0.5,0.722,0.722,0.722,0.722,0.722,0.722,1,0.722,0.667,0.667,0.667,0.667,0.389,0.389,0.389,0.389,0.722,0.722,0.778,0.778,0.778,0.778,0.778,0.57,0.778,0.722,0.722,0.722,0.722,0.722,0.611,0.556,0.5,0.5,0.5,0.5,0.5,0.5,0.722,0.444,0.444,0.444,0.444,0.444,0.278,0.278,0.278,0.278,0.5,0.556,0.5,0.5,0.5,0.5,0.5,0.57,0.5,0.556,0.556,0.556,0.556,0.5,0.556,0.5],t.n)
 B.tQ=new A.m_(0,"client")
-B.aXW=new A.a8("Client",null,null,null,null,null,null,null,null,null)
-B.QY=new A.nF(B.tQ,B.aXW,t.pJ)
+B.aXV=new A.a8("Client",null,null,null,null,null,null,null,null,null)
+B.QY=new A.nF(B.tQ,B.aXV,t.pJ)
 B.OG=new A.m_(1,"partnerKr")
 B.aXa=new A.a8("Partenaire Coree",null,null,null,null,null,null,null,null,null)
 B.QX=new A.nF(B.OG,B.aXa,t.pJ)
@@ -124146,8 +124146,8 @@ B.Sx=new A.cT(B.aj,null,null,B.aYg,null)
 B.avx=s([B.dx,B.Xn,B.b1,B.Sx],t.p)
 B.Xe=new A.b_(61838,"MaterialIcons",null,!1)
 B.XP=new A.bk(B.Xe,64,B.am,null,null)
-B.aXp=new A.a8("Aucune commande en cours",null,B.d1,null,null,null,null,null,null,null)
-B.SG=new A.cT(B.aj,null,null,B.aXp,null)
+B.aXo=new A.a8("Aucune commande en cours",null,B.d1,null,null,null,null,null,null,null)
+B.SG=new A.cT(B.aj,null,null,B.aXo,null)
 B.avy=s([B.dx,B.XP,B.b1,B.SG],t.p)
 B.ax8=s([0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.333,0.42,0.5,0.5,0.833,0.778,0.214,0.333,0.333,0.5,0.675,0.25,0.333,0.25,0.278,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.333,0.333,0.675,0.675,0.675,0.5,0.92,0.611,0.611,0.667,0.722,0.611,0.611,0.722,0.722,0.333,0.444,0.667,0.556,0.833,0.667,0.722,0.611,0.722,0.611,0.5,0.556,0.722,0.611,0.833,0.611,0.556,0.556,0.389,0.278,0.389,0.422,0.5,0.333,0.5,0.5,0.444,0.5,0.444,0.278,0.5,0.5,0.278,0.278,0.444,0.278,0.722,0.5,0.5,0.5,0.5,0.389,0.389,0.278,0.5,0.444,0.667,0.444,0.444,0.389,0.4,0.275,0.4,0.541,0.35,0.5,0.35,0.333,0.5,0.556,0.889,0.5,0.5,0.333,1,0.5,0.333,0.944,0.35,0.556,0.35,0.35,0.333,0.333,0.556,0.556,0.35,0.5,0.889,0.333,0.98,0.389,0.333,0.667,0.35,0.389,0.556,0.25,0.389,0.5,0.5,0.5,0.5,0.275,0.5,0.333,0.76,0.276,0.5,0.675,0.333,0.76,0.333,0.4,0.675,0.3,0.3,0.333,0.5,0.523,0.25,0.333,0.3,0.31,0.5,0.75,0.75,0.75,0.5,0.611,0.611,0.611,0.611,0.611,0.611,0.889,0.667,0.611,0.611,0.611,0.611,0.333,0.333,0.333,0.333,0.722,0.667,0.722,0.722,0.722,0.722,0.722,0.675,0.722,0.722,0.722,0.722,0.722,0.556,0.611,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.667,0.444,0.444,0.444,0.444,0.444,0.278,0.278,0.278,0.278,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.675,0.5,0.5,0.5,0.5,0.5,0.444,0.5,0.444],t.n)
 B.b0g=new A.je(0,1)
@@ -124258,14 +124258,14 @@ B.Qz=new A.bL(0.2,B.PM,B.vt,B.D,11)
 B.aFM=s([B.Qz],t.F)
 B.aWw=new A.a8("Modifier",null,null,null,null,null,null,null,null,null)
 B.aMN=new A.Ae("edit",B.aWw,null,t.wI)
-B.aY0=new A.a8("Supprimer",null,null,null,null,null,null,null,null,null)
-B.aMO=new A.Ae("delete",B.aY0,null,t.wI)
+B.aY_=new A.a8("Supprimer",null,null,null,null,null,null,null,null,null)
+B.aMO=new A.Ae("delete",B.aY_,null,t.wI)
 B.aFO=s([B.aMN,B.aMO],A.at("D<qW<j>>"))
 B.NP=new A.Kl(0,"left")
 B.NQ=new A.Kl(1,"right")
 B.aFP=s([B.NP,B.NQ],A.at("D<Kl>"))
-B.aXB=new A.a8("Aucune demande pour le moment",null,B.d1,null,null,null,null,null,null,null)
-B.Ss=new A.cT(B.aj,null,null,B.aXB,null)
+B.aXA=new A.a8("Aucune demande pour le moment",null,B.d1,null,null,null,null,null,null,null)
+B.Ss=new A.cT(B.aj,null,null,B.aXA,null)
 B.aFQ=s([B.dx,B.xu,B.b1,B.Ss],t.p)
 B.bo=new A.Kz(0,"upstream")
 B.aFT=s([B.bo,B.K],A.at("D<Kz>"))
@@ -124330,8 +124330,8 @@ B.n8=new A.fV(B.bQ,B.jv)
 B.aGm=s([B.R2,B.n8],A.at("D<bh>"))
 B.Xh=new A.b_(62226,"MaterialIcons",null,!1)
 B.XK=new A.bk(B.Xh,64,B.am,null,null)
-B.aXt=new A.a8("Aucune demande de prix",null,B.d1,null,null,null,null,null,null,null)
-B.SH=new A.cT(B.aj,null,null,B.aXt,null)
+B.aXs=new A.a8("Aucune demande de prix",null,B.d1,null,null,null,null,null,null,null)
+B.SH=new A.cT(B.aj,null,null,B.aXs,null)
 B.aGo=s([B.dx,B.XK,B.b1,B.SH],t.p)
 B.nH=new A.kQ(0,"enAttenteDevis")
 B.aZX=new A.kQ(1,"devisEnvoye")
@@ -124370,8 +124370,8 @@ B.Db=s([],t.ee)
 B.aGE=s([],t._m)
 B.Xb=new A.b_(61509,"MaterialIcons",null,!1)
 B.Xl=new A.bk(B.Xb,64,B.am,null,null)
-B.aY1=new A.a8("Aucune demande a chiffrer",null,B.d1,null,null,null,null,null,null,null)
-B.SC=new A.cT(B.aj,null,null,B.aY1,null)
+B.aY0=new A.a8("Aucune demande a chiffrer",null,B.d1,null,null,null,null,null,null,null)
+B.SC=new A.cT(B.aj,null,null,B.aY0,null)
 B.aGJ=s([B.dx,B.Xl,B.b1,B.SC],t.p)
 B.Xc=new A.b_(61734,"MaterialIcons",null,!1)
 B.XY=new A.bk(B.Xc,64,B.am,null,null)
@@ -124417,8 +124417,8 @@ B.aF9=s([0.00010146692491640572,0.0005364214359186694,0.0032979401770712076],t.n
 B.aHd=s([B.ayP,B.aGp,B.aF9],t.zg)
 B.X7=new A.b_(61378,"MaterialIcons",null,!1)
 B.XB=new A.bk(B.X7,64,B.am,null,null)
-B.aXH=new A.a8("Aucune commande vehicule",null,B.d1,null,null,null,null,null,null,null)
-B.Sv=new A.cT(B.aj,null,null,B.aXH,null)
+B.aXG=new A.a8("Aucune commande vehicule",null,B.d1,null,null,null,null,null,null,null)
+B.Sv=new A.cT(B.aj,null,null,B.aXG,null)
 B.aHe=s([B.dx,B.XB,B.b1,B.Sv],t.p)
 B.aHf=s([45,95,45,20,45,90,45,45,45],t.n)
 B.aHg=s([120,120,20,45,20,15,20,120,120],t.n)
@@ -128778,12 +128778,12 @@ B.XO=new A.bk(B.f7,16,B.az,null,null)
 B.rp=new A.ao(B.Vt,B.XO,null)
 B.Vs=new A.an(0,0,0,5)
 B.hQ=new A.u(!0,B.am,null,null,null,null,11,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.aXl=new A.a8("tout compris (hors dedouanement)",null,B.hQ,null,null,null,null,null,null,null)
-B.aLu=new A.ao(B.Vs,B.aXl,null)
-B.aXQ=new A.a8("Mode de paiement de l'acompte",null,B.d2,null,null,null,null,null,null,null)
-B.aLw=new A.ao(B.bu,B.aXQ,null)
-B.aXk=new A.a8("Mode de paiement recu",null,B.d2,null,null,null,null,null,null,null)
-B.aLx=new A.ao(B.bu,B.aXk,null)
+B.aXk=new A.a8("tout compris (hors dedouanement)",null,B.hQ,null,null,null,null,null,null,null)
+B.aLu=new A.ao(B.Vs,B.aXk,null)
+B.aXP=new A.a8("Mode de paiement de l'acompte",null,B.d2,null,null,null,null,null,null,null)
+B.aLw=new A.ao(B.bu,B.aXP,null)
+B.aXj=new A.a8("Mode de paiement recu",null,B.d2,null,null,null,null,null,null,null)
+B.aLx=new A.ao(B.bu,B.aXj,null)
 B.IN=new A.HX(0,"natural")
 B.aLy=new A.HX(1,"landscape")
 B.aLz=new A.HX(2,"portrait")
@@ -128946,13 +128946,13 @@ B.Xi=new A.b_(983712,"MaterialIcons",null,!1)
 B.Xs=new A.bk(B.Xi,20,B.vj,null,null)
 B.nn=new A.cm(10,null,null,null)
 B.Oa=new A.u(!0,B.km,null,null,null,null,12.5,null,null,null,null,null,1.4,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.aXI=new A.a8("Cette piece est souvent trop volumineuse pour un envoi express. Vous pouvez envoyer la demande : nous verifierons la faisabilite et le cout avant tout devis.",null,B.Oa,null,null,null,null,null,null,null)
-B.W4=new A.q7(1,B.h8,B.aXI,null)
+B.aXH=new A.a8("Cette piece est souvent trop volumineuse pour un envoi express. Vous pouvez envoyer la demande : nous verifierons la faisabilite et le cout avant tout devis.",null,B.Oa,null,null,null,null,null,null,null)
+B.W4=new A.q7(1,B.h8,B.aXH,null)
 B.aH9=s([B.Xs,B.nn,B.W4],t.p)
 B.aNJ=new A.vT(B.br,B.J,B.N,B.ao,null,B.cE,null,0,B.aH9,null)
 B.aVq=new A.u(!0,B.ai,null,null,null,null,null,B.c3,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.aXZ=new A.a8("Proposer",null,B.aVq,null,null,null,null,null,null,null)
-B.aFg=s([B.aXZ,B.xr],t.p)
+B.aXY=new A.a8("Proposer",null,B.aVq,null,null,null,null,null,null,null)
+B.aFg=s([B.aXY,B.xr],t.p)
 B.aNK=new A.vT(B.br,B.J,B.N,B.R,null,B.cE,null,0,B.aFg,null)
 B.wC=new A.q7(1,B.h8,B.iz,null)
 B.aWt=new A.a8("ou",null,B.cq,null,null,null,null,null,null,null)
@@ -129257,18 +129257,18 @@ B.aQg=new A.n2(5,"timeout")
 B.aQh=new A.AZ(null,null,null,null,null,null,null,null,null,null,null,null,null,null)
 B.aY4=new A.a8("Expedition enregistree.",null,null,null,null,null,null,null,null,null)
 B.NK=new A.j6(B.aY4,null,null,null,null,null,null,null,null,null,null,null,null,B.bC,!1,null,null,null,B.a2,null)
-B.aXj=new A.a8("Devis envoye au client.",null,null,null,null,null,null,null,null,null)
-B.aQi=new A.j6(B.aXj,null,null,null,null,null,null,null,null,null,null,null,null,B.bC,!1,null,null,null,B.a2,null)
-B.aXd=new A.a8("Proposition envoyee a Teranga Parts.",null,null,null,null,null,null,null,null,null)
-B.aQj=new A.j6(B.aXd,null,null,null,null,null,null,null,null,null,null,null,null,B.bC,!1,null,null,null,B.a2,null)
+B.aY1=new A.a8("Proposition envoyee a TerangaMobility.",null,null,null,null,null,null,null,null,null)
+B.aQi=new A.j6(B.aY1,null,null,null,null,null,null,null,null,null,null,null,null,B.bC,!1,null,null,null,B.a2,null)
+B.aXi=new A.a8("Devis envoye au client.",null,null,null,null,null,null,null,null,null)
+B.aQj=new A.j6(B.aXi,null,null,null,null,null,null,null,null,null,null,null,null,B.bC,!1,null,null,null,B.a2,null)
 B.aX5=new A.a8("Demande envoyee ! Nous recherchons la piece.",null,null,null,null,null,null,null,null,null)
 B.aQk=new A.j6(B.aX5,null,null,null,null,null,null,null,null,null,null,null,null,B.bC,!1,null,null,null,B.a2,null)
-B.aXO=new A.a8("Compte cree. Tu peux te connecter.",null,null,null,null,null,null,null,null,null)
-B.aQl=new A.j6(B.aXO,null,null,null,null,null,null,null,null,null,null,null,null,B.bC,!1,null,null,null,B.a2,null)
+B.aXN=new A.a8("Compte cree. Tu peux te connecter.",null,null,null,null,null,null,null,null,null)
+B.aQl=new A.j6(B.aXN,null,null,null,null,null,null,null,null,null,null,null,null,B.bC,!1,null,null,null,B.a2,null)
 B.aYh=new A.a8("Merci ! Notre equipe verifie votre paiement et confirme sous peu.",null,null,null,null,null,null,null,null,null)
 B.aQm=new A.j6(B.aYh,null,null,null,null,null,null,null,null,null,null,null,null,B.bC,!1,null,null,null,B.a2,null)
-B.aY_=new A.a8("Solde regle. Merci !",null,null,null,null,null,null,null,null,null)
-B.aQn=new A.j6(B.aY_,null,null,null,null,null,null,null,null,null,null,null,null,B.bC,!1,null,null,null,B.a2,null)
+B.aXZ=new A.a8("Solde regle. Merci !",null,null,null,null,null,null,null,null,null)
+B.aQn=new A.j6(B.aXZ,null,null,null,null,null,null,null,null,null,null,null,null,B.bC,!1,null,null,null,B.a2,null)
 B.aWO=new A.a8("Acompte enregistre. Commande confirmee !",null,null,null,null,null,null,null,null,null)
 B.aQo=new A.j6(B.aWO,null,null,null,null,null,null,null,null,null,null,null,null,B.bC,!1,null,null,null,B.a2,null)
 B.NL=new A.K6(0,"permissive")
@@ -129760,37 +129760,37 @@ B.Oi=new A.a8("Piloter la commande",null,null,null,null,null,null,null,null,null
 B.aXb=new A.a8("J'ai paye",null,null,null,null,null,null,null,null,null)
 B.aXc=new A.a8("Page Not Found",null,B.cp,null,null,null,null,null,null,null)
 B.aTi=new A.u(!0,B.az,null,null,null,null,12.5,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.aXe=new A.a8("Acompte et solde confirmes.",null,B.aTi,null,null,null,null,null,null,null)
-B.aXf=new A.a8("Mes devis",null,null,null,null,null,null,null,null,null)
-B.aXh=new A.a8("Piece disponible",null,null,null,null,null,null,null,null,null)
-B.aXi=new A.a8("Notre equipe vous repond du lundi au samedi, de 9h a 19h.",null,B.tt,null,null,null,null,null,null,null)
-B.aXm=new A.a8("Paiements (virement / especes)",null,B.cp,null,null,null,null,null,null,null)
-B.aXn=new A.a8("Enregistrer",null,null,null,null,null,null,null,null,null)
-B.aXr=new A.a8("Votre demande de prix a bien ete transmise. Notre equipe vous prepare un devis et vous recontacte rapidement.",null,null,null,null,null,null,null,null,null)
-B.aXs=new A.a8("Reference, prix (KRW), poids, dimensions, photo, delai",null,null,null,null,null,null,null,null,null)
-B.aXu=new A.a8("Notifications",null,null,null,null,null,null,null,null,null)
-B.aXv=new A.a8("Etat d'avancement",null,B.d2,null,null,null,null,null,null,null)
-B.aXw=new A.a8("Voir les vehicules de Coree",null,null,null,null,null,null,null,null,null)
-B.aXx=new A.a8("Astuce : selectionne \xab Solde demande \xbb pour que le client puisse payer les 30%.",null,B.cT,null,null,null,null,null,null,null)
-B.aXz=new A.a8("Mon contrat",null,null,null,null,null,null,null,null,null)
-B.aXA=new A.a8("Consultez les demandes et proposez vos pieces.",null,B.cq,null,null,null,null,null,null,null)
-B.aXD=new A.a8("Commandez vos pieces coreennes en toute confiance.",null,B.cq,null,null,null,null,null,null,null)
-B.aXF=new A.a8("Besoin d'aide ?",null,B.Ob,null,null,null,null,null,null,null)
-B.aXG=new A.a8("Demande",null,null,null,null,null,null,null,null,null)
+B.aXd=new A.a8("Acompte et solde confirmes.",null,B.aTi,null,null,null,null,null,null,null)
+B.aXe=new A.a8("Mes devis",null,null,null,null,null,null,null,null,null)
+B.aXg=new A.a8("Piece disponible",null,null,null,null,null,null,null,null,null)
+B.aXh=new A.a8("Notre equipe vous repond du lundi au samedi, de 9h a 19h.",null,B.tt,null,null,null,null,null,null,null)
+B.aXl=new A.a8("Paiements (virement / especes)",null,B.cp,null,null,null,null,null,null,null)
+B.aXm=new A.a8("Enregistrer",null,null,null,null,null,null,null,null,null)
+B.aXq=new A.a8("Votre demande de prix a bien ete transmise. Notre equipe vous prepare un devis et vous recontacte rapidement.",null,null,null,null,null,null,null,null,null)
+B.aXr=new A.a8("Reference, prix (KRW), poids, dimensions, photo, delai",null,null,null,null,null,null,null,null,null)
+B.aXt=new A.a8("Notifications",null,null,null,null,null,null,null,null,null)
+B.aXu=new A.a8("Etat d'avancement",null,B.d2,null,null,null,null,null,null,null)
+B.aXv=new A.a8("Voir les vehicules de Coree",null,null,null,null,null,null,null,null,null)
+B.aXw=new A.a8("Astuce : selectionne \xab Solde demande \xbb pour que le client puisse payer les 30%.",null,B.cT,null,null,null,null,null,null,null)
+B.aXy=new A.a8("Mon contrat",null,null,null,null,null,null,null,null,null)
+B.aXz=new A.a8("Consultez les demandes et proposez vos pieces.",null,B.cq,null,null,null,null,null,null,null)
+B.aXC=new A.a8("Commandez vos pieces coreennes en toute confiance.",null,B.cq,null,null,null,null,null,null,null)
+B.aXE=new A.a8("Besoin d'aide ?",null,B.Ob,null,null,null,null,null,null,null)
+B.aXF=new A.a8("Demande",null,null,null,null,null,null,null,null,null)
 B.aSv=new A.u(!0,B.c7,null,null,null,null,12.5,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.aXJ=new A.a8("Le paiement d'un vehicule se fait par virement bancaire ou en especes. Contactez-nous pour les coordonnees, puis confirmez ci-dessous.",null,B.aSv,null,null,null,null,null,null,null)
-B.aXK=new A.a8("1. Proposition partenaire",null,B.cp,null,null,null,null,null,null,null)
-B.aXL=new A.a8("Passe a \xab Arrive au port \xbb pour permettre au client de payer le solde de 30%.",null,B.tz,null,null,null,null,null,null,null)
-B.aXM=new A.a8("Expedition FedEx",null,B.cp,null,null,null,null,null,null,null)
-B.aXN=new A.a8("Aucune proposition recue.",null,B.cq,null,null,null,null,null,null,null)
-B.aXR=new A.a8("Devis a etablir",null,null,null,null,null,null,null,null,null)
-B.aXS=new A.a8("Prix total du vehicule",null,null,null,null,null,null,null,null,null)
-B.aXT=new A.a8("Tout lu",null,null,null,null,null,null,null,null,null)
+B.aXI=new A.a8("Le paiement d'un vehicule se fait par virement bancaire ou en especes. Contactez-nous pour les coordonnees, puis confirmez ci-dessous.",null,B.aSv,null,null,null,null,null,null,null)
+B.aXJ=new A.a8("1. Proposition partenaire",null,B.cp,null,null,null,null,null,null,null)
+B.aXK=new A.a8("Passe a \xab Arrive au port \xbb pour permettre au client de payer le solde de 30%.",null,B.tz,null,null,null,null,null,null,null)
+B.aXL=new A.a8("Expedition FedEx",null,B.cp,null,null,null,null,null,null,null)
+B.aXM=new A.a8("Aucune proposition recue.",null,B.cq,null,null,null,null,null,null,null)
+B.aXQ=new A.a8("Devis a etablir",null,null,null,null,null,null,null,null,null)
+B.aXR=new A.a8("Prix total du vehicule",null,null,null,null,null,null,null,null,null)
+B.aXS=new A.a8("Tout lu",null,null,null,null,null,null,null,null,null)
 B.aUr=new A.u(!0,B.km,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.aXU=new A.a8("\u2022 ",null,B.aUr,null,null,null,null,null,null,null)
-B.aXV=new A.a8("A propos & Assistance",null,null,null,null,null,null,null,null,null)
-B.aXX=new A.a8("Envoyer la proposition",null,null,null,null,null,null,null,null,null)
-B.aXY=new A.a8("2. Categorie de douane",null,B.cp,null,null,null,null,null,null,null)
+B.aXT=new A.a8("\u2022 ",null,B.aUr,null,null,null,null,null,null,null)
+B.aXU=new A.a8("A propos & Assistance",null,null,null,null,null,null,null,null,null)
+B.aXW=new A.a8("Envoyer la proposition",null,null,null,null,null,null,null,null,null)
+B.aXX=new A.a8("2. Categorie de douane",null,B.cp,null,null,null,null,null,null,null)
 B.aY2=new A.a8("Page Not Found",null,null,null,null,null,null,null,null,null)
 B.aY3=new A.a8("Vehicule concerne",null,B.dZ,null,null,null,null,null,null,null)
 B.Oj=new A.a8("Enregistrer l'expedition",null,null,null,null,null,null,null,null,null)
