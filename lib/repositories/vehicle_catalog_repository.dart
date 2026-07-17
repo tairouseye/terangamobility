@@ -16,7 +16,8 @@ class VehicleCatalogRepository {
       _source.fetchByReference(reference);
 
   Future<List<String>> brands() => _source.distinctValues('brand');
-  Future<List<String>> models() => _source.distinctValues('model');
+  Future<List<String>> modelsForBrand(String brand) =>
+      _source.modelsForBrand(brand);
   Future<List<String>> fuels() => _source.distinctValues('fuel');
   Future<List<String>> transmissions() =>
       _source.distinctValues('transmission');

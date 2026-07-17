@@ -154,7 +154,7 @@ class DemoVehicleDataSource implements VehicleDataSource {
       r = r.where(
           (v) => v.model.toLowerCase().contains(f.model!.toLowerCase()));
     }
-    if (f.year != null) r = r.where((v) => v.year == f.year);
+    if (f.year != null) r = r.where((v) => (v.year ?? 0) >= f.year!);
     if (f.fuel != null) r = r.where((v) => v.fuel == f.fuel);
     if (f.transmission != null) {
       r = r.where((v) => v.transmission == f.transmission);
@@ -199,6 +199,17 @@ class DemoVehicleDataSource implements VehicleDataSource {
     }
     final list = set.toList()..sort();
     return list;
+  }
+
+  @override
+  Future<List<String>> modelsForBrand(String brand) async {
+    final set = _listings
+        .where((v) => v.brand == brand)
+        .map((v) => v.model)
+        .toSet()
+        .toList()
+      ..sort();
+    return set;
   }
 }
 

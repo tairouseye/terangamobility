@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/theme/app_theme.dart';
 import '../../../models/vehicle_filter.dart';
 import '../../../providers/vehicle_catalog_providers.dart';
 
-/// Feuille de filtres du catalogue vehicules.
+/// Feuille de filtres du catalogue vehicules :
+/// Marque -> Modele (listes dependantes), Annee « a partir de »,
+/// Carburant, Transmission, Couleur, Kilometrage max (paliers).
 class VehicleFilterSheet extends ConsumerStatefulWidget {
   const VehicleFilterSheet({super.key});
 
@@ -15,6 +16,8 @@ class VehicleFilterSheet extends ConsumerStatefulWidget {
 
 class _VehicleFilterSheetState extends ConsumerState<VehicleFilterSheet> {
   late VehicleFilter _draft;
+
+  static const _mileageTiers = [50000, 100000, 150000, 200000];
 
   @override
   void initState() {
@@ -30,9 +33,18 @@ class _VehicleFilterSheetState extends ConsumerState<VehicleFilterSheet> {
         ref.watch(vehicleTransmissionsProvider).valueOrNull ?? const [];
     final colors = ref.watch(vehicleColorsProvider).valueOrNull ?? const [];
 
+    // Modeles dependants de la marque choisie.
+    final models = _draft.brand == null
+        ? const <String>[]
+        : (ref.watch(vehicleModelsProvider(_draft.brand!)).valueOrNull ??
+            const []);
+
+    final nowYear = DateTime.now().year;
+    final years = [for (var y = nowYear; y >= nowYear - 10; y--) y];
+
     return DraggableScrollableSheet(
       expand: false,
-      initialChildSize: 0.75,
+      initialChildSize: 0.8,
       maxChildSize: 0.95,
       builder: (context, scroll) => Padding(
         padding: const EdgeInsets.all(20),
@@ -52,44 +64,87 @@ class _VehicleFilterSheetState extends ConsumerState<VehicleFilterSheet> {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
-            _dropdown('Marque', _draft.brand, brands,
-                (v) => setState(() => _draft = _draft.copyWith(brand: v))),
-            _dropdown('Carburant', _draft.fuel, fuels,
-                (v) => setState(() => _draft = _draft.copyWith(fuel: v))),
-            _dropdown('Transmission', _draft.transmission, trans,
-                (v) => setState(() => _draft = _draft.copyWith(transmission: v))),
-            _dropdown('Couleur', _draft.color, colors,
-                (v) => setState(() => _draft = _draft.copyWith(color: v))),
-            const SizedBox(height: 8),
-            _TextFilter(
-              label: 'Modele (mot-cle)',
-              value: _draft.model,
-              keyboard: TextInputType.text,
-              onChanged: (v) =>
-                  setState(() => _draft = _draft.copyWith(model: v)),
-            ),
-            _TextFilter(
-              label: 'Annee',
-              value: _draft.year?.toString(),
-              keyboard: TextInputType.number,
+            const SizedBox(height: 4),
+
+            // --- Marque -> Modele (dependants) ---
+            _dropdown<String>(
+              label: 'Marque',
+              value: _draft.brand,
+              hint: 'Toutes',
+              items: brands,
+              itemLabel: (b) => b,
               onChanged: (v) => setState(() =>
-                  _draft = _draft.copyWith(year: v == null ? null : int.tryParse(v))),
+                  _draft = _draft.copyWith(brand: v, model: null)),
             ),
-            _TextFilter(
+            _dropdown<String>(
+              label: 'Modele',
+              value: _draft.model,
+              hint: _draft.brand == null
+                  ? 'Choisir une marque d\'abord'
+                  : 'Tous',
+              items: models,
+              itemLabel: (m) => m,
+              enabled: _draft.brand != null,
+              onChanged: (v) => setState(() => _draft = _draft.copyWith(model: v)),
+            ),
+
+            // --- Annee a partir de ---
+            _dropdown<int>(
+              label: 'Annee (a partir de)',
+              value: _draft.year,
+              hint: 'Toutes',
+              items: years,
+              itemLabel: (y) => 'A partir de $y',
+              onChanged: (v) => setState(() => _draft = _draft.copyWith(year: v)),
+            ),
+
+            // --- Carburant / Transmission / Couleur ---
+            _dropdown<String>(
+              label: 'Carburant',
+              value: _draft.fuel,
+              hint: 'Tous',
+              items: fuels,
+              itemLabel: (e) => e,
+              onChanged: (v) => setState(() => _draft = _draft.copyWith(fuel: v)),
+            ),
+            _dropdown<String>(
+              label: 'Transmission',
+              value: _draft.transmission,
+              hint: 'Toutes',
+              items: trans,
+              itemLabel: (e) => e,
+              onChanged: (v) =>
+                  setState(() => _draft = _draft.copyWith(transmission: v)),
+            ),
+            _dropdown<String>(
+              label: 'Couleur',
+              value: _draft.color,
+              hint: 'Toutes',
+              items: colors,
+              itemLabel: (e) => e,
+              onChanged: (v) => setState(() => _draft = _draft.copyWith(color: v)),
+            ),
+
+            // --- Kilometrage max (paliers) ---
+            _dropdown<int>(
               label: 'Kilometrage maximum',
-              value: _draft.maxMileage?.toString(),
-              keyboard: TextInputType.number,
-              onChanged: (v) => setState(() => _draft =
-                  _draft.copyWith(maxMileage: v == null ? null : int.tryParse(v))),
+              value: _draft.maxMileage,
+              hint: 'Illimite',
+              items: _mileageTiers,
+              itemLabel: (km) => 'Jusqu\'a ${_fmt(km)} km',
+              onChanged: (v) =>
+                  setState(() => _draft = _draft.copyWith(maxMileage: v)),
             ),
-            const SizedBox(height: 20),
+
+            const SizedBox(height: 12),
             ElevatedButton(
               onPressed: () {
                 ref.read(vehicleFilterProvider.notifier).state = _draft;
                 Navigator.of(context).pop();
               },
-              child: const Text('Appliquer les filtres'),
+              child: Text(_draft.activeCount == 0
+                  ? 'Voir tous les vehicules'
+                  : 'Appliquer (${_draft.activeCount})'),
             ),
           ],
         ),
@@ -97,75 +152,45 @@ class _VehicleFilterSheetState extends ConsumerState<VehicleFilterSheet> {
     );
   }
 
-  Widget _dropdown(String label, String? value, List<String> items,
-      ValueChanged<String?> onChanged) {
+  static String _fmt(int v) {
+    final s = v.toString();
+    final b = StringBuffer();
+    for (var i = 0; i < s.length; i++) {
+      if (i > 0 && (s.length - i) % 3 == 0) b.write(' ');
+      b.write(s[i]);
+    }
+    return b.toString();
+  }
+
+  /// Dropdown generique avec option « aucune valeur » (null).
+  /// La cle inclut la valeur et le nombre d'items : le champ se reinitialise
+  /// proprement au reset et quand la liste dependante (modeles) change.
+  Widget _dropdown<T>({
+    required String label,
+    required T? value,
+    required String hint,
+    required List<T> items,
+    required String Function(T) itemLabel,
+    required ValueChanged<T?> onChanged,
+    bool enabled = true,
+  }) {
+    // Valeur toujours coherente avec les options disponibles.
+    final T? safe = (value != null && items.contains(value)) ? value : null;
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: DropdownButtonFormField<String>(
-        initialValue: value,
+      child: DropdownButtonFormField<T>(
+        key: ValueKey('$label-$safe-${items.length}'),
+        initialValue: safe,
         isExpanded: true,
         decoration: InputDecoration(labelText: label),
-        hint: const Text('Tous'),
+        hint: Text(hint),
         items: [
-          const DropdownMenuItem<String>(value: null, child: Text('Tous')),
-          ...items.map((e) => DropdownMenuItem(value: e, child: Text(e))),
+          DropdownMenuItem<T>(value: null, child: Text(hint)),
+          ...items
+              .map((e) => DropdownMenuItem(value: e, child: Text(itemLabel(e)))),
         ],
-        onChanged: onChanged,
+        onChanged: enabled ? onChanged : null,
       ),
     );
   }
 }
-
-class _TextFilter extends StatefulWidget {
-  final String label;
-  final String? value;
-  final TextInputType keyboard;
-  final ValueChanged<String?> onChanged;
-  const _TextFilter({
-    required this.label,
-    required this.value,
-    required this.keyboard,
-    required this.onChanged,
-  });
-
-  @override
-  State<_TextFilter> createState() => _TextFilterState();
-}
-
-class _TextFilterState extends State<_TextFilter> {
-  late final TextEditingController _c =
-      TextEditingController(text: widget.value);
-
-  @override
-  void dispose() {
-    _c.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: TextField(
-        controller: _c,
-        keyboardType: widget.keyboard,
-        decoration: InputDecoration(
-          labelText: widget.label,
-          suffixIcon: _c.text.isEmpty
-              ? null
-              : IconButton(
-                  icon: const Icon(Icons.clear, size: 18),
-                  onPressed: () {
-                    _c.clear();
-                    widget.onChanged(null);
-                  },
-                ),
-        ),
-        onChanged: (v) => widget.onChanged(v.trim().isEmpty ? null : v.trim()),
-      ),
-    );
-  }
-}
-
-/// Couleur d'accent reutilisable pour le badge de filtre actif.
-const filterAccent = AppColors.primary;

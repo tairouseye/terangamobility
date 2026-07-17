@@ -40,6 +40,11 @@ final vehicleByRefProvider =
 /// Valeurs distinctes pour les listes de filtres.
 final vehicleBrandsProvider = FutureProvider<List<String>>(
     (ref) => ref.watch(vehicleCatalogRepositoryProvider).brands());
+
+/// Modeles disponibles pour une marque (liste dependante du filtre).
+final vehicleModelsProvider = FutureProvider.family<List<String>, String>(
+    (ref, brand) =>
+        ref.watch(vehicleCatalogRepositoryProvider).modelsForBrand(brand));
 final vehicleFuelsProvider = FutureProvider<List<String>>(
     (ref) => ref.watch(vehicleCatalogRepositoryProvider).fuels());
 final vehicleTransmissionsProvider = FutureProvider<List<String>>(

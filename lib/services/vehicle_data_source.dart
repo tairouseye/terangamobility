@@ -13,6 +13,9 @@ abstract class VehicleDataSource {
 
   /// Valeurs distinctes pour alimenter les filtres (marques, carburants...).
   Future<List<String>> distinctValues(String field);
+
+  /// Modeles distincts disponibles pour une marque donnee (listes dependantes).
+  Future<List<String>> modelsForBrand(String brand);
 }
 
 /// Implementation par defaut : lit la table `vehicle_listings` de Supabase,
@@ -35,7 +38,7 @@ class SupabaseVehicleDataSource implements VehicleDataSource {
 
     if (filter.brand != null) query = query.eq('brand', filter.brand!);
     if (filter.model != null) query = query.eq('model', filter.model!);
-    if (filter.year != null) query = query.eq('year', filter.year!);
+    if (filter.year != null) query = query.gte('year', filter.year!); // a partir de
     if (filter.fuel != null) query = query.eq('fuel', filter.fuel!);
     if (filter.transmission != null) {
       query = query.eq('transmission', filter.transmission!);
@@ -77,6 +80,23 @@ class SupabaseVehicleDataSource implements VehicleDataSource {
     final set = <String>{};
     for (final r in rows as List) {
       final v = (r as Map)[field];
+      if (v != null && v.toString().isNotEmpty) set.add(v.toString());
+    }
+    final list = set.toList()..sort();
+    return list;
+  }
+
+  @override
+  Future<List<String>> modelsForBrand(String brand) async {
+    final rows = await _client
+        .from(_table)
+        .select('model')
+        .eq('is_active', true)
+        .eq('brand', brand)
+        .limit(1000);
+    final set = <String>{};
+    for (final r in rows as List) {
+      final v = (r as Map)['model'];
       if (v != null && v.toString().isNotEmpty) set.add(v.toString());
     }
     final list = set.toList()..sort();
