@@ -138,10 +138,11 @@ async function fetchDetail(item: ListItem): Promise<VehicleRow | null> {
     steering: "left", // vehicules domestiques coreens = conduite a gauche
     location: item.region ? `${item.region}, Coree du Sud` : "Coree du Sud",
     condition: "Occasion",
-    description: cat.modelName
-      ? `${cat.manufacturerEnglishName ?? ""} ${cat.modelGroupEnglishName ?? ""} `
-        .trim() + `— importe de Coree du Sud.`
-      : null,
+    description:
+      `${cat.manufacturerEnglishName ?? ""} ${cat.modelGroupEnglishName ?? ""}` +
+      `${cat.formYear ? " " + cat.formYear : ""} - importe de Coree du Sud.`
+        .replace(/\s+/g, " ")
+        .trim(),
     photos: item.photos,
     is_active: true,
   };
@@ -158,12 +159,22 @@ Deno.serve(async (req) => {
   try {
     const list = await fetchList();
 
-    const rows: VehicleRow[] = [];
-    for (const item of list) {
+    // Dedoublonne la liste par Id (la pagination sur donnees live peut
+    // renvoyer 2x la meme annonce).
+    const seen = new Set<string>();
+    const uniqueList = list.filter((it) => {
+      if (seen.has(it.id)) return false;
+      seen.add(it.id);
+      return true;
+    });
+
+    const rowsById = new Map<string, VehicleRow>();
+    for (const item of uniqueList) {
       const row = await fetchDetail(item);
-      if (row) rows.push(row);
+      if (row) rowsById.set(row.reference, row); // ecrase tout doublon residuel
       await sleep(DETAIL_DELAY_MS);
     }
+    const rows: VehicleRow[] = [...rowsById.values()];
 
     if (dryRun) {
       return json({

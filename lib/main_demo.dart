@@ -12,6 +12,7 @@ import 'providers/partner_providers.dart';
 import 'providers/quote_providers.dart';
 import 'providers/request_providers.dart';
 import 'providers/vehicle_catalog_providers.dart';
+import 'providers/vehicle_order_providers.dart';
 import 'providers/vehicle_providers.dart';
 
 /// Point d'entree MODE DEMO (aucun backend requis).
@@ -52,6 +53,8 @@ Future<void> main() async {
         vehicleDataSourceProvider.overrideWithValue(DemoVehicleDataSource()),
         vehicleRequestServiceProvider
             .overrideWithValue(DemoVehicleRequestService(client)),
+        vehicleOrderServiceProvider
+            .overrideWithValue(DemoVehicleOrderService(client)),
       ],
       child: const DemoApp(),
     ),

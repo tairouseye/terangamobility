@@ -12,7 +12,10 @@ import '../models/quote_breakdown.dart';
 import '../models/shipment.dart';
 import '../models/supplier_quote.dart';
 import '../models/vehicle.dart';
+import '../models/vehicle_order.dart';
+import '../models/vehicle_request.dart';
 import '../services/admin_client_service.dart';
+import '../services/vehicle_order_service.dart';
 import '../services/auth_service.dart';
 import '../services/order_service.dart';
 import '../services/quote_service.dart';
@@ -255,6 +258,22 @@ class DemoAdminClientService extends AdminClientService {
     }
     return out;
   }
+}
+
+/// Commandes vehicule en mode demo : listes vides (le parcours vehicule reel
+/// se teste sur l'app branchee a Supabase).
+class DemoVehicleOrderService extends VehicleOrderService {
+  DemoVehicleOrderService(super.client);
+  @override
+  Future<List<VehicleRequest>> listRequests({status}) async => [];
+  @override
+  Future<List<VehicleOrder>> listAllOrders() async => [];
+  @override
+  Future<List<VehicleRequest>> myRequests() async => [];
+  @override
+  Future<List<VehicleOrder>> myOrders() async => [];
+  @override
+  Future<List<VehicleTrackingEvent>> tracking(String orderId) async => [];
 }
 
 class DemoStorageService extends StorageService {

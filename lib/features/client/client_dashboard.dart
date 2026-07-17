@@ -10,6 +10,7 @@ import 'requests/requests_screen.dart';
 import 'quotes/my_quotes_screen.dart';
 import 'orders/my_orders_screen.dart';
 import '../vehicles_kr/catalog_screen.dart';
+import 'vehicles_kr/my_vehicle_orders_screen.dart';
 
 /// Espace Client (Lot 2+ : vehicules, demandes, devis, paiement, suivi).
 class ClientDashboard extends ConsumerWidget {
@@ -31,6 +32,16 @@ class ClientDashboard extends ConsumerWidget {
         _FeatureBanner(
           onTap: () => Navigator.of(context).push(MaterialPageRoute(
             builder: (_) => const VehicleCatalogScreen(),
+          )),
+        ),
+        const SizedBox(height: 12),
+        _MenuCard(
+          icon: Icons.directions_boat,
+          color: AppColors.primary,
+          title: 'Mes commandes vehicule',
+          subtitle: 'Devis, acompte, suivi maritime',
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => const MyVehicleOrdersScreen(),
           )),
         ),
         const SizedBox(height: 8),

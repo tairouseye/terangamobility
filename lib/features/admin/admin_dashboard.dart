@@ -7,6 +7,8 @@ import '../shared/dashboard_scaffold.dart';
 import 'quote_requests_screen.dart';
 import 'orders_screen.dart';
 import 'clients_screen.dart';
+import 'vehicle_requests_admin_screen.dart';
+import 'vehicle_orders_admin_screen.dart';
 
 /// Espace Admin Teranga Parts (pilotage global).
 class AdminDashboard extends ConsumerWidget {
@@ -20,48 +22,60 @@ class AdminDashboard extends ConsumerWidget {
       children: [
         Text('Bonjour ${profile?.fullName ?? ''} 👋',
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
-        const SizedBox(height: 24),
-        GridView.count(
-          crossAxisCount: 2,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
-          childAspectRatio: 1.1,
-          children: [
-            _AdminTile(
-              Icons.people,
-              'Clients',
-              AppColors.vert,
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (_) => const ClientsScreen(),
-              )),
-            ),
-            _AdminTile(
-              Icons.fact_check,
-              'Valider devis',
-              AppColors.primary,
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (_) => const QuoteRequestsScreen(),
-              )),
-            ),
-            _AdminTile(
-              Icons.inventory_2,
-              'Commandes',
-              AppColors.ambre,
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (_) => const OrdersScreen(),
-              )),
-            ),
-            const _AdminTile(Icons.payments, 'Paiements', AppColors.vert),
-            const _AdminTile(
-                Icons.local_shipping, 'Expeditions', AppColors.anthracite),
-            const _AdminTile(Icons.tune, 'Douane & commission', AppColors.gris),
-          ],
-        ),
+        const SizedBox(height: 20),
+        const _SectionLabel('Pieces detachees'),
+        _Grid(children: [
+          _AdminTile(Icons.people, 'Clients', AppColors.vert,
+              onTap: () => _go(context, const ClientsScreen())),
+          _AdminTile(Icons.fact_check, 'Valider devis', AppColors.primary,
+              onTap: () => _go(context, const QuoteRequestsScreen())),
+          _AdminTile(Icons.inventory_2, 'Commandes', AppColors.ambre,
+              onTap: () => _go(context, const OrdersScreen())),
+        ]),
+        const SizedBox(height: 20),
+        const _SectionLabel('Vehicules Coree'),
+        _Grid(children: [
+          _AdminTile(
+              Icons.request_quote, 'Demandes vehicule', AppColors.primary,
+              onTap: () =>
+                  _go(context, const VehicleRequestsAdminScreen())),
+          _AdminTile(
+              Icons.directions_boat, 'Commandes vehicule', AppColors.ambre,
+              onTap: () => _go(context, const VehicleOrdersAdminScreen())),
+        ]),
       ],
     );
   }
+
+  void _go(BuildContext context, Widget page) =>
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
+}
+
+class _SectionLabel extends StatelessWidget {
+  final String text;
+  const _SectionLabel(this.text);
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.only(bottom: 10, left: 2),
+        child: Text(text,
+            style: const TextStyle(
+                fontWeight: FontWeight.w700, color: AppColors.gris)),
+      );
+}
+
+class _Grid extends StatelessWidget {
+  final List<Widget> children;
+  const _Grid({required this.children});
+  @override
+  Widget build(BuildContext context) => GridView.count(
+        crossAxisCount: 2,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+        childAspectRatio: 1.1,
+        children: children,
+      );
 }
 
 class _AdminTile extends StatelessWidget {
