@@ -8,6 +8,7 @@ import 'demo/demo_store.dart';
 import 'demo/demo_vehicle_source.dart';
 import 'providers/admin_client_providers.dart';
 import 'providers/auth_providers.dart';
+import 'providers/notification_providers.dart';
 import 'providers/partner_providers.dart';
 import 'providers/quote_providers.dart';
 import 'providers/request_providers.dart';
@@ -55,6 +56,8 @@ Future<void> main() async {
             .overrideWithValue(DemoVehicleRequestService(client)),
         vehicleOrderServiceProvider
             .overrideWithValue(DemoVehicleOrderService(client)),
+        notificationServiceProvider
+            .overrideWithValue(DemoNotificationService(client)),
       ],
       child: const DemoApp(),
     ),

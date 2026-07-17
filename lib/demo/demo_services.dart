@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../models/app_notification.dart';
 import '../models/app_user.dart';
 import '../models/client_overview.dart';
 import '../models/customer_quote.dart';
@@ -17,6 +18,7 @@ import '../models/vehicle_request.dart';
 import '../services/admin_client_service.dart';
 import '../services/vehicle_order_service.dart';
 import '../services/auth_service.dart';
+import '../services/notification_service.dart';
 import '../services/order_service.dart';
 import '../services/quote_service.dart';
 import '../services/request_service.dart';
@@ -274,6 +276,38 @@ class DemoVehicleOrderService extends VehicleOrderService {
   Future<List<VehicleOrder>> myOrders() async => [];
   @override
   Future<List<VehicleTrackingEvent>> tracking(String orderId) async => [];
+}
+
+/// Notifications de demonstration.
+class DemoNotificationService extends NotificationService {
+  DemoNotificationService(super.client);
+
+  final List<AppNotification> _items = [
+    AppNotification(
+      id: 'n1',
+      title: 'Votre devis est pret',
+      body: 'Hyundai Santa Fe 2019 — consultez votre devis.',
+      type: 'quote',
+      createdAt: DateTime(2026, 7, 10, 9, 15),
+    ),
+    AppNotification(
+      id: 'n2',
+      title: 'Mise a jour de votre vehicule',
+      body: 'Nouveau statut : Navire en mer',
+      type: 'tracking',
+      isRead: true,
+      createdAt: DateTime(2026, 7, 8, 14, 0),
+    ),
+  ];
+
+  @override
+  Future<List<AppNotification>> list() async => _items;
+  @override
+  Future<int> unreadCount() async => _items.where((n) => !n.isRead).length;
+  @override
+  Future<void> markRead(String id) async {}
+  @override
+  Future<void> markAllRead() async {}
 }
 
 class DemoStorageService extends StorageService {
