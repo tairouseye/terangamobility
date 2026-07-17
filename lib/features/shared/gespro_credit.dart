@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../core/config/app_info.dart';
 import '../../core/theme/app_theme.dart';
 
-/// Bloc « Developpe par GesPro » affiche en bas de l'accueil : editeur,
+/// Bloc « Développé par GesPro » affiche en bas de l'accueil : éditeur,
 /// email et WhatsApp cliquables, + version de deploiement.
 class GesProCredit extends StatelessWidget {
   final bool onDark;
@@ -24,7 +24,7 @@ class GesProCredit extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text('Developpe par ${AppInfo.publisherShort}',
+        Text('Développé par ${AppInfo.publisherShort}',
             style: TextStyle(
                 fontSize: 13, fontWeight: FontWeight.w700, color: base)),
         const SizedBox(height: 6),

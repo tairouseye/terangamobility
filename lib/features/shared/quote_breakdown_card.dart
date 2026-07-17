@@ -17,7 +17,7 @@ class QuoteBreakdownCard extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            _row('Prix de la piece', b.partPrice),
+            _row('Prix de la pièce', b.partPrice),
             _row('Transport FedEx', b.fedexCost),
             _row('Douane estimee', b.customsCost),
             _row('Commission TerangaMobility', b.commission),

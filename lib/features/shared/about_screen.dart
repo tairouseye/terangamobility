@@ -6,7 +6,7 @@ import '../../core/config/app_info.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/teranga_logo.dart';
 
-/// Ecran « A propos & Assistance » : version de l'application, editeur et
+/// Ecran « A propos & Assistance » : version de l'application, éditeur et
 /// contacts de support cliquables.
 class AboutScreen extends StatefulWidget {
   const AboutScreen({super.key});
@@ -97,7 +97,7 @@ class _AboutScreenState extends State<AboutScreen> {
             _ContactTile(
               icon: Icons.call,
               color: AppColors.primary,
-              title: 'Telephone',
+              title: 'Téléphone',
               subtitle: AppInfo.supportPhone,
               onTap: () => _open(AppInfo.telUrl),
             ),
@@ -128,7 +128,7 @@ class _AboutScreenState extends State<AboutScreen> {
               ),
               child: Column(
                 children: [
-                  const Text('Application editee par',
+                  const Text('Application éditée par',
                       style: TextStyle(fontSize: 12, color: AppColors.gris)),
                   const SizedBox(height: 4),
                   Text(
@@ -141,7 +141,7 @@ class _AboutScreenState extends State<AboutScreen> {
                   ),
                   const SizedBox(height: 6),
                   const Text(
-                    'Solutions de gestion pour les entreprises senegalaises',
+                    'Solutions de gestion pour les entreprises sénégalaises',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 12, color: AppColors.gris),
                   ),

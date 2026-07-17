@@ -10,7 +10,7 @@ import '../../../providers/vehicle_order_providers.dart';
 import '../../shared/vehicle_timeline.dart';
 import 'vehicle_tracking_screen.dart';
 
-/// Client : ses demandes de prix (en attente) et ses commandes vehicule.
+/// Client : ses demandes de prix (en attente) et ses commandes véhicule.
 class MyVehicleOrdersScreen extends ConsumerWidget {
   const MyVehicleOrdersScreen({super.key});
 

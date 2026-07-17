@@ -10,7 +10,7 @@ import '../../providers/vehicle_catalog_providers.dart';
 import 'request_price_screen.dart';
 import 'widgets/customs_terms_notice.dart';
 
-/// Fiche detaillee d'un vehicule. Le prix n'est jamais affiche : un bouton
+/// Fiche detaillee d'un véhicule. Le prix n'est jamais affiche : un bouton
 /// « Demander le prix » ouvre le formulaire de demande.
 class VehicleDetailScreen extends ConsumerWidget {
   final String reference;
@@ -107,7 +107,7 @@ class _Detail extends StatelessWidget {
                     style: const TextStyle(
                         color: AppColors.gris, fontSize: 15)),
               const SizedBox(height: 12),
-              // Prix affiche (converti depuis le prix coreen + marge)
+              // Prix affiche (converti depuis le prix coréen + marge)
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [

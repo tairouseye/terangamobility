@@ -84,7 +84,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                           value: UserRole.client, label: Text('Client')),
                       ButtonSegment(
                           value: UserRole.partnerKr,
-                          label: Text('Partenaire Coree')),
+                          label: Text('Partenaire Corée')),
                     ],
                     selected: {_role},
                     onSelectionChanged: (s) => setState(() => _role = s.first),
@@ -99,7 +99,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     controller: _whatsapp,
                     keyboardType: TextInputType.phone,
                     decoration:
-                        const InputDecoration(labelText: 'Numero WhatsApp'),
+                        const InputDecoration(labelText: 'Numéro WhatsApp'),
                   ),
                   const SizedBox(height: 12),
                   TextField(

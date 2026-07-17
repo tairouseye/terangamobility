@@ -1,19 +1,19 @@
-/// Catalogue de pieces detachees courantes, organise par categorie, pour
+/// Catalogue de pièces détachées courantes, organise par catégorie, pour
 /// aider le client a nommer sa demande (liste deroulante). Une option
 /// « Autre » permet toujours une saisie libre.
 class PartCatalog {
   const PartCatalog._();
 
   /// Libelle de l'option de saisie libre.
-  static const autre = 'Autre (preciser)';
+  static const autre = 'Autre (préciser)';
 
-  /// Categorie -> liste de pieces.
+  /// Catégorie -> liste de pièces.
   static const Map<String, List<String>> catalog = {
     'Freinage': [
       'Plaquettes de frein avant',
-      'Plaquettes de frein arriere',
+      'Plaquettes de frein arrière',
       'Disques de frein avant',
-      'Disques de frein arriere',
+      'Disques de frein arrière',
       'Etrier de frein',
       'Maitre-cylindre de frein',
       'Flexible de frein',
@@ -32,21 +32,21 @@ class PartCatalog {
       'Turbocompresseur',
     ],
     'Filtration': [
-      'Filtre a air',
+      'Filtre à air',
       'Filtre a huile',
       'Filtre a carburant',
       'Filtre d\'habitacle',
     ],
     'Suspension & direction': [
       'Amortisseur avant',
-      'Amortisseur arriere',
+      'Amortisseur arrière',
       'Ressort de suspension',
       'Rotule de direction',
       'Biellette de barre stabilisatrice',
       'Bras de suspension',
       'Roulement de roue',
       'Cardan / arbre de transmission',
-      'Cremaillere de direction',
+      'Crémaillère de direction',
       'Silent-bloc',
     ],
     'Embrayage & transmission': [
@@ -56,26 +56,26 @@ class PartCatalog {
       'Cable d\'embrayage',
     ],
     'Carrosserie & optique': [
-      'Retroviseur droit',
-      'Retroviseur gauche',
+      'Rétroviseur droit',
+      'Rétroviseur gauche',
       'Phare avant droit',
       'Phare avant gauche',
-      'Feu arriere droit',
-      'Feu arriere gauche',
+      'Feu arrière droit',
+      'Feu arrière gauche',
       'Pare-chocs avant',
-      'Pare-chocs arriere',
+      'Pare-chocs arrière',
       'Capot',
       'Aile avant',
       'Calandre',
       'Pare-brise',
     ],
-    'Electrique & batterie': [
+    'Électrique & batterie': [
       'Batterie',
       'Alternateur',
-      'Demarreur',
+      'Démarreur',
       'Capteur ABS',
       'Sonde lambda',
-      'Faisceau electrique',
+      'Faisceau électrique',
     ],
     'Refroidissement & clim': [
       'Radiateur',
@@ -85,7 +85,7 @@ class PartCatalog {
       'Compresseur de climatisation',
       'Condenseur de climatisation',
     ],
-    'Echappement': [
+    'Échappement': [
       'Ligne d\'echappement',
       'Silencieux',
       'Catalyseur',
@@ -96,18 +96,18 @@ class PartCatalog {
 
   static List<String> get categories => catalog.keys.toList();
 
-  /// Pieces d'une categorie + option « Autre » a la fin.
+  /// Pièces d'une catégorie + option « Autre » a la fin.
   static List<String> partsFor(String category) => [
         ...?catalog[category],
         autre,
       ];
 
-  /// Pieces generalement trop volumineuses / lourdes pour un envoi par
+  /// Pièces generalement trop volumineuses / lourdes pour un envoi par
   /// messagerie express (FedEx, DHL...). Elles sont signalees au client car
-  /// Teranga Parts ne traite que des pieces acheminables par ces transporteurs.
+  /// Teranga Parts ne traite que des pièces acheminables par ces transporteurs.
   static const Set<String> oversized = {
     'Pare-chocs avant',
-    'Pare-chocs arriere',
+    'Pare-chocs arrière',
     'Capot',
     'Aile avant',
     'Calandre',

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_theme.dart';
 
-/// Encadre rappelant les conditions d'import vehicule :
-/// paiement 70/30 et dedouanement a la charge du client.
+/// Encadre rappelant les conditions d'import véhicule :
+/// paiement 70/30 et dédouanement a la charge du client.
 /// Affiche sur la fiche, la demande de prix et avant validation de commande.
 class CustomsTermsNotice extends StatelessWidget {
   final bool dense;

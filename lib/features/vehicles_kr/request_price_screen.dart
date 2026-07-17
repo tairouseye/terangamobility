@@ -7,7 +7,7 @@ import '../../providers/auth_providers.dart';
 import '../../providers/vehicle_catalog_providers.dart';
 import 'widgets/customs_terms_notice.dart';
 
-/// Formulaire « Demander le prix » pour un vehicule (statut initial cote
+/// Formulaire « Demander le prix » pour un véhicule (statut initial cote
 /// serveur : en_attente_devis). Notifie l'admin via la fonction serveur.
 class RequestPriceScreen extends ConsumerStatefulWidget {
   final VehicleListing vehicle;
@@ -23,7 +23,7 @@ class _RequestPriceScreenState extends ConsumerState<RequestPriceScreen> {
   final _phone = TextEditingController();
   final _whatsapp = TextEditingController();
   final _email = TextEditingController();
-  final _country = TextEditingController(text: 'Senegal');
+  final _country = TextEditingController(text: 'Sénégal');
   final _city = TextEditingController();
   final _message = TextEditingController();
   bool _accepted = false;
@@ -118,7 +118,7 @@ class _RequestPriceScreenState extends ConsumerState<RequestPriceScreen> {
           child: ListView(
             padding: const EdgeInsets.all(20),
             children: [
-              // Rappel du vehicule
+              // Rappel du véhicule
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(

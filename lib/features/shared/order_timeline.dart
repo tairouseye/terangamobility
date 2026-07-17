@@ -3,8 +3,8 @@ import '../../core/theme/app_theme.dart';
 import '../../models/enums.dart';
 
 /// Timeline verticale des 13 statuts du workflow commande.
-/// Les etapes atteintes sont vertes, l'etape courante est mise en avant,
-/// les etapes a venir sont grisees.
+/// Les étapes atteintes sont vertes, l'étape courante est mise en avant,
+/// les étapes a venir sont grisees.
 class OrderTimeline extends StatelessWidget {
   final OrderStatus current;
   const OrderTimeline({super.key, required this.current});

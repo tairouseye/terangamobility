@@ -7,7 +7,7 @@ import 'about_screen.dart';
 import 'app_footer.dart';
 import 'notifications_screen.dart';
 
-/// Ossature commune des dashboards : titre, deconnexion, contenu scrollable.
+/// Ossature commune des dashboards : titre, déconnexion, contenu scrollable.
 class DashboardScaffold extends ConsumerWidget {
   final String title;
   final List<Widget> children;
@@ -34,7 +34,7 @@ class DashboardScaffold extends ConsumerWidget {
             ),
           ),
           IconButton(
-            tooltip: 'Se deconnecter',
+            tooltip: 'Se déconnecter',
             icon: const Icon(Icons.logout),
             onPressed: () => ref.read(authServiceProvider).signOut(),
           ),

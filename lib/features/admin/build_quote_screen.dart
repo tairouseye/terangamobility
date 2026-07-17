@@ -11,7 +11,7 @@ import '../../providers/quote_providers.dart';
 import '../shared/quote_breakdown_card.dart';
 
 /// Categories de douane (doivent correspondre a la table customs_rates).
-const _customsCategories = ['general', 'carrosserie', 'electronique', 'mecanique'];
+const _customsCategories = ['general', 'carrosserie', 'électronique', 'mecanique'];
 
 /// Ecran admin : chiffrer et envoyer un devis a partir d'une proposition
 /// partenaire (Lot 5).
@@ -66,7 +66,7 @@ class _BuildQuoteScreenState extends ConsumerState<BuildQuoteScreen> {
       ref.invalidate(requestsToQuoteProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Devis envoye au client.')),
+          const SnackBar(content: Text('Devis envoyé au client.')),
         );
         Navigator.of(context).pop();
       }
@@ -101,7 +101,7 @@ class _BuildQuoteScreenState extends ConsumerState<BuildQuoteScreen> {
               error: (e, _) => Text('Erreur : $e'),
               data: (quotes) {
                 if (quotes.isEmpty) {
-                  return const Text('Aucune proposition recue.',
+                  return const Text('Aucune proposition reçue.',
                       style: TextStyle(color: AppColors.gris));
                 }
                 _selected ??= quotes.first;
@@ -120,7 +120,7 @@ class _BuildQuoteScreenState extends ConsumerState<BuildQuoteScreen> {
                               subtitle: Text([
                                 if (q.partRef != null) 'Ref ${q.partRef}',
                                 if (q.leadTimeDays != null)
-                                  'Delai ${q.leadTimeDays} j',
+                                  'Délai ${q.leadTimeDays} j',
                                 if (!q.available) 'INDISPONIBLE',
                               ].join('  •  ')),
                             ))
@@ -130,7 +130,7 @@ class _BuildQuoteScreenState extends ConsumerState<BuildQuoteScreen> {
               },
             ),
             const SizedBox(height: 16),
-            const Text('2. Categorie de douane',
+            const Text('2. Catégorie de douane',
                 style: TextStyle(fontWeight: FontWeight.w700)),
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(

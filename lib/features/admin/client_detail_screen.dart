@@ -8,7 +8,7 @@ import '../../models/client_overview.dart';
 import '../../providers/admin_client_providers.dart';
 import 'order_manage_screen.dart';
 
-/// Admin : fiche client 360 (identite, vehicules, demandes, commandes,
+/// Admin : fiche client 360 (identite, véhicules, demandes, commandes,
 /// paiements) avec la distinction commande / encaisse.
 class ClientDetailScreen extends ConsumerWidget {
   final ClientSummary summary;
@@ -43,16 +43,16 @@ class ClientDetailScreen extends ConsumerWidget {
             _Money(summary: summary),
             const SizedBox(height: 20),
 
-            // --- Vehicules ---
+            // --- Véhicules ---
             _Section(
               icon: Icons.directions_car,
               color: AppColors.vert,
-              title: 'Vehicules',
+              title: 'Véhicules',
               child: vehicles.when(
                 loading: () => const LinearProgressIndicator(),
                 error: (e, _) => Text('Erreur : $e'),
                 data: (list) => list.isEmpty
-                    ? const _Empty('Aucun vehicule enregistre')
+                    ? const _Empty('Aucun véhicule enregistre')
                     : Column(
                         children: list
                             .map((v) => ListTile(
@@ -78,7 +78,7 @@ class ClientDetailScreen extends ConsumerWidget {
             _Section(
               icon: Icons.inventory_2,
               color: AppColors.ambre,
-              title: 'Demandes de pieces',
+              title: 'Demandes de pièces',
               child: requests.when(
                 loading: () => const LinearProgressIndicator(),
                 error: (e, _) => Text('Erreur : $e'),

@@ -8,7 +8,7 @@ import '../../models/supplier_quote.dart';
 import '../../providers/auth_providers.dart';
 import '../../providers/partner_providers.dart';
 
-/// Formulaire de proposition de piece par le partenaire Coree (Lot 4).
+/// Formulaire de proposition de pièce par le partenaire Corée (Lot 4).
 class ProposePartScreen extends ConsumerStatefulWidget {
   final PartsRequest request;
   const ProposePartScreen({super.key, required this.request});
@@ -82,7 +82,7 @@ class _ProposePartScreenState extends ConsumerState<ProposePartScreen> {
       ref.invalidate(quotesForRequestProvider(widget.request.id!));
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Proposition envoyee a TerangaMobility.')),
+          const SnackBar(content: Text('Proposition envoyée a TerangaMobility.')),
         );
         Navigator.of(context).pop();
       }
@@ -97,7 +97,7 @@ class _ProposePartScreenState extends ConsumerState<ProposePartScreen> {
   Widget build(BuildContext context) {
     final r = widget.request;
     return Scaffold(
-      appBar: AppBar(title: const Text('Proposer une piece')),
+      appBar: AppBar(title: const Text('Proposer une pièce')),
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -108,7 +108,7 @@ class _ProposePartScreenState extends ConsumerState<ProposePartScreen> {
               const SizedBox(height: 20),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Piece disponible'),
+                title: const Text('Pièce disponible'),
                 value: _available,
                 activeThumbColor: AppColors.vert,
                 onChanged: (v) => setState(() => _available = v),
@@ -118,7 +118,7 @@ class _ProposePartScreenState extends ConsumerState<ProposePartScreen> {
               TextFormField(
                 controller: _partRef,
                 decoration: const InputDecoration(
-                    labelText: 'Reference de la piece'),
+                    labelText: 'Référence de la pièce'),
               ),
               const SizedBox(height: 12),
               TextFormField(
@@ -126,7 +126,7 @@ class _ProposePartScreenState extends ConsumerState<ProposePartScreen> {
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                     labelText: 'Prix d\'achat (KRW) *',
-                    hintText: 'Prix en wons coreens'),
+                    hintText: 'Prix en wons coréens'),
                 validator: (v) => (num.tryParse(v?.trim() ?? '') == null)
                     ? 'Prix requis'
                     : null,
@@ -154,7 +154,7 @@ class _ProposePartScreenState extends ConsumerState<ProposePartScreen> {
                 controller: _leadTime,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                    labelText: 'Delai d\'approvisionnement (jours)'),
+                    labelText: 'Délai d\'approvisionnement (jours)'),
               ),
               const SizedBox(height: 16),
               OutlinedButton.icon(
@@ -163,7 +163,7 @@ class _ProposePartScreenState extends ConsumerState<ProposePartScreen> {
                     color: _photo != null ? AppColors.vert : AppColors.gris),
                 label: Text(_photo != null
                     ? _photo!.name
-                    : 'Ajouter une photo de la piece'),
+                    : 'Ajouter une photo de la pièce'),
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size.fromHeight(52),
                   alignment: Alignment.centerLeft,
@@ -192,7 +192,7 @@ class _ProposePartScreenState extends ConsumerState<ProposePartScreen> {
   }
 }
 
-/// Rappel de la demande (piece + vehicule) pour aider le partenaire.
+/// Rappel de la demande (pièce + véhicule) pour aider le partenaire.
 class _RequestSummary extends StatelessWidget {
   final PartsRequest request;
   const _RequestSummary({required this.request});

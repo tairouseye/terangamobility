@@ -167,7 +167,7 @@ class _QuoteCardState extends ConsumerState<_QuoteCard> {
               color: AppColors.vert.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Text('✓ Acompte paye — commande confirmee',
+            child: const Text('✓ Acompte payé — commande confirmee',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: AppColors.vert, fontWeight: FontWeight.w600)),

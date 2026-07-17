@@ -9,7 +9,7 @@ import '../../models/shipment.dart';
 import '../../providers/quote_providers.dart';
 import '../shared/order_timeline.dart';
 
-/// Admin : pilotage d'une commande (avancer le statut, gerer l'expedition).
+/// Admin : pilotage d'une commande (avancer le statut, gerer l'expédition).
 class OrderManageScreen extends ConsumerStatefulWidget {
   final OrderView orderView;
   const OrderManageScreen({super.key, required this.orderView});
@@ -74,7 +74,7 @@ class _OrderManageScreenState extends ConsumerState<OrderManageScreen> {
       ref.invalidate(shipmentProvider(widget.orderView.order.id!));
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Expedition enregistree.')),
+          const SnackBar(content: Text('Expédition enregistrée.')),
         );
       }
     } catch (e) {
@@ -133,13 +133,13 @@ class _OrderManageScreenState extends ConsumerState<OrderManageScreen> {
               child: const Text('Enregistrer le statut'),
             ),
             const Divider(height: 32),
-            const Text('Expedition FedEx',
+            const Text('Expédition FedEx',
                 style: TextStyle(fontWeight: FontWeight.w700)),
             const SizedBox(height: 8),
             TextField(
               controller: _tracking,
               decoration:
-                  const InputDecoration(labelText: 'Numero de suivi FedEx'),
+                  const InputDecoration(labelText: 'Numéro de suivi FedEx'),
             ),
             const SizedBox(height: 12),
             TextField(
@@ -150,7 +150,7 @@ class _OrderManageScreenState extends ConsumerState<OrderManageScreen> {
             const SizedBox(height: 12),
             OutlinedButton(
               onPressed: _saving ? null : _saveShipment,
-              child: const Text('Enregistrer l\'expedition'),
+              child: const Text('Enregistrer l\'expédition'),
             ),
             const Divider(height: 32),
             const Text('Historique',
@@ -166,7 +166,7 @@ class _OrderManageScreenState extends ConsumerState<OrderManageScreen> {
   Widget _flag(String label, bool ok) => Chip(
         avatar: Icon(ok ? Icons.check_circle : Icons.radio_button_unchecked,
             size: 18, color: ok ? AppColors.vert : AppColors.gris),
-        label: Text('$label ${ok ? 'paye' : 'en attente'}'),
+        label: Text('$label ${ok ? 'payé' : 'en attente'}'),
         backgroundColor: (ok ? AppColors.vert : AppColors.gris)
             .withValues(alpha: 0.08),
       );

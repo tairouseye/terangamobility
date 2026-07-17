@@ -11,7 +11,7 @@ import '../../../providers/request_providers.dart';
 import '../../../providers/vehicle_providers.dart';
 import '../vehicles/vehicle_form_screen.dart';
 
-/// Formulaire de depot d'une nouvelle demande de piece (Lot 3).
+/// Formulaire de depot d'une nouvelle demande de pièce (Lot 3).
 class NewRequestScreen extends ConsumerStatefulWidget {
   const NewRequestScreen({super.key});
 
@@ -34,7 +34,7 @@ class _NewRequestScreenState extends ConsumerState<NewRequestScreen> {
   bool get _needsCustom =>
       _category == 'Autre' || _selectedPart == PartCatalog.autre;
 
-  /// Nom final de la piece (choix dans la liste ou saisie libre).
+  /// Nom final de la pièce (choix dans la liste ou saisie libre).
   String get _resolvedPartName =>
       _needsCustom ? _customPart.text.trim() : (_selectedPart ?? '');
 
@@ -54,7 +54,7 @@ class _NewRequestScreenState extends ConsumerState<NewRequestScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     if (_resolvedPartName.isEmpty) {
-      setState(() => _error = 'Choisissez ou precisez la piece recherchee.');
+      setState(() => _error = 'Choisissez ou précisez la pièce recherchee.');
       return;
     }
     final uid = ref.read(authServiceProvider).currentUser?.id;
@@ -80,7 +80,7 @@ class _NewRequestScreenState extends ConsumerState<NewRequestScreen> {
         partName: _resolvedPartName,
         partPhotoUrl: photoUrl,
         notes: _notes.text.trim().isEmpty ? null : _notes.text.trim(),
-        // Instantane vehicle fige pour le partenaire Coree.
+        // Instantane vehicle fige pour le partenaire Corée.
         vehicleBrand: _vehicle?.brand,
         vehicleModel: _vehicle?.model,
         vehicleYear: _vehicle?.year,
@@ -92,7 +92,7 @@ class _NewRequestScreenState extends ConsumerState<NewRequestScreen> {
       ref.invalidate(myRequestsProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Demande envoyee ! Nous recherchons la piece.')),
+          const SnackBar(content: Text('Demande envoyée ! Nous recherchons la pièce.')),
         );
         Navigator.of(context).pop();
       }
@@ -107,23 +107,23 @@ class _NewRequestScreenState extends ConsumerState<NewRequestScreen> {
   Widget build(BuildContext context) {
     final vehiclesAsync = ref.watch(myVehiclesProvider);
     return Scaffold(
-      appBar: AppBar(title: const Text('Nouvelle demande de piece')),
+      appBar: AppBar(title: const Text('Nouvelle demande de pièce')),
       body: SafeArea(
         child: Form(
           key: _formKey,
           child: ListView(
             padding: const EdgeInsets.all(20),
             children: [
-              // --- Rappel : uniquement pieces expediables ---
+              // --- Rappel : uniquement pièces expediables ---
               const _ShippingNotice(),
               const SizedBox(height: 20),
-              // --- Vehicule concerne ---
-              const Text('Vehicule concerne',
+              // --- Véhicule concerne ---
+              const Text('Véhicule concerne',
                   style: TextStyle(fontWeight: FontWeight.w600)),
               const SizedBox(height: 8),
               vehiclesAsync.when(
                 loading: () => const LinearProgressIndicator(),
-                error: (e, _) => Text('Erreur vehicules : $e'),
+                error: (e, _) => Text('Erreur véhicules : $e'),
                 data: (vehicles) {
                   if (vehicles.isEmpty) {
                     return _AddVehiclePrompt(onAdded: () =>
@@ -141,21 +141,21 @@ class _NewRequestScreenState extends ConsumerState<NewRequestScreen> {
                 },
               ),
               const SizedBox(height: 20),
-              // --- Piece recherchee (categorie -> piece, + saisie libre) ---
-              const Text('Piece recherchee',
+              // --- Pièce recherchee (catégorie -> pièce, + saisie libre) ---
+              const Text('Pièce recherchee',
                   style: TextStyle(fontWeight: FontWeight.w600)),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
                 initialValue: _category,
                 isExpanded: true,
-                decoration: const InputDecoration(labelText: 'Categorie *'),
-                hint: const Text('Choisir une categorie'),
+                decoration: const InputDecoration(labelText: 'Catégorie *'),
+                hint: const Text('Choisir une catégorie'),
                 items: PartCatalog.categories
                     .map((c) => DropdownMenuItem(value: c, child: Text(c)))
                     .toList(),
                 onChanged: (c) => setState(() {
                   _category = c;
-                  _selectedPart = null; // reinitialise la piece
+                  _selectedPart = null; // reinitialise la pièce
                 }),
               ),
               if (_category != null && _category != 'Autre') ...[
@@ -163,8 +163,8 @@ class _NewRequestScreenState extends ConsumerState<NewRequestScreen> {
                 DropdownButtonFormField<String>(
                   initialValue: _selectedPart,
                   isExpanded: true,
-                  decoration: const InputDecoration(labelText: 'Piece *'),
-                  hint: const Text('Choisir la piece'),
+                  decoration: const InputDecoration(labelText: 'Pièce *'),
+                  hint: const Text('Choisir la pièce'),
                   items: PartCatalog.partsFor(_category!)
                       .map((p) => DropdownMenuItem(value: p, child: Text(p)))
                       .toList(),
@@ -177,11 +177,11 @@ class _NewRequestScreenState extends ConsumerState<NewRequestScreen> {
                   controller: _customPart,
                   textCapitalization: TextCapitalization.sentences,
                   decoration: const InputDecoration(
-                    labelText: 'Precisez la piece *',
+                    labelText: 'Precisez la pièce *',
                     hintText: 'Ex : support de boite de vitesses',
                   ),
                   validator: (v) => (v == null || v.trim().isEmpty)
-                      ? 'Precisez la piece'
+                      ? 'Precisez la pièce'
                       : null,
                 ),
               ],
@@ -194,8 +194,8 @@ class _NewRequestScreenState extends ConsumerState<NewRequestScreen> {
                 controller: _notes,
                 maxLines: 3,
                 decoration: const InputDecoration(
-                  labelText: 'Details / precisions',
-                  hintText: 'Reference connue, cote, etat...',
+                  labelText: 'Details / précisions',
+                  hintText: 'Référence connue, cote, état...',
                 ),
               ),
               const SizedBox(height: 16),
@@ -206,7 +206,7 @@ class _NewRequestScreenState extends ConsumerState<NewRequestScreen> {
                     color: _pickedPhoto != null ? AppColors.vert : AppColors.gris),
                 label: Text(_pickedPhoto != null
                     ? (_pickedPhoto!.name)
-                    : 'Ajouter une photo de la piece (optionnel)'),
+                    : 'Ajouter une photo de la pièce (optionnel)'),
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size.fromHeight(52),
                   alignment: Alignment.centerLeft,
@@ -235,7 +235,7 @@ class _NewRequestScreenState extends ConsumerState<NewRequestScreen> {
   }
 }
 
-/// Rappel permanent : Teranga Parts ne traite que des pieces acheminables
+/// Rappel permanent : Teranga Parts ne traite que des pièces acheminables
 /// par messagerie express (FedEx, DHL...).
 class _ShippingNotice extends StatelessWidget {
   const _ShippingNotice();
@@ -261,14 +261,14 @@ class _ShippingNotice extends StatelessWidget {
                     color: AppColors.anthracite, fontSize: 13, height: 1.4),
                 children: [
                   TextSpan(
-                    text: 'Pieces expediables uniquement.\n',
+                    text: 'Pièces expediables uniquement.\n',
                     style: TextStyle(fontWeight: FontWeight.w700),
                   ),
                   TextSpan(
                     text:
-                        'Nous traitons les pieces transportables par messagerie '
-                        'express (FedEx, DHL...). Les pieces tres volumineuses '
-                        'ou lourdes ne peuvent pas etre acheminees.',
+                        'Nous traitons les pièces transportables par messagerie '
+                        'express (FedEx, DHL...). Les pièces très volumineuses '
+                        'ou lourdes ne peuvent pas être acheminees.',
                   ),
                 ],
               ),
@@ -280,7 +280,7 @@ class _ShippingNotice extends StatelessWidget {
   }
 }
 
-/// Avertissement affiche quand la piece choisie est generalement hors gabarit.
+/// Avertissement affiche quand la pièce choisie est generalement hors gabarit.
 class _OversizeWarning extends StatelessWidget {
   const _OversizeWarning();
 
@@ -300,7 +300,7 @@ class _OversizeWarning extends StatelessWidget {
           SizedBox(width: 10),
           Expanded(
             child: Text(
-              'Cette piece est souvent trop volumineuse pour un envoi express. '
+              'Cette pièce est souvent trop volumineuse pour un envoi express. '
               'Vous pouvez envoyer la demande : nous verifierons la faisabilite '
               'et le cout avant tout devis.',
               style: TextStyle(color: Color(0xFF7A5A00), fontSize: 12.5, height: 1.4),
@@ -326,7 +326,7 @@ class _AddVehiclePrompt extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Aucun vehicule enregistre. Ajoutez-en un pour associer la demande.',
+              'Aucun véhicule enregistre. Ajoutez-en un pour associer la demande.',
               style: TextStyle(color: AppColors.gris),
             ),
             const SizedBox(height: 12),
@@ -338,7 +338,7 @@ class _AddVehiclePrompt extends StatelessWidget {
                 onAdded();
               },
               icon: const Icon(Icons.add),
-              label: const Text('Ajouter un vehicule'),
+              label: const Text('Ajouter un véhicule'),
             ),
           ],
         ),

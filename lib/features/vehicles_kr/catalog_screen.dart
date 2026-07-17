@@ -11,7 +11,7 @@ import '../shared/app_footer.dart';
 import 'vehicle_detail_screen.dart';
 import 'widgets/vehicle_filter_sheet.dart';
 
-/// Onglet « Vehicules Coree » : catalogue avec recherche + filtres.
+/// Onglet « Véhicules Corée » : catalogue avec recherche + filtres.
 class VehicleCatalogScreen extends ConsumerStatefulWidget {
   const VehicleCatalogScreen({super.key});
 

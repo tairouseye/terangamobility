@@ -11,7 +11,7 @@ import '../../../providers/vehicle_catalog_providers.dart';
 import '../../../providers/vehicle_order_providers.dart';
 import '../../shared/vehicle_timeline.dart';
 
-/// Client : suivi d'une commande vehicule (prix, expedition, timeline,
+/// Client : suivi d'une commande véhicule (prix, expédition, timeline,
 /// paiement acompte/solde).
 class VehicleTrackingScreen extends ConsumerStatefulWidget {
   final VehicleOrder order;
@@ -27,7 +27,7 @@ class _VehicleTrackingScreenState
   bool _busy = false;
 
   /// Le client declare avoir effectue le virement/depot -> l'admin est notifie
-  /// et confirmera apres verification (pas d'auto-validation pour les vehicules).
+  /// et confirmera après vérification (pas d'auto-validation pour les véhicules).
   Future<void> _declare({required bool deposit}) async {
     setState(() => _busy = true);
     try {
@@ -94,7 +94,7 @@ class _VehicleTrackingScreenState
               ),
             ),
             const SizedBox(height: 12),
-            // Infos numero de commande + expedition
+            // Infos numéro de commande + expédition
             Card(
               color: AppColors.grisClair,
               child: Padding(
@@ -112,7 +112,7 @@ class _VehicleTrackingScreenState
               ),
             ),
             const SizedBox(height: 8),
-            // Rappel delai
+            // Rappel délai
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -126,7 +126,7 @@ class _VehicleTrackingScreenState
               ),
             ),
             const SizedBox(height: 16),
-            // Paiement vehicule : par virement ou especes, confirme par l'equipe.
+            // Paiement véhicule : par virement ou espèces, confirme par l'equipe.
             if (o.status == VehicleOrderStatus.enAttenteAcompte &&
                 !o.depositPaid)
               _paymentBlock(
@@ -195,7 +195,7 @@ class _VehicleTrackingScreenState
     );
   }
 
-  /// Bloc d'instructions de paiement vehicule (virement/especes) +
+  /// Bloc d'instructions de paiement véhicule (virement/espèces) +
   /// bouton « J'ai effectue le paiement » qui notifie l'equipe.
   Widget _paymentBlock(
       {required String label, required num? amount, required bool deposit}) {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
 import '../../models/vehicle_enums.dart';
 
-/// Timeline verticale des etapes de la commande vehicule (import maritime).
+/// Timeline verticale des étapes de la commande véhicule (import maritime).
 class VehicleTimeline extends StatelessWidget {
   final VehicleOrderStatus current;
   const VehicleTimeline({super.key, required this.current});
@@ -69,7 +69,7 @@ class VehicleTimeline extends StatelessWidget {
   }
 }
 
-/// Petite pastille de statut vehicule (couleur selon l'etape).
+/// Petite pastille de statut véhicule (couleur selon l'étape).
 class VehicleStatusBadge extends StatelessWidget {
   final VehicleOrderStatus status;
   const VehicleStatusBadge(this.status, {super.key});

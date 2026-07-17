@@ -6,7 +6,7 @@ import '../../../models/vehicle.dart';
 import '../../../providers/vehicle_providers.dart';
 import 'vehicle_form_screen.dart';
 
-/// Liste des vehicules du client (Lot 2).
+/// Liste des véhicules du client (Lot 2).
 class VehiclesScreen extends ConsumerWidget {
   const VehiclesScreen({super.key});
 
@@ -21,7 +21,7 @@ class VehiclesScreen extends ConsumerWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Supprimer ce vehicule ?'),
+        title: const Text('Supprimer ce véhicule ?'),
         content: Text(v.label),
         actions: [
           TextButton(
@@ -44,7 +44,7 @@ class VehiclesScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final vehiclesAsync = ref.watch(myVehiclesProvider);
     return Scaffold(
-      appBar: AppBar(title: const Text('Mes vehicules')),
+      appBar: AppBar(title: const Text('Mes véhicules')),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openForm(context),
         backgroundColor: AppColors.primary,
@@ -113,11 +113,11 @@ class _EmptyState extends StatelessWidget {
           children: [
             Icon(Icons.directions_car_outlined, size: 64, color: AppColors.gris),
             SizedBox(height: 16),
-            Text('Aucun vehicule enregistre',
+            Text('Aucun véhicule enregistre',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             SizedBox(height: 8),
             Text(
-              'Ajoutez votre vehicule pour commander des pieces adaptees.',
+              'Ajoutez votre véhicule pour commander des pièces adaptees.',
               textAlign: TextAlign.center,
               style: TextStyle(color: AppColors.gris),
             ),

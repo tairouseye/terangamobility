@@ -105,7 +105,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   OutlinedButton.icon(
                     onPressed: () => context.push('/vehicules'),
                     icon: const Icon(Icons.directions_car_filled, size: 18),
-                    label: const Text('Voir les vehicules de Coree'),
+                    label: const Text('Voir les véhicules de Corée'),
                     style: OutlinedButton.styleFrom(
                       minimumSize: const Size.fromHeight(50),
                     ),
@@ -120,7 +120,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   const SizedBox(height: 28),
                   const Divider(),
                   const SizedBox(height: 16),
-                  // Bloc editeur + assistance + version, en bas de l'accueil.
+                  // Bloc éditeur + assistance + version, en bas de l'accueil.
                   const GesProCredit(),
                   const SizedBox(height: 12),
                 ],

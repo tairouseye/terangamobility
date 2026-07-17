@@ -12,7 +12,7 @@ import 'orders/my_orders_screen.dart';
 import '../vehicles_kr/catalog_screen.dart';
 import 'vehicles_kr/my_vehicle_orders_screen.dart';
 
-/// Espace Client (Lot 2+ : vehicules, demandes, devis, paiement, suivi).
+/// Espace Client (Lot 2+ : véhicules, demandes, devis, paiement, suivi).
 class ClientDashboard extends ConsumerWidget {
   const ClientDashboard({super.key});
 
@@ -28,7 +28,7 @@ class ClientDashboard extends ConsumerWidget {
         const Text('Commandez vos pièces coréennes en toute confiance.',
             style: TextStyle(color: AppColors.gris)),
         const SizedBox(height: 24),
-        // --- Nouveau : import de vehicules depuis la Coree ---
+        // --- Nouveau : import de véhicules depuis la Corée ---
         _FeatureBanner(
           onTap: () => Navigator.of(context).push(MaterialPageRoute(
             builder: (_) => const VehicleCatalogScreen(),
@@ -54,8 +54,8 @@ class ClientDashboard extends ConsumerWidget {
         _MenuCard(
           icon: Icons.directions_car,
           color: AppColors.vert,
-          title: 'Mes vehicules',
-          subtitle: 'Enregistrer marque, modele, VIN, carte grise',
+          title: 'Mes véhicules',
+          subtitle: 'Enregistrer marque, modèle, VIN, carte grise',
           onTap: () => Navigator.of(context).push(MaterialPageRoute(
             builder: (_) => const VehiclesScreen(),
           )),
@@ -63,8 +63,8 @@ class ClientDashboard extends ConsumerWidget {
         _MenuCard(
           icon: Icons.add_shopping_cart,
           color: AppColors.primary,
-          title: 'Nouvelle demande de piece',
-          subtitle: 'Decrivez la piece recherchee + photo',
+          title: 'Nouvelle demande de pièce',
+          subtitle: 'Decrivez la pièce recherchee + photo',
           onTap: () => Navigator.of(context).push(MaterialPageRoute(
             builder: (_) => const NewRequestScreen(),
           )),
@@ -73,7 +73,7 @@ class ClientDashboard extends ConsumerWidget {
           icon: Icons.inventory_2,
           color: AppColors.ambre,
           title: 'Mes demandes',
-          subtitle: 'Suivre l\'etat de mes demandes de pieces',
+          subtitle: 'Suivre l\'état de mes demandes de pièces',
           onTap: () => Navigator.of(context).push(MaterialPageRoute(
             builder: (_) => const RequestsScreen(),
           )),
@@ -91,7 +91,7 @@ class ClientDashboard extends ConsumerWidget {
           icon: Icons.local_shipping,
           color: AppColors.anthracite,
           title: 'Suivi de mes commandes',
-          subtitle: 'Suivre les 13 etapes jusqu\'a la livraison',
+          subtitle: 'Suivre les 13 étapes jusqu\'a la livraison',
           onTap: () => Navigator.of(context).push(MaterialPageRoute(
             builder: (_) => const MyOrdersScreen(),
           )),
@@ -139,7 +139,7 @@ class _MenuCard extends StatelessWidget {
   }
 }
 
-/// Banniere mise en avant : import de vehicules depuis la Coree.
+/// Banniere mise en avant : import de véhicules depuis la Corée.
 class _FeatureBanner extends StatelessWidget {
   final VoidCallback onTap;
   const _FeatureBanner({required this.onTap});

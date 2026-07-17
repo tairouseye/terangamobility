@@ -4,9 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/vehicle_filter.dart';
 import '../../../providers/vehicle_catalog_providers.dart';
 
-/// Feuille de filtres du catalogue vehicules :
-/// Marque -> Modele (listes dependantes), Annee « a partir de »,
-/// Carburant, Transmission, Couleur, Kilometrage max (paliers).
+/// Feuille de filtres du catalogue véhicules :
+/// Marque -> Modèle (listes dependantes), Année « a partir de »,
+/// Carburant, Transmission, Couleur, Kilométrage max (paliers).
 class VehicleFilterSheet extends ConsumerStatefulWidget {
   const VehicleFilterSheet({super.key});
 
@@ -33,7 +33,7 @@ class _VehicleFilterSheetState extends ConsumerState<VehicleFilterSheet> {
         ref.watch(vehicleTransmissionsProvider).valueOrNull ?? const [];
     final colors = ref.watch(vehicleColorsProvider).valueOrNull ?? const [];
 
-    // Modeles dependants de la marque choisie.
+    // Modèles dependants de la marque choisie.
     final models = _draft.brand == null
         ? const <String>[]
         : (ref.watch(vehicleModelsProvider(_draft.brand!)).valueOrNull ??
@@ -66,7 +66,7 @@ class _VehicleFilterSheetState extends ConsumerState<VehicleFilterSheet> {
             ),
             const SizedBox(height: 4),
 
-            // --- Marque -> Modele (dependants) ---
+            // --- Marque -> Modèle (dependants) ---
             _dropdown<String>(
               label: 'Marque',
               value: _draft.brand,
@@ -88,7 +88,7 @@ class _VehicleFilterSheetState extends ConsumerState<VehicleFilterSheet> {
               onChanged: (v) => setState(() => _draft = _draft.copyWith(model: v)),
             ),
 
-            // --- Annee a partir de ---
+            // --- Année a partir de ---
             _dropdown<int>(
               label: 'Année (à partir de)',
               value: _draft.year,
@@ -125,7 +125,7 @@ class _VehicleFilterSheetState extends ConsumerState<VehicleFilterSheet> {
               onChanged: (v) => setState(() => _draft = _draft.copyWith(color: v)),
             ),
 
-            // --- Kilometrage max (paliers) ---
+            // --- Kilométrage max (paliers) ---
             _dropdown<int>(
               label: 'Kilométrage maximum',
               value: _draft.maxMileage,
@@ -164,7 +164,7 @@ class _VehicleFilterSheetState extends ConsumerState<VehicleFilterSheet> {
 
   /// Dropdown generique avec option « aucune valeur » (null).
   /// La cle inclut la valeur et le nombre d'items : le champ se reinitialise
-  /// proprement au reset et quand la liste dependante (modeles) change.
+  /// proprement au reset et quand la liste dependante (modèles) change.
   Widget _dropdown<T>({
     required String label,
     required T? value,

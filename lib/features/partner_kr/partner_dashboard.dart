@@ -6,7 +6,7 @@ import '../../providers/auth_providers.dart';
 import '../shared/dashboard_scaffold.dart';
 import 'requests_inbox_screen.dart';
 
-/// Espace Partenaire Coree (Lot 4 : inbox demandes, proposer pieces).
+/// Espace Partenaire Corée (Lot 4 : inbox demandes, proposer pièces).
 class PartnerDashboard extends ConsumerWidget {
   const PartnerDashboard({super.key});
 
@@ -14,12 +14,12 @@ class PartnerDashboard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(currentProfileProvider).value;
     return DashboardScaffold(
-      title: 'Partenaire Coree',
+      title: 'Partenaire Corée',
       children: [
         Text('Annyeong ${profile?.fullName ?? ''} 👋',
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
         const SizedBox(height: 4),
-        const Text('Consultez les demandes et proposez vos pieces.',
+        const Text('Consultez les demandes et proposez vos pièces.',
             style: TextStyle(color: AppColors.gris)),
         const SizedBox(height: 24),
         Card(
@@ -32,7 +32,7 @@ class PartnerDashboard extends ConsumerWidget {
             title: const Text('Demandes a traiter',
                 style: TextStyle(fontWeight: FontWeight.w600)),
             subtitle: const Text(
-                'Reference, prix (KRW), poids, dimensions, photo, delai'),
+                'Référence, prix (KRW), poids, dimensions, photo, délai'),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => Navigator.of(context).push(MaterialPageRoute(
               builder: (_) => const RequestsInboxScreen(),

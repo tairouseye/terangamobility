@@ -10,7 +10,7 @@ import '../../providers/vehicle_catalog_providers.dart';
 import '../../providers/vehicle_order_providers.dart';
 import '../shared/vehicle_timeline.dart';
 
-/// Admin : pilotage d'une commande vehicule (statut + expedition maritime).
+/// Admin : pilotage d'une commande véhicule (statut + expédition maritime).
 class VehicleOrderManageScreen extends ConsumerStatefulWidget {
   final VehicleOrder order;
   const VehicleOrderManageScreen({super.key, required this.order});
@@ -28,7 +28,7 @@ class _VehicleOrderManageScreenState
   DateTime? _departure;
   DateTime? _arrival;
   bool _saving = false;
-  // Etat local (le widget.order passe est immuable).
+  // État local (le widget.order passe est immuable).
   late bool _depositPaid;
   late bool _balancePaid;
   late bool _hasInvoice;
@@ -56,10 +56,10 @@ class _VehicleOrderManageScreenState
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           const Padding(
             padding: EdgeInsets.all(16),
-            child: Text('Mode de paiement recu',
+            child: Text('Mode de paiement reçu',
                 style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
           ),
-          for (final m in const ['Virement', 'Especes'])
+          for (final m in const ['Virement', 'Espèces'])
             ListTile(
               leading: const Icon(Icons.account_balance, color: AppColors.vert),
               title: Text(m),
@@ -110,7 +110,7 @@ class _VehicleOrderManageScreenState
         setState(() => _hasContract = true);
       }
       ref.invalidate(vehicleOrdersAdminProvider);
-      _snack(invoice ? 'Facture generee' : 'Contrat genere');
+      _snack(invoice ? 'Facture générée' : 'Contrat généré');
     } catch (e) {
       _snack('Erreur : $e');
     } finally {
@@ -178,7 +178,7 @@ class _VehicleOrderManageScreenState
       ref.invalidate(vehicleOrdersAdminProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Expedition enregistree.')));
+            const SnackBar(content: Text('Expédition enregistrée.')));
       }
     } catch (e) {
       if (mounted) {
@@ -233,8 +233,8 @@ class _VehicleOrderManageScreenState
               ),
             ),
             const Divider(height: 32),
-            // --- Confirmation des paiements (virement/especes) ---
-            const Text('Paiements (virement / especes)',
+            // --- Confirmation des paiements (virement/espèces) ---
+            const Text('Paiements (virement / espèces)',
                 style: TextStyle(fontWeight: FontWeight.w700)),
             const SizedBox(height: 8),
             if (!_depositPaid)
@@ -244,7 +244,7 @@ class _VehicleOrderManageScreenState
                   onPressed: _busyDoc ? null : () => _confirmPayment(deposit: true),
                   icon: const Icon(Icons.check_circle),
                   label: Text(
-                      'Confirmer l\'acompte recu (${Formatters.fcfa(o.depositAmount)})'),
+                      'Confirmer l\'acompte reçu (${Formatters.fcfa(o.depositAmount)})'),
                 ),
               ),
             if (_depositPaid && !_balancePaid) ...[
@@ -255,7 +255,7 @@ class _VehicleOrderManageScreenState
                   onPressed: _busyDoc ? null : () => _confirmPayment(deposit: false),
                   icon: const Icon(Icons.check_circle_outline),
                   label: Text(
-                      'Confirmer le solde recu (${Formatters.fcfa(o.balanceAmount)})'),
+                      'Confirmer le solde reçu (${Formatters.fcfa(o.balanceAmount)})'),
                 ),
               ),
             ],
@@ -275,7 +275,7 @@ class _VehicleOrderManageScreenState
                 child: OutlinedButton.icon(
                   onPressed: _busyDoc ? null : () => _generate(invoice: true),
                   icon: const Icon(Icons.description, size: 18),
-                  label: Text(_hasInvoice ? 'Regenerer facture' : 'Generer facture'),
+                  label: Text(_hasInvoice ? 'Regenerer facture' : 'Générer facture'),
                 ),
               ),
               const SizedBox(width: 8),
@@ -286,7 +286,7 @@ class _VehicleOrderManageScreenState
                       : () => _generate(invoice: false),
                   icon: const Icon(Icons.assignment, size: 18),
                   label:
-                      Text(_hasContract ? 'Regenerer contrat' : 'Generer contrat'),
+                      Text(_hasContract ? 'Regenerer contrat' : 'Générer contrat'),
                 ),
               ),
             ]),
@@ -330,13 +330,13 @@ class _VehicleOrderManageScreenState
                 onPressed: _saving ? null : _saveStatus,
                 child: const Text('Enregistrer le statut')),
             const Divider(height: 32),
-            const Text('Expedition maritime',
+            const Text('Expédition maritime',
                 style: TextStyle(fontWeight: FontWeight.w700)),
             const SizedBox(height: 8),
             TextField(
                 controller: _tracking,
                 decoration:
-                    const InputDecoration(labelText: 'Numero de tracking')),
+                    const InputDecoration(labelText: 'Numéro de tracking')),
             const SizedBox(height: 12),
             TextField(
                 controller: _company,
@@ -361,7 +361,7 @@ class _VehicleOrderManageScreenState
             const SizedBox(height: 12),
             OutlinedButton(
                 onPressed: _saving ? null : _saveShipping,
-                child: const Text('Enregistrer l\'expedition')),
+                child: const Text('Enregistrer l\'expédition')),
             const Divider(height: 32),
             const Text('Historique',
                 style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),

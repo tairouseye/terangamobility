@@ -8,7 +8,7 @@ import '../../models/parts_request.dart';
 import '../../providers/partner_providers.dart';
 import 'propose_part_screen.dart';
 
-/// Inbox du partenaire Coree : demandes ouvertes a traiter (Lot 4).
+/// Inbox du partenaire Corée : demandes ouvertes a traiter (Lot 4).
 class RequestsInboxScreen extends ConsumerWidget {
   const RequestsInboxScreen({super.key});
 
@@ -95,7 +95,7 @@ class _RequestCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Recue le ${Formatters.date(request.createdAt)}',
+                  Text('Reçue le ${Formatters.date(request.createdAt)}',
                       style: const TextStyle(
                           fontSize: 12, color: AppColors.gris)),
                   const Row(children: [

@@ -8,7 +8,7 @@ import '../../models/vehicle_request.dart';
 import '../../providers/vehicle_catalog_providers.dart';
 import '../../providers/vehicle_order_providers.dart';
 
-/// Admin : demandes de prix vehicule + envoi du devis.
+/// Admin : demandes de prix véhicule + envoi du devis.
 class VehicleRequestsAdminScreen extends ConsumerWidget {
   const VehicleRequestsAdminScreen({super.key});
 
@@ -16,7 +16,7 @@ class VehicleRequestsAdminScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(vehicleRequestsAdminProvider);
     return Scaffold(
-      appBar: AppBar(title: const Text('Demandes vehicule')),
+      appBar: AppBar(title: const Text('Demandes véhicule')),
       body: RefreshIndicator(
         onRefresh: () async => ref.invalidate(vehicleRequestsAdminProvider),
         child: async.when(
@@ -87,7 +87,7 @@ class _RequestCard extends ConsumerWidget {
               _line(Icons.notes, request.message!),
             _line(Icons.tag, 'Ref ${request.vehicleReference}'),
             const SizedBox(height: 4),
-            Text('Recue le ${Formatters.date(request.createdAt)}',
+            Text('Reçue le ${Formatters.date(request.createdAt)}',
                 style: const TextStyle(fontSize: 11, color: AppColors.gris)),
             if (canQuote) ...[
               const SizedBox(height: 10),
@@ -111,7 +111,7 @@ class _RequestCard extends ConsumerWidget {
     final total = await showDialog<num>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Prix total du vehicule'),
+        title: const Text('Prix total du véhicule'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,7 +154,7 @@ class _RequestCard extends ConsumerWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
-                'Devis envoye : ${Formatters.fcfa(total)} (acompte ${Formatters.fcfa((total * 0.7).round())})')));
+                'Devis envoyé : ${Formatters.fcfa(total)} (acompte ${Formatters.fcfa((total * 0.7).round())})')));
       }
     } catch (e) {
       if (context.mounted) {

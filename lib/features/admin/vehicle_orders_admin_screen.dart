@@ -9,7 +9,7 @@ import '../../providers/vehicle_order_providers.dart';
 import '../shared/vehicle_timeline.dart';
 import 'vehicle_order_manage_screen.dart';
 
-/// Admin : liste des commandes vehicule.
+/// Admin : liste des commandes véhicule.
 class VehicleOrdersAdminScreen extends ConsumerWidget {
   const VehicleOrdersAdminScreen({super.key});
 
@@ -17,7 +17,7 @@ class VehicleOrdersAdminScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(vehicleOrdersAdminProvider);
     return Scaffold(
-      appBar: AppBar(title: const Text('Commandes vehicule')),
+      appBar: AppBar(title: const Text('Commandes véhicule')),
       body: RefreshIndicator(
         onRefresh: () async => ref.invalidate(vehicleOrdersAdminProvider),
         child: async.when(
@@ -31,7 +31,7 @@ class VehicleOrdersAdminScreen extends ConsumerWidget {
                     size: 64, color: AppColors.gris),
                 SizedBox(height: 16),
                 Center(
-                    child: Text('Aucune commande vehicule',
+                    child: Text('Aucune commande véhicule',
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w600))),
               ]);

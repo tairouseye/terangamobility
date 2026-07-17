@@ -1,6 +1,6 @@
-/// Informations sur l'editeur de l'application et l'assistance.
+/// Informations sur l'éditeur de l'application et l'assistance.
 ///
-/// Centralise ici : un changement de numero ou d'email ne se fait qu'a un
+/// Centralise ici : un changement de numéro ou d'email ne se fait qu'a un
 /// seul endroit. La VERSION, elle, n'est pas dupliquee ici : elle est lue a
 /// l'execution depuis le pubspec via package_info_plus (evite toute derive).
 class AppInfo {

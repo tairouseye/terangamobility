@@ -36,11 +36,11 @@ class AdminDashboard extends ConsumerWidget {
         const _SectionLabel('Véhicules Corée'),
         _Grid(children: [
           _AdminTile(
-              Icons.request_quote, 'Demandes vehicule', AppColors.primary,
+              Icons.request_quote, 'Demandes véhicule', AppColors.primary,
               onTap: () =>
                   _go(context, const VehicleRequestsAdminScreen())),
           _AdminTile(
-              Icons.directions_boat, 'Commandes vehicule', AppColors.ambre,
+              Icons.directions_boat, 'Commandes véhicule', AppColors.ambre,
               onTap: () => _go(context, const VehicleOrdersAdminScreen())),
         ]),
       ],

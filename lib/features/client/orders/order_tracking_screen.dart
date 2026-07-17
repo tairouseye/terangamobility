@@ -105,7 +105,7 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            // Expedition
+            // Expédition
             shipmentAsync.when(
               loading: () => const SizedBox.shrink(),
               error: (_, _) => const SizedBox.shrink(),
@@ -145,7 +145,7 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
                       'Payer le solde (${Formatters.fcfa(v.balance)})'),
                 ),
               ),
-            const Text('Etat d\'avancement',
+            const Text('État d\'avancement',
                 style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
             const SizedBox(height: 12),
             OrderTimeline(current: v.status),

@@ -7,7 +7,7 @@ import '../../../models/vehicle.dart';
 import '../../../providers/auth_providers.dart';
 import '../../../providers/vehicle_providers.dart';
 
-/// Formulaire de creation / edition d'un vehicule.
+/// Formulaire de creation / edition d'un véhicule.
 class VehicleFormScreen extends ConsumerStatefulWidget {
   final Vehicle? existing;
   const VehicleFormScreen({super.key, this.existing});
@@ -102,7 +102,7 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
     final isEdit = widget.existing != null;
     return Scaffold(
       appBar: AppBar(
-          title: Text(isEdit ? 'Modifier le vehicule' : 'Nouveau vehicule')),
+          title: Text(isEdit ? 'Modifier le véhicule' : 'Nouveau véhicule')),
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -120,7 +120,7 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
               TextFormField(
                 controller: _model,
                 decoration: const InputDecoration(
-                    labelText: 'Modele *', hintText: 'Tucson, Sportage...'),
+                    labelText: 'Modèle *', hintText: 'Tucson, Sportage...'),
                 validator: (v) =>
                     (v == null || v.trim().isEmpty) ? 'Obligatoire' : null,
               ),
@@ -128,7 +128,7 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
               TextFormField(
                 controller: _year,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Annee'),
+                decoration: const InputDecoration(labelText: 'Année'),
               ),
               const SizedBox(height: 12),
               TextFormField(
@@ -141,7 +141,7 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
                 controller: _vin,
                 textCapitalization: TextCapitalization.characters,
                 decoration: const InputDecoration(
-                    labelText: 'VIN (numero de chassis)'),
+                    labelText: 'VIN (numéro de chassis)'),
               ),
               const SizedBox(height: 20),
               _CarteGriseField(
@@ -190,7 +190,7 @@ class _CarteGriseField extends StatelessWidget {
           color: hasImage ? AppColors.vert : AppColors.gris),
       label: Text(
         hasImage
-            ? (pickedName ?? 'Carte grise enregistree — modifier')
+            ? (pickedName ?? 'Carte grise enregistrée — modifier')
             : 'Ajouter la photo de la carte grise',
       ),
       style: OutlinedButton.styleFrom(
