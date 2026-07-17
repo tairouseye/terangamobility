@@ -1,0 +1,14 @@
+# Netlify — en-tetes. Copie automatiquement dans build/web par Flutter.
+
+/*
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+
+# Ne jamais mettre en cache le point d'entree ni le service worker,
+# sinon les utilisateurs restent bloques sur une ancienne version.
+/index.html
+  Cache-Control: no-cache
+
+/flutter_service_worker.js
+  Cache-Control: no-cache

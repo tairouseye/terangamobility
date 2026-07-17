@@ -1,0 +1,4 @@
+# Netlify — application monopage (Flutter web + go_router).
+# Toute URL inconnue renvoie index.html pour que le routeur cote client
+# prenne le relais (sinon /client, /admin... donneraient un 404 au refresh).
+/*    /index.html   200
