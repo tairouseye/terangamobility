@@ -1,0 +1,140 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../core/theme/app_theme.dart';
+import '../../models/enums.dart';
+import '../../providers/auth_providers.dart';
+
+class SignupScreen extends ConsumerStatefulWidget {
+  const SignupScreen({super.key});
+
+  @override
+  ConsumerState<SignupScreen> createState() => _SignupScreenState();
+}
+
+class _SignupScreenState extends ConsumerState<SignupScreen> {
+  final _fullName = TextEditingController();
+  final _whatsapp = TextEditingController();
+  final _email = TextEditingController();
+  final _password = TextEditingController();
+  // Seuls client et partenaire s'auto-inscrivent ; l'admin est promu en base.
+  UserRole _role = UserRole.client;
+  bool _loading = false;
+  String? _error;
+
+  @override
+  void dispose() {
+    _fullName.dispose();
+    _whatsapp.dispose();
+    _email.dispose();
+    _password.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    if (_fullName.text.trim().isEmpty || _email.text.trim().isEmpty) {
+      setState(() => _error = 'Nom et email obligatoires.');
+      return;
+    }
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      await ref.read(authServiceProvider).signUp(
+            email: _email.text.trim(),
+            password: _password.text,
+            fullName: _fullName.text.trim(),
+            whatsapp: _whatsapp.text.trim(),
+            role: _role,
+          );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Compte cree. Tu peux te connecter.')),
+        );
+        context.go('/login');
+      }
+    } catch (e) {
+      setState(() => _error = 'Inscription impossible : $e');
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Creer un compte')),
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 420),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Text('Je suis :',
+                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 8),
+                  SegmentedButton<UserRole>(
+                    segments: const [
+                      ButtonSegment(
+                          value: UserRole.client, label: Text('Client')),
+                      ButtonSegment(
+                          value: UserRole.partnerKr,
+                          label: Text('Partenaire Coree')),
+                    ],
+                    selected: {_role},
+                    onSelectionChanged: (s) => setState(() => _role = s.first),
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: _fullName,
+                    decoration: const InputDecoration(labelText: 'Nom complet'),
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _whatsapp,
+                    keyboardType: TextInputType.phone,
+                    decoration:
+                        const InputDecoration(labelText: 'Numero WhatsApp'),
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _email,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(labelText: 'Email'),
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _password,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                        labelText: 'Mot de passe (min. 6 caracteres)'),
+                  ),
+                  if (_error != null) ...[
+                    const SizedBox(height: 12),
+                    Text(_error!, style: const TextStyle(color: AppColors.primary)),
+                  ],
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _loading ? null : _submit,
+                    child: _loading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                                color: Colors.white, strokeWidth: 2))
+                        : const Text('Creer mon compte'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

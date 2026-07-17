@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description"
+        content="TerangaMobility — Pieces detachees et vehicules importes de Coree. Devis, suivi maritime, livraison au Senegal.">
+  <meta name="theme-color" content="#1E3A5F">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="TerangaMobility">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>TerangaMobility — Parts & Vehicules</title>
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    /* Ecran de chargement affiche AVANT que Flutter ne demarre :
+       l'utilisateur voit immediatement la marque, pas une page blanche. */
+    html, body { margin: 0; padding: 0; height: 100%; background: #1E3A5F; }
+    #boot {
+      position: fixed; inset: 0; z-index: 9999;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: linear-gradient(160deg, #1E3A5F 0%, #15293F 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      transition: opacity .35s ease;
+    }
+    #boot .badge {
+      width: 76px; height: 76px; border-radius: 18px; background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 12px 30px rgba(0,0,0,.35); margin-bottom: 20px;
+    }
+    #boot .badge span { font-size: 40px; line-height: 1; }
+    #boot .brand { color: #fff; font-size: 24px; font-weight: 800; letter-spacing: -.5px; }
+    #boot .brand em { color: #C9A24B; font-style: normal; }
+    #boot .scope {
+      color: #C9A24B; font-size: 12px; letter-spacing: 2.5px;
+      font-weight: 700; margin-top: 6px;
+    }
+    #boot .ring {
+      margin-top: 28px; width: 34px; height: 34px; border-radius: 50%;
+      border: 3px solid rgba(255,255,255,.25); border-top-color: #C9A24B;
+      animation: spin .9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #boot.hide { opacity: 0; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <div id="boot">
+    <div class="badge"><span>⚙️</span></div>
+    <div class="brand">Teranga<em>Mobility</em></div>
+    <div class="scope">PARTS &amp; VEHICULES</div>
+    <div class="ring"></div>
+  </div>
+
+  <script>
+    // Retire l'ecran de chargement des que Flutter affiche sa 1re image.
+    window.addEventListener('flutter-first-frame', function () {
+      var boot = document.getElementById('boot');
+      if (!boot) return;
+      boot.classList.add('hide');
+      setTimeout(function () { boot.remove(); }, 400);
+    });
+  </script>
+
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>

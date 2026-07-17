@@ -1,0 +1,37 @@
+# Configuration Netlify — TerangaMobility (Parts & Vehicules)
+#
+# Le build Flutter est fait EN LOCAL (`flutter build web --release`), car le
+# SDK Flutter n'est pas present dans l'image de build Netlify par defaut.
+# On publie ensuite le dossier build/web.
+
+[build]
+  publish = "build/web"
+  # Pas de commande : le build est fait en local puis deploye.
+  command = ""
+
+# Application monopage : le routeur cote client gere les chemins.
+# (Double securite : web/_redirects est aussi copie dans build/web.)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# En-tetes de securite de base.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Les fichiers versionnes de Flutter peuvent etre caches longtemps,
+# mais jamais index.html ni flutter_service_worker.js (sinon l'app reste figee).
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/flutter_service_worker.js"
+  [headers.values]
+    Cache-Control = "no-cache"
