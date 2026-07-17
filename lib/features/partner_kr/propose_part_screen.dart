@@ -82,7 +82,7 @@ class _ProposePartScreenState extends ConsumerState<ProposePartScreen> {
       ref.invalidate(quotesForRequestProvider(widget.request.id!));
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Proposition envoyee a Teranga Parts.')),
+          const SnackBar(content: Text('Proposition envoyee a TerangaMobility.')),
         );
         Navigator.of(context).pop();
       }

@@ -18,7 +18,7 @@ class AdminDashboard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(currentProfileProvider).value;
     return DashboardScaffold(
-      title: 'Admin Teranga Parts',
+      title: 'Espace Admin',
       children: [
         Text('Bonjour ${profile?.fullName ?? ''} 👋',
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),

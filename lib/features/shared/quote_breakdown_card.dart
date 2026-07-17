@@ -20,7 +20,7 @@ class QuoteBreakdownCard extends StatelessWidget {
             _row('Prix de la piece', b.partPrice),
             _row('Transport FedEx', b.fedexCost),
             _row('Douane estimee', b.customsCost),
-            _row('Commission Teranga Parts', b.commission),
+            _row('Commission TerangaMobility', b.commission),
             const Divider(height: 24),
             _row('TOTAL', b.total, bold: true, color: AppColors.anthracite),
             const SizedBox(height: 12),

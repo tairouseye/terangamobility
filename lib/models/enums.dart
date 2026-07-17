@@ -16,7 +16,7 @@ enum UserRole {
   String get label => switch (this) {
         UserRole.client => 'Client',
         UserRole.partnerKr => 'Partenaire Coree',
-        UserRole.admin => 'Admin Teranga Parts',
+        UserRole.admin => 'Administrateur',
       };
 
   static UserRole fromDb(String? value) => switch (value) {

@@ -21,7 +21,7 @@
 // =====================================================================
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { COLORS, FUELS, REGIONS, TRANSMISSIONS, tr } from "./mappings.ts";
+import { cleanBrand, COLORS, FUELS, REGIONS, TRANSMISSIONS, tr } from "./mappings.ts";
 
 // --- Reglages --------------------------------------------------------
 const PAGE_SIZE = 20; // annonces recuperees dans la liste
@@ -151,7 +151,7 @@ async function fetchDetail(item: ListItem): Promise<VehicleRow | null> {
   return {
     reference: `EC-${item.id}`,
     source: "encar",
-    brand: cat.manufacturerEnglishName ?? cat.manufacturerName ?? "Inconnu",
+    brand: cleanBrand(cat.manufacturerEnglishName ?? cat.manufacturerName),
     model: cat.modelGroupEnglishName ?? cat.modelName ?? "Inconnu",
     year: cat.formYear ? parseInt(String(cat.formYear), 10) : null,
     version: version.length > 0 ? version : null,

@@ -80,7 +80,7 @@ class _DemoLanding extends StatelessWidget {
                   const SizedBox(height: 12),
                   _RoleButton(
                     icon: Icons.admin_panel_settings,
-                    title: 'Admin Teranga Parts',
+                    title: 'Espace Admin',
                     subtitle: 'Devis, commandes, expeditions',
                     onTap: () => _open(context, const AdminDashboard()),
                   ),

@@ -49,6 +49,26 @@ export const MODELS: Record<string, string> = {
   "코란도": "Korando",
 };
 
+// Noms de marque bruts d'Encar -> nom commercial propre.
+export const BRAND_CLEAN: Record<string, string> = {
+  "KG_Mobility_Ssangyong": "SsangYong",
+  "KG Mobility": "SsangYong",
+  "SsangYong": "SsangYong",
+  "Renault Korea": "Renault",
+  "Renault Samsung": "Renault",
+  "Chevrolet(GM Daewoo)": "Chevrolet",
+};
+
+/// Nettoie un nom de marque (mapping connu + heuristique SsangYong).
+export function cleanBrand(b?: string | null): string {
+  if (!b || b.trim().length === 0) return "Inconnu";
+  if (BRAND_CLEAN[b]) return BRAND_CLEAN[b];
+  if (/ssangyong/i.test(b)) return "SsangYong";
+  if (/chevrolet/i.test(b)) return "Chevrolet";
+  if (/renault/i.test(b)) return "Renault";
+  return b.replace(/_/g, " ").trim();
+}
+
 export const FUELS: Record<string, string> = {
   "가솔린": "Essence",
   "디젤": "Diesel",
