@@ -87,25 +87,14 @@ class _Detail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Contenu borne et centre par bloc : plein ecran sur telephone, largeur
-    // maitrisee sur laptop/desktop (evite une photo geante en pleine largeur).
-    // La ListView reste la racine pour se dimensionner correctement.
     return ListView(
       children: [
-        Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 900),
-            child: _Gallery(photos: vehicle.photos),
-          ),
-        ),
-        Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 900),
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+        _Gallery(photos: vehicle.photos),
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               Text(vehicle.title,
                   style: const TextStyle(
                       fontSize: 22, fontWeight: FontWeight.w800)),
@@ -173,8 +162,6 @@ class _Detail extends StatelessWidget {
               ],
               const SizedBox(height: 12),
             ],
-          ),
-        ),
           ),
         ),
       ],
@@ -293,8 +280,7 @@ class _GalleryState extends State<_Gallery> {
                 itemBuilder: (_, i) => _img(
                     // Image principale : resolution ajustee a la largeur ecran.
                     encarPhotoAdaptive(widget.photos[i],
-                        logicalWidth:
-                            MediaQuery.of(context).size.width.clamp(0, 900),
+                        logicalWidth: MediaQuery.of(context).size.width,
                         devicePixelRatio:
                             MediaQuery.of(context).devicePixelRatio,
                         ratio: 16 / 10),
