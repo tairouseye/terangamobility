@@ -38,6 +38,12 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       setState(() => _error = 'Nom et email obligatoires.');
       return;
     }
+    final waDigits = _whatsapp.text.replaceAll(RegExp(r'[^0-9]'), '');
+    if (waDigits.length < 8) {
+      setState(() => _error =
+          'Un numéro WhatsApp valide est obligatoire (indispensable pour le suivi de vos commandes).');
+      return;
+    }
     setState(() {
       _loading = true;
       _error = null;
@@ -86,8 +92,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   TextField(
                     controller: _whatsapp,
                     keyboardType: TextInputType.phone,
-                    decoration:
-                        const InputDecoration(labelText: 'Numéro WhatsApp'),
+                    decoration: const InputDecoration(
+                      labelText: 'Numéro WhatsApp *',
+                      helperText: 'Obligatoire — utilisé pour le suivi de vos commandes',
+                    ),
                   ),
                   const SizedBox(height: 12),
                   TextField(

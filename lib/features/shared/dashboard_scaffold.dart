@@ -43,9 +43,17 @@ class DashboardScaffold extends ConsumerWidget {
       floatingActionButton: floatingActionButton,
       body: SafeArea(
         bottom: false,
-        child: ListView(
-          padding: const EdgeInsets.all(20),
-          children: children,
+        // Responsive : le contenu est centré et borné à ~760 px sur grand écran
+        // via un padding latéral (la ListView reste l'enfant direct du body).
+        child: LayoutBuilder(
+          builder: (context, c) {
+            const maxW = 760.0;
+            final side = c.maxWidth > maxW + 40 ? (c.maxWidth - maxW) / 2 : 20.0;
+            return ListView(
+              padding: EdgeInsets.fromLTRB(side, 20, side, 20),
+              children: children,
+            );
+          },
         ),
       ),
       bottomNavigationBar: const AppFooter(),

@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../core/config/app_info.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/formatters.dart';
+import '../../core/utils/open_external.dart';
 import '../../models/vehicle_enums.dart';
 import '../../models/vehicle_order.dart';
 import '../../providers/vehicle_catalog_providers.dart';
@@ -155,11 +156,10 @@ class _VehicleOrderManageScreenState
   }
 
   Future<void> _openDoc(String name) async {
+    final path = '${widget.order.clientId}/$name-${widget.order.id}.pdf';
     try {
-      final path = '${widget.order.clientId}/$name-${widget.order.id}.pdf';
-      final url =
-          await ref.read(vehicleOrderServiceProvider).documentUrl(path);
-      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+      await openSignedUrl(
+          ref.read(vehicleOrderServiceProvider).documentUrl(path));
     } catch (e) {
       _snack('Ouverture impossible : $e');
     }
