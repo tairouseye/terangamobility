@@ -62,6 +62,22 @@
   </div>
 
   <script>
+    // Anti-cache : desinscrit tout ancien service worker et vide ses caches.
+    // Evite qu'un build precedent reste servi en boucle (probleme "nouvelle
+    // version"). L'app est deployee sans service worker (--pwa-strategy=none).
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function (regs) {
+        regs.forEach(function (r) { r.unregister(); });
+      }).catch(function () {});
+      if (window.caches && caches.keys) {
+        caches.keys().then(function (keys) {
+          keys.forEach(function (k) { caches.delete(k); });
+        }).catch(function () {});
+      }
+    }
+  </script>
+
+  <script>
     // Retire l'ecran de chargement des que Flutter affiche sa 1re image.
     window.addEventListener('flutter-first-frame', function () {
       var boot = document.getElementById('boot');
