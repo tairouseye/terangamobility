@@ -41,13 +41,14 @@ const KRW_TO_FCFA = 0.45; // taux KRW -> FCFA (ajustable selon le cours)
 const MARGIN_THRESHOLD = 6000000; // FCFA
 const MARGIN_LOW = 1300000; // ajoute si prix converti < seuil
 const MARGIN_HIGH = 1500000; // ajoute si prix converti >= seuil
+const PRICE_STEP = 100000; // arrondi commercial final -> prix uniformes
 
 function computePriceFcfa(priceManwon?: number): number | null {
   if (!priceManwon || priceManwon <= 0) return null;
   const raw = priceManwon * KRW_PER_MANWON * KRW_TO_FCFA;
-  const rounded = Math.round(raw / 10000) * 10000; // arrondi au 10 000
-  const margin = rounded < MARGIN_THRESHOLD ? MARGIN_LOW : MARGIN_HIGH;
-  return rounded + margin;
+  const margin = raw < MARGIN_THRESHOLD ? MARGIN_LOW : MARGIN_HIGH;
+  // Arrondi au 100 000 FCFA le plus proche pour uniformiser l'affichage.
+  return Math.round((raw + margin) / PRICE_STEP) * PRICE_STEP;
 }
 
 const HEADERS: HeadersInit = {
