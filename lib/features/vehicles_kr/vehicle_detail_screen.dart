@@ -244,14 +244,7 @@ class _Gallery extends StatefulWidget {
 }
 
 class _GalleryState extends State<_Gallery> {
-  final _controller = PageController();
   int _index = 0;
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -266,82 +259,53 @@ class _GalleryState extends State<_Gallery> {
         ),
       );
     }
+    // Index securise (au cas ou la liste changerait).
+    final index = _index.clamp(0, widget.photos.length - 1);
+    final dpr = MediaQuery.of(context).devicePixelRatio;
+    final w = MediaQuery.of(context).size.width;
     return Column(
       children: [
+        // Image principale unique (pas de PageView : evite le bug de
+        // composition des <img> HTML dans un viewport scrollable sur web).
         AspectRatio(
           aspectRatio: 16 / 10,
-          child: Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              PageView.builder(
-                controller: _controller,
-                itemCount: widget.photos.length,
-                onPageChanged: (i) => setState(() => _index = i),
-                itemBuilder: (_, i) => _img(
-                    // Image principale : resolution ajustee a la largeur ecran.
-                    encarPhotoAdaptive(widget.photos[i],
-                        logicalWidth: MediaQuery.of(context).size.width,
-                        devicePixelRatio:
-                            MediaQuery.of(context).devicePixelRatio,
-                        ratio: 16 / 10),
-                    BoxFit.cover),
-              ),
-              if (widget.photos.length > 1)
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(
-                      widget.photos.length,
-                      (i) => Container(
-                        width: 7,
-                        height: 7,
-                        margin: const EdgeInsets.symmetric(horizontal: 3),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color:
-                              i == _index ? AppColors.primary : Colors.white70,
+          child: _img(
+              encarPhotoAdaptive(widget.photos[index],
+                  logicalWidth: w, devicePixelRatio: dpr, ratio: 16 / 10),
+              BoxFit.cover),
+        ),
+        // Bande de miniatures en Wrap (non scrollable) : on change l'image
+        // principale au clic.
+        if (widget.photos.length > 1)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (var i = 0; i < widget.photos.length; i++)
+                  GestureDetector(
+                    onTap: () => setState(() => _index = i),
+                    child: Container(
+                      width: 74,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: i == index
+                              ? AppColors.primary
+                              : Colors.transparent,
+                          width: 2,
                         ),
                       ),
+                      clipBehavior: Clip.antiAlias,
+                      child: _img(
+                          encarPhoto(widget.photos[i],
+                              height: 200, ratio: 16 / 10),
+                          BoxFit.cover),
                     ),
                   ),
-                ),
-            ],
-          ),
-        ),
-        // Bande de miniatures (les 4 photos visibles d'un coup).
-        if (widget.photos.length > 1)
-          SizedBox(
-            height: 66,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              itemCount: widget.photos.length,
-              separatorBuilder: (_, _) => const SizedBox(width: 8),
-              itemBuilder: (_, i) => GestureDetector(
-                onTap: () {
-                  _controller.animateToPage(i,
-                      duration: const Duration(milliseconds: 250),
-                      curve: Curves.easeOut);
-                },
-                child: Container(
-                  width: 74,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: i == _index
-                          ? AppColors.primary
-                          : Colors.transparent,
-                      width: 2,
-                    ),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  // Miniature : petite version (bande sous la galerie).
-                  child: _img(
-                      encarPhoto(widget.photos[i], height: 200, ratio: 16 / 10),
-                      BoxFit.cover),
-                ),
-              ),
+              ],
             ),
           ),
       ],
