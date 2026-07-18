@@ -49,31 +49,28 @@ class _PriceCta extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isLoggedIn = ref.watch(authServiceProvider).currentUser != null;
 
-    // Barre compacte : un seul bouton, centre et borne comme le contenu.
+    // Barre compacte : un seul bouton pleine largeur. PAS de Center ici :
+    // dans un bottomNavigationBar, Center s'etire sur toute la hauteur et
+    // ecrase le corps (fiche vide, bouton au milieu de l'ecran).
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 900),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  if (isLoggedIn) {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (_) => RequestPriceScreen(vehicle: vehicle),
-                    ));
-                  } else {
-                    context.push('/login');
-                  }
-                },
-                icon: Icon(isLoggedIn ? Icons.directions_car : Icons.login),
-                label: Text(isLoggedIn
-                    ? 'Commander ce véhicule'
-                    : 'Se connecter pour commander'),
-              ),
-            ),
+        child: SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: () {
+              if (isLoggedIn) {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => RequestPriceScreen(vehicle: vehicle),
+                ));
+              } else {
+                context.push('/login');
+              }
+            },
+            icon: Icon(isLoggedIn ? Icons.directions_car : Icons.login),
+            label: Text(isLoggedIn
+                ? 'Commander ce véhicule'
+                : 'Se connecter pour commander'),
           ),
         ),
       ),
