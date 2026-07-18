@@ -9,13 +9,19 @@ class VehicleTimeline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final steps = VehicleOrderStatus.values;
+    final steps = VehicleOrderStatus.trackingSteps;
+    // Phase reservation (avant l'acompte) ou reservation expiree : aucune
+    // etape maritime encore atteinte.
+    final currentIdx = (current == VehicleOrderStatus.expiree ||
+            current.isReservationPhase)
+        ? -1
+        : current.index;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: List.generate(steps.length, (i) {
         final s = steps[i];
-        final reached = s.index <= current.index;
-        final isCurrent = s.index == current.index;
+        final reached = currentIdx >= s.index;
+        final isCurrent = currentIdx == s.index;
         final isLast = i == steps.length - 1;
         return IntrinsicHeight(
           child: Row(
@@ -43,7 +49,7 @@ class VehicleTimeline extends StatelessWidget {
                     Expanded(
                       child: Container(
                         width: 2,
-                        color: s.index < current.index
+                        color: s.index < currentIdx
                             ? AppColors.vert
                             : AppColors.grisClair,
                       ),

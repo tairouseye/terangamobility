@@ -142,6 +142,54 @@ class VehicleOrderService {
         params: {'p_order_id': orderId, 'p_kind': kind});
   }
 
+  // ------------------------------------------------------------------
+  // RESERVATION
+  // ------------------------------------------------------------------
+
+  /// Client : reserve un vehicule (cree la commande + verrouille le listing 48 h).
+  /// Renvoie l'id de la commande creee.
+  Future<String> reserveVehicle(String reference, int reservationFee) async {
+    final id = await _client.rpc('reserve_vehicle', params: {
+      'p_reference': reference,
+      'p_reservation_fee': reservationFee,
+    });
+    return id as String;
+  }
+
+  /// Client : declare avoir paye l'acompte de reservation (mobile money).
+  Future<void> declareReservationPayment(String orderId, String method) async {
+    await _client.rpc('declare_reservation_payment',
+        params: {'p_order_id': orderId, 'p_method': method});
+  }
+
+  /// Client : choisit un creneau de RDV en agence pour payer le gros acompte cash.
+  Future<void> bookDepositAppointment(String orderId, DateTime at) async {
+    await _client.from('vehicle_orders').update(
+        {'deposit_appointment_at': at.toIso8601String()}).eq('id', orderId);
+  }
+
+  /// Admin : confirme la reception de l'acompte de reservation -> 'reservee'.
+  Future<void> confirmReservation(String orderId, String method) async {
+    await _client.from('vehicle_orders').update({
+      'reservation_paid': true,
+      'reservation_method': method,
+      'status': 'reservee',
+    }).eq('id', orderId);
+  }
+
+  /// Admin : vehicule securise chez le fournisseur -> en attente du gros acompte.
+  Future<void> markSecuredOnEncar(String orderId) async {
+    await _client
+        .from('vehicle_orders')
+        .update({'status': 'en_attente_acompte'}).eq('id', orderId);
+  }
+
+  /// Admin : relache la reservation (annulation) + libere le vehicule.
+  Future<void> releaseReservation(String orderId) async {
+    await _client.rpc('admin_release_reservation',
+        params: {'p_order_id': orderId});
+  }
+
   // --- ADMIN : confirmation des paiements (apres reception reelle) ---
   Future<void> confirmDeposit(String orderId, String method) async {
     await _client.from('vehicle_orders').update({

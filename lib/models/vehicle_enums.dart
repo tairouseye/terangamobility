@@ -30,8 +30,13 @@ enum VehicleRequestStatus {
           orElse: () => VehicleRequestStatus.enAttenteDevis);
 }
 
-/// Statut d'une commande vehicule = etapes du suivi maritime.
+/// Statut d'une commande vehicule.
+///
+/// Prelude reservation (`enAttenteReservation`, `reservee`) + etapes du suivi
+/// maritime + etat terminal `expiree`. L'ordre suit l'enum Postgres.
 enum VehicleOrderStatus {
+  enAttenteReservation,
+  reservee,
   enAttenteAcompte,
   commandeConfirmee,
   vehiculeAchete,
@@ -40,9 +45,12 @@ enum VehicleOrderStatus {
   navireEnMer,
   arrivePort,
   pretRecuperation,
-  livre;
+  livre,
+  expiree;
 
   String get dbValue => switch (this) {
+        VehicleOrderStatus.enAttenteReservation => 'en_attente_reservation',
+        VehicleOrderStatus.reservee => 'reservee',
         VehicleOrderStatus.enAttenteAcompte => 'en_attente_acompte',
         VehicleOrderStatus.commandeConfirmee => 'commande_confirmee',
         VehicleOrderStatus.vehiculeAchete => 'vehicule_achete',
@@ -52,9 +60,13 @@ enum VehicleOrderStatus {
         VehicleOrderStatus.arrivePort => 'arrive_port',
         VehicleOrderStatus.pretRecuperation => 'pret_recuperation',
         VehicleOrderStatus.livre => 'livre',
+        VehicleOrderStatus.expiree => 'expiree',
       };
 
   String get label => switch (this) {
+        VehicleOrderStatus.enAttenteReservation =>
+          'En attente de réservation',
+        VehicleOrderStatus.reservee => 'Réservé',
         VehicleOrderStatus.enAttenteAcompte => 'En attente d\'acompte',
         VehicleOrderStatus.commandeConfirmee => 'Commande confirmée',
         VehicleOrderStatus.vehiculeAchete => 'Véhicule acheté',
@@ -64,18 +76,38 @@ enum VehicleOrderStatus {
         VehicleOrderStatus.arrivePort => 'Arrivé au port',
         VehicleOrderStatus.pretRecuperation => 'Prêt à être récupéré',
         VehicleOrderStatus.livre => 'Livré',
+        VehicleOrderStatus.expiree => 'Réservation expirée',
       };
+
+  /// Etapes affichees dans la timeline maritime (hors prelude reservation et
+  /// etat terminal `expiree`).
+  static const List<VehicleOrderStatus> trackingSteps = [
+    enAttenteAcompte,
+    commandeConfirmee,
+    vehiculeAchete,
+    preparation,
+    chargeContainer,
+    navireEnMer,
+    arrivePort,
+    pretRecuperation,
+    livre,
+  ];
+
+  bool get isReservationPhase =>
+      this == enAttenteReservation || this == reservee;
 
   int get step => index + 1;
 
-  Color get color {
-    if (this == VehicleOrderStatus.livre ||
-        this == VehicleOrderStatus.pretRecuperation) {
-      return AppColors.vert;
-    }
-    if (this == VehicleOrderStatus.enAttenteAcompte) return AppColors.gris;
-    return AppColors.ambre;
-  }
+  Color get color => switch (this) {
+        VehicleOrderStatus.livre ||
+        VehicleOrderStatus.pretRecuperation =>
+          AppColors.vert,
+        VehicleOrderStatus.enAttenteReservation => AppColors.ambre,
+        VehicleOrderStatus.reservee => AppColors.primary,
+        VehicleOrderStatus.expiree => AppColors.gris,
+        VehicleOrderStatus.enAttenteAcompte => AppColors.gris,
+        _ => AppColors.ambre,
+      };
 
   static VehicleOrderStatus fromDb(String? v) =>
       VehicleOrderStatus.values.firstWhere((s) => s.dbValue == v,

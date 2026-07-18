@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/config/vehicle_config.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/encar_image.dart';
 import '../../core/utils/formatters.dart';
 import '../../models/vehicle_listing.dart';
 import '../../providers/auth_providers.dart';
 import '../../providers/vehicle_catalog_providers.dart';
+import '../../providers/vehicle_order_providers.dart';
 import 'request_price_screen.dart';
+import 'reservation_payment_screen.dart';
 import 'widgets/customs_terms_notice.dart';
 
 /// Fiche detaillee d'un véhicule. Le prix n'est jamais affiche : un bouton
@@ -39,40 +42,126 @@ class VehicleDetailScreen extends ConsumerWidget {
   }
 }
 
-/// Bouton « Demander le prix ». C'est ici — et seulement ici — qu'un compte
-/// devient necessaire : la consultation du catalogue reste libre.
-class _PriceCta extends ConsumerWidget {
+/// Barre d'action de la fiche : « Réserver » (prix connu), « Demander le prix »
+/// (prix sur demande) ou « Déjà réservé » (véhicule non disponible).
+/// C'est ici — et seulement ici — qu'un compte devient necessaire.
+class _PriceCta extends ConsumerStatefulWidget {
   final VehicleListing vehicle;
   const _PriceCta({required this.vehicle});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_PriceCta> createState() => _PriceCtaState();
+}
+
+class _PriceCtaState extends ConsumerState<_PriceCta> {
+  bool _busy = false;
+
+  Future<void> _reserve() async {
+    final v = widget.vehicle;
+    const fee = VehicleConfig.reservationFeeFcfa;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Réserver ce véhicule'),
+        content: Text(
+            'Pour bloquer ce véhicule et le sécuriser en Corée, un acompte de '
+            'réservation de ${Formatters.fcfa(fee)} est demandé (payable par '
+            'Wave / Orange Money).\n\n'
+            '• Réservation valable 48 h.\n'
+            '• Montant déduit du prix total.\n'
+            '• Non remboursable en cas d\'annulation de votre part.\n\n'
+            'Le reste de l\'acompte se règle ensuite en espèces (RDV agence) '
+            'ou par virement.'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Annuler')),
+          ElevatedButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Réserver')),
+        ],
+      ),
+    );
+    if (ok != true) return;
+
+    setState(() => _busy = true);
+    try {
+      final orderId = await ref
+          .read(vehicleOrderServiceProvider)
+          .reserveVehicle(v.reference, fee);
+      ref.invalidate(vehicleListingsProvider);
+      ref.invalidate(vehicleByRefProvider(v.reference));
+      ref.invalidate(myVehicleOrdersProvider);
+      if (!mounted) return;
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) => ReservationPaymentScreen(
+          orderId: orderId,
+          vehicleTitle: v.title,
+          feeFcfa: fee,
+        ),
+      ));
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Réservation impossible : $e')));
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final v = widget.vehicle;
     final isLoggedIn = ref.watch(authServiceProvider).currentUser != null;
+    final hasPrice = v.priceFcfa != null;
 
     // Barre compacte : un seul bouton pleine largeur. PAS de Center ici :
     // dans un bottomNavigationBar, Center s'etire sur toute la hauteur et
-    // ecrase le corps (fiche vide, bouton au milieu de l'ecran).
+    // ecrase le corps.
+    Widget button;
+    if (!v.isAvailable) {
+      button = ElevatedButton.icon(
+        onPressed: null,
+        icon: const Icon(Icons.lock_outline),
+        label: const Text('Déjà réservé'),
+      );
+    } else if (!isLoggedIn) {
+      button = ElevatedButton.icon(
+        onPressed: () => context.push('/login'),
+        icon: const Icon(Icons.login),
+        label: Text(hasPrice
+            ? 'Se connecter pour réserver'
+            : 'Se connecter pour commander'),
+      );
+    } else if (hasPrice) {
+      button = ElevatedButton.icon(
+        onPressed: _busy ? null : _reserve,
+        icon: _busy
+            ? const SizedBox(
+                height: 18,
+                width: 18,
+                child: CircularProgressIndicator(
+                    color: Colors.white, strokeWidth: 2))
+            : const Icon(Icons.lock_clock),
+        label: Text(_busy
+            ? 'Réservation…'
+            : 'Réserver (${Formatters.fcfa(VehicleConfig.reservationFeeFcfa)})'),
+      );
+    } else {
+      button = ElevatedButton.icon(
+        onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+          builder: (_) => RequestPriceScreen(vehicle: v),
+        )),
+        icon: const Icon(Icons.directions_car),
+        label: const Text('Demander le prix'),
+      );
+    }
+
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
-        child: SizedBox(
-          width: double.infinity,
-          child: ElevatedButton.icon(
-            onPressed: () {
-              if (isLoggedIn) {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => RequestPriceScreen(vehicle: vehicle),
-                ));
-              } else {
-                context.push('/login');
-              }
-            },
-            icon: Icon(isLoggedIn ? Icons.directions_car : Icons.login),
-            label: Text(isLoggedIn
-                ? 'Commander ce véhicule'
-                : 'Se connecter pour commander'),
-          ),
-        ),
+        child: SizedBox(width: double.infinity, child: button),
       ),
     );
   }
@@ -121,6 +210,22 @@ class _Detail extends StatelessWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: 12),
+              if (!vehicle.isAvailable)
+                _banner(
+                  icon: Icons.lock_outline,
+                  color: AppColors.gris,
+                  text: 'Ce véhicule est déjà réservé par un autre client.',
+                )
+              else if (vehicle.priceFcfa != null)
+                _banner(
+                  icon: Icons.bolt,
+                  color: AppColors.ambre,
+                  text:
+                      'Ces véhicules partent vite. Réservez-le avec un acompte de '
+                      '${Formatters.fcfa(VehicleConfig.reservationFeeFcfa)} '
+                      '(Wave / Orange Money) — valable 48 h, déduit du prix.',
+                ),
               const SizedBox(height: 16),
               const CustomsTermsNotice(),
               const SizedBox(height: 20),
@@ -162,6 +267,30 @@ class _Detail extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _banner(
+      {required IconData icon, required Color color, required String text}) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 20, color: color),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(text,
+                style: const TextStyle(
+                    fontSize: 12.5, color: AppColors.anthracite)),
+          ),
+        ],
+      ),
     );
   }
 }

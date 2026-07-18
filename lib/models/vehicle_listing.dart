@@ -25,6 +25,7 @@ class VehicleListing {
   final List<String> photos;
   final num? priceFcfa; // prix affiche en FCFA (converti + marge)
   final bool isActive;
+  final String availability; // available | reserved | sold | unavailable
 
   const VehicleListing({
     required this.id,
@@ -49,7 +50,11 @@ class VehicleListing {
     this.photos = const [],
     this.priceFcfa,
     this.isActive = true,
+    this.availability = 'available',
   });
+
+  bool get isAvailable => availability == 'available';
+  bool get isReserved => availability == 'reserved';
 
   String get title =>
       '$brand $model${year != null ? ' $year' : ''}';
@@ -100,5 +105,6 @@ class VehicleListing {
         photos: _strList(j['photos']),
         priceFcfa: j['price_fcfa'] as num?,
         isActive: (j['is_active'] ?? true) as bool,
+        availability: (j['availability'] ?? 'available') as String,
       );
 }

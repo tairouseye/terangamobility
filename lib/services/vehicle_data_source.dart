@@ -34,6 +34,7 @@ class SupabaseVehicleDataSource implements VehicleDataSource {
         .from(_table)
         .select()
         .eq('is_active', true)
+        .eq('availability', 'available') // masque reserves / vendus / retires
         .gte('year', minYear);
 
     if (filter.brand != null) query = query.eq('brand', filter.brand!);

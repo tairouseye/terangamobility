@@ -29,6 +29,7 @@ class _VehicleOrderManageScreenState
   DateTime? _arrival;
   bool _saving = false;
   // État local (le widget.order passe est immuable).
+  late bool _reservationPaid;
   late bool _depositPaid;
   late bool _balancePaid;
   late bool _hasInvoice;
@@ -43,10 +44,105 @@ class _VehicleOrderManageScreenState
     _company = TextEditingController(text: widget.order.shippingCompany ?? '');
     _departure = widget.order.estimatedDeparture;
     _arrival = widget.order.estimatedArrival;
+    _reservationPaid = widget.order.reservationPaid;
     _depositPaid = widget.order.depositPaid;
     _balancePaid = widget.order.balancePaid;
     _hasInvoice = widget.order.hasInvoice;
     _hasContract = widget.order.hasContract;
+  }
+
+  Future<String?> _pickReservationMethod() {
+    return showModalBottomSheet<String>(
+      context: context,
+      builder: (_) => SafeArea(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          const Padding(
+            padding: EdgeInsets.all(16),
+            child: Text('Réservation reçue via',
+                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+          ),
+          for (final m in const ['Wave', 'Orange Money'])
+            ListTile(
+              leading: const Icon(Icons.account_balance_wallet,
+                  color: AppColors.vert),
+              title: Text(m),
+              onTap: () => Navigator.pop(context, m),
+            ),
+        ]),
+      ),
+    );
+  }
+
+  Future<void> _confirmReservation() async {
+    final method = await _pickReservationMethod();
+    if (method == null) return;
+    setState(() => _busyDoc = true);
+    try {
+      await ref
+          .read(vehicleOrderServiceProvider)
+          .confirmReservation(widget.order.id!, method);
+      setState(() {
+        _reservationPaid = true;
+        _status = VehicleOrderStatus.reservee;
+      });
+      ref.invalidate(vehicleOrdersAdminProvider);
+      _snack('Réservation confirmée');
+    } catch (e) {
+      _snack('Erreur : $e');
+    } finally {
+      if (mounted) setState(() => _busyDoc = false);
+    }
+  }
+
+  Future<void> _secureEncar() async {
+    setState(() => _busyDoc = true);
+    try {
+      await ref
+          .read(vehicleOrderServiceProvider)
+          .markSecuredOnEncar(widget.order.id!);
+      setState(() => _status = VehicleOrderStatus.enAttenteAcompte);
+      ref.invalidate(vehicleOrdersAdminProvider);
+      _snack('Véhicule sécurisé — en attente de l\'acompte');
+    } catch (e) {
+      _snack('Erreur : $e');
+    } finally {
+      if (mounted) setState(() => _busyDoc = false);
+    }
+  }
+
+  Future<void> _releaseReservation() async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Relâcher la réservation ?'),
+        content: const Text(
+            'Le véhicule sera remis au catalogue et la commande marquée '
+            'expirée. Action irréversible.'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Annuler')),
+          ElevatedButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Relâcher')),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    setState(() => _busyDoc = true);
+    try {
+      await ref
+          .read(vehicleOrderServiceProvider)
+          .releaseReservation(widget.order.id!);
+      setState(() => _status = VehicleOrderStatus.expiree);
+      ref.invalidate(vehicleOrdersAdminProvider);
+      ref.invalidate(vehicleListingsProvider);
+      _snack('Réservation relâchée, véhicule remis au catalogue');
+    } catch (e) {
+      _snack('Erreur : $e');
+    } finally {
+      if (mounted) setState(() => _busyDoc = false);
+    }
   }
 
   Future<String?> _pickPaymentMethod() {
@@ -227,11 +323,84 @@ class _VehicleOrderManageScreenState
                 padding: const EdgeInsets.all(14),
                 child: Column(children: [
                   _row('Prix total', o.totalPrice),
+                  if (o.reservationFee != null)
+                    _row('Réservation', o.reservationFee,
+                        paid: _reservationPaid),
                   _row('Acompte (70%)', o.depositAmount, paid: _depositPaid),
                   _row('Solde (30%)', o.balanceAmount, paid: _balancePaid),
                 ]),
               ),
             ),
+            // --- Réservation (verrouillage véhicule) ---
+            if (_status == VehicleOrderStatus.enAttenteReservation ||
+                _status == VehicleOrderStatus.reservee ||
+                _status == VehicleOrderStatus.expiree) ...[
+              const Divider(height: 32),
+              const Text('Réservation',
+                  style: TextStyle(fontWeight: FontWeight.w700)),
+              const SizedBox(height: 4),
+              Text(
+                o.reservationMethod != null
+                    ? 'Le client déclare avoir payé via ${o.reservationMethod}.'
+                    : 'En attente de la déclaration de paiement du client.',
+                style: const TextStyle(fontSize: 12.5, color: AppColors.gris),
+              ),
+              const SizedBox(height: 10),
+              if (_status == VehicleOrderStatus.enAttenteReservation)
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _busyDoc ? null : _confirmReservation,
+                    icon: const Icon(Icons.verified),
+                    label: Text(
+                        'Confirmer la réservation reçue (${Formatters.fcfa(o.reservationFee)})'),
+                  ),
+                ),
+              if (_status == VehicleOrderStatus.reservee)
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _busyDoc ? null : _secureEncar,
+                    icon: const Icon(Icons.verified_user),
+                    label: const Text('Véhicule sécurisé sur Encar'),
+                  ),
+                ),
+              if (_status == VehicleOrderStatus.expiree)
+                const Text('Réservation expirée — véhicule remis au catalogue.',
+                    style: TextStyle(color: AppColors.gris, fontSize: 12.5)),
+              if (_status == VehicleOrderStatus.enAttenteReservation ||
+                  _status == VehicleOrderStatus.reservee) ...[
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: _busyDoc ? null : _releaseReservation,
+                    icon: const Icon(Icons.lock_open, size: 18),
+                    label: const Text('Relâcher la réservation'),
+                  ),
+                ),
+              ],
+            ],
+            if (o.depositAppointmentAt != null) ...[
+              const SizedBox(height: 10),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                decoration: BoxDecoration(
+                  color: AppColors.grisClair,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(children: [
+                  const Icon(Icons.event, size: 18, color: AppColors.primary),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                        'RDV acompte (agence) : ${Formatters.date(o.depositAppointmentAt)}',
+                        style: const TextStyle(fontSize: 13)),
+                  ),
+                ]),
+              ),
+            ],
             const Divider(height: 32),
             // --- Confirmation des paiements (virement/espèces) ---
             const Text('Paiements (virement / espèces)',
