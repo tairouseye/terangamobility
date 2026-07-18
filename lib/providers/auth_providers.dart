@@ -22,6 +22,11 @@ final authStateProvider = StreamProvider<AuthState>((ref) {
   return ref.watch(authServiceProvider).onAuthChange;
 });
 
+/// Vrai quand l'utilisateur arrive via un lien de recuperation de mot de passe
+/// (evenement passwordRecovery) : le routeur force alors l'ecran « nouveau
+/// mot de passe ».
+final passwordRecoveryProvider = StateProvider<bool>((ref) => false);
+
 /// Profil de l'utilisateur courant (null si deconnecte).
 /// Recharge automatiquement a chaque changement d'auth.
 final currentProfileProvider = FutureProvider<AppUser?>((ref) async {

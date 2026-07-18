@@ -18,6 +18,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _email = TextEditingController();
   final _password = TextEditingController();
   bool _loading = false;
+  bool _obscure = true;
   String? _error;
 
   @override
@@ -45,6 +46,59 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
+  Future<void> _forgotPassword() async {
+    final ctrl = TextEditingController(text: _email.text.trim());
+    final email = await showDialog<String>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Mot de passe oublié'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+                'Entrez votre email : nous vous envoyons un lien pour définir '
+                'un nouveau mot de passe.',
+                style: TextStyle(fontSize: 13)),
+            const SizedBox(height: 12),
+            TextField(
+              controller: ctrl,
+              keyboardType: TextInputType.emailAddress,
+              autofocus: true,
+              decoration: const InputDecoration(labelText: 'Email'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Annuler')),
+          ElevatedButton(
+              onPressed: () => Navigator.pop(context, ctrl.text.trim()),
+              child: const Text('Envoyer')),
+        ],
+      ),
+    );
+    ctrl.dispose();
+    if (email == null || email.isEmpty) return;
+    try {
+      await ref
+          .read(authServiceProvider)
+          .sendPasswordReset(email, redirectTo: Uri.base.origin);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+                'Si un compte existe pour $email, un lien de réinitialisation '
+                'a été envoyé. Pensez à vérifier vos spams.')));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Envoi impossible : $e')));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,14 +122,31 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   const SizedBox(height: 12),
                   TextField(
                     controller: _password,
-                    obscureText: true,
-                    decoration: const InputDecoration(labelText: 'Mot de passe'),
+                    obscureText: _obscure,
+                    onSubmitted: (_) => _submit(),
+                    decoration: InputDecoration(
+                      labelText: 'Mot de passe',
+                      suffixIcon: IconButton(
+                        tooltip: _obscure ? 'Afficher' : 'Masquer',
+                        icon: Icon(_obscure
+                            ? Icons.visibility
+                            : Icons.visibility_off),
+                        onPressed: () => setState(() => _obscure = !_obscure),
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: _loading ? null : _forgotPassword,
+                      child: const Text('Mot de passe oublié ?'),
+                    ),
                   ),
                   if (_error != null) ...[
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 4),
                     Text(_error!, style: const TextStyle(color: AppColors.primary)),
                   ],
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 12),
                   ElevatedButton(
                     onPressed: _loading ? null : _submit,
                     child: _loading

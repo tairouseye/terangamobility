@@ -39,6 +39,18 @@ class AuthService {
 
   Future<void> signOut() => _client.auth.signOut();
 
+  /// Envoie un email de reinitialisation du mot de passe.
+  /// [redirectTo] : URL de retour dans l'app (ou le lien de recuperation ouvre
+  /// l'ecran « nouveau mot de passe »).
+  Future<void> sendPasswordReset(String email, {String? redirectTo}) {
+    return _client.auth.resetPasswordForEmail(email, redirectTo: redirectTo);
+  }
+
+  /// Definit un nouveau mot de passe (session de recuperation active).
+  Future<void> updatePassword(String newPassword) {
+    return _client.auth.updateUser(UserAttributes(password: newPassword));
+  }
+
   /// Recupere le profil (dont le role) de l'utilisateur connecte.
   Future<AppUser?> fetchProfile() async {
     final uid = currentUser?.id;

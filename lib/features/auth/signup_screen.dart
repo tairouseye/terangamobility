@@ -21,6 +21,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   // Inscription = compte client (le role partenaire n'est plus propose).
   final UserRole _role = UserRole.client;
   bool _loading = false;
+  bool _obscure = true;
   String? _error;
 
   @override
@@ -97,9 +98,17 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   const SizedBox(height: 12),
                   TextField(
                     controller: _password,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                        labelText: 'Mot de passe (min. 6 caracteres)'),
+                    obscureText: _obscure,
+                    decoration: InputDecoration(
+                      labelText: 'Mot de passe (min. 6 caractères)',
+                      suffixIcon: IconButton(
+                        tooltip: _obscure ? 'Afficher' : 'Masquer',
+                        icon: Icon(_obscure
+                            ? Icons.visibility
+                            : Icons.visibility_off),
+                        onPressed: () => setState(() => _obscure = !_obscure),
+                      ),
+                    ),
                   ),
                   if (_error != null) ...[
                     const SizedBox(height: 12),

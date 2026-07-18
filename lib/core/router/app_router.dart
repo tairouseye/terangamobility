@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../models/enums.dart';
 import '../../providers/auth_providers.dart';
 import '../../features/auth/login_screen.dart';
+import '../../features/auth/reset_password_screen.dart';
 import '../../features/auth/signup_screen.dart';
 import '../../features/auth/splash_screen.dart';
 import '../../features/client/client_dashboard.dart';
@@ -30,6 +32,9 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/', builder: (_, _) => const SplashScreen()),
       GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
       GoRoute(path: '/signup', builder: (_, _) => const SignupScreen()),
+      GoRoute(
+          path: '/reset-password',
+          builder: (_, _) => const ResetPasswordScreen()),
       // Catalogue public (visiteurs anonymes bienvenus).
       GoRoute(
           path: '/vehicules', builder: (_, _) => const VehicleCatalogScreen()),
@@ -40,6 +45,11 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final authState = ref.read(authStateProvider);
       final loc = state.matchedLocation;
+
+      // Recuperation de mot de passe : on force l'ecran dedie.
+      if (ref.read(passwordRecoveryProvider)) {
+        return loc == '/reset-password' ? null : '/reset-password';
+      }
 
       // Auth en cours de resolution -> on reste sur le splash.
       if (authState.isLoading) return loc == '/' ? null : '/';
@@ -72,7 +82,13 @@ final routerProvider = Provider<GoRouter>((ref) {
 /// Rafraichit go_router quand l'auth ou le profil change.
 class _AuthRefresh extends ChangeNotifier {
   _AuthRefresh(Ref ref) {
-    ref.listen(authStateProvider, (_, _) => notifyListeners());
+    ref.listen(authStateProvider, (_, next) {
+      // Lien de recuperation ouvert -> bascule vers l'ecran nouveau mot de passe.
+      if (next.valueOrNull?.event == AuthChangeEvent.passwordRecovery) {
+        ref.read(passwordRecoveryProvider.notifier).state = true;
+      }
+      notifyListeners();
+    });
     ref.listen(currentProfileProvider, (_, _) => notifyListeners());
   }
 }
