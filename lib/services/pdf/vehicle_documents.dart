@@ -44,7 +44,7 @@ class VehicleDocuments {
         children: [
           _header(docTitle: 'FACTURE', numero: 'FA-${_shortRef(order.id)}', date: now),
           pw.SizedBox(height: 18),
-          _parties(request),
+          _parties(request, order),
           pw.SizedBox(height: 16),
           _sectionTitle('Vehicule'),
           pw.Text('$title  (Ref ${order.vehicleReference})'),
@@ -72,7 +72,9 @@ class VehicleDocuments {
     final doc = pw.Document();
     final title = _vehicleTitle(vehicle, order.vehicleReference);
     final now = DateTime.now();
-    final client = request?.customerName ?? 'Le client';
+    final client = (request?.customerName ?? '').isNotEmpty
+        ? request!.customerName
+        : (order.clientName ?? 'Le client');
     final total = Formatters.fcfa(order.totalPrice);
     final deposit = Formatters.fcfa(order.depositAmount);
     final balance = Formatters.fcfa(order.balanceAmount);
@@ -166,7 +168,14 @@ class VehicleDocuments {
     );
   }
 
-  static pw.Widget _parties(VehicleRequest? r) {
+  static pw.Widget _parties(VehicleRequest? r, VehicleOrder o) {
+    final name = (r?.customerName ?? '').isNotEmpty
+        ? r!.customerName
+        : (o.clientName ?? '-');
+    final phone = (r?.phone ?? '').isNotEmpty ? r!.phone : null;
+    final String whatsapp = (r?.whatsapp ?? '').isNotEmpty
+        ? r!.whatsapp!
+        : (o.clientWhatsapp ?? '');
     return pw.Row(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
@@ -187,10 +196,9 @@ class VehicleDocuments {
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
               _sectionTitle('Client'),
-              pw.Text(r?.customerName ?? '-'),
-              if ((r?.phone ?? '').isNotEmpty) pw.Text(r!.phone),
-              if ((r?.whatsapp ?? '').isNotEmpty)
-                pw.Text('WhatsApp ${r!.whatsapp}'),
+              pw.Text(name),
+              if (phone != null) pw.Text(phone),
+              if (whatsapp.isNotEmpty) pw.Text('WhatsApp $whatsapp'),
               pw.Text([r?.city, r?.country]
                   .where((e) => e != null && e.isNotEmpty)
                   .join(', ')),

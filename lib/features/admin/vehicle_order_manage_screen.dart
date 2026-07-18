@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../core/config/app_info.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/formatters.dart';
 import '../../models/vehicle_enums.dart';
@@ -29,7 +30,6 @@ class _VehicleOrderManageScreenState
   DateTime? _arrival;
   bool _saving = false;
   // État local (le widget.order passe est immuable).
-  late bool _reservationPaid;
   late bool _depositPaid;
   late bool _balancePaid;
   late bool _hasInvoice;
@@ -44,70 +44,10 @@ class _VehicleOrderManageScreenState
     _company = TextEditingController(text: widget.order.shippingCompany ?? '');
     _departure = widget.order.estimatedDeparture;
     _arrival = widget.order.estimatedArrival;
-    _reservationPaid = widget.order.reservationPaid;
     _depositPaid = widget.order.depositPaid;
     _balancePaid = widget.order.balancePaid;
     _hasInvoice = widget.order.hasInvoice;
     _hasContract = widget.order.hasContract;
-  }
-
-  Future<String?> _pickReservationMethod() {
-    return showModalBottomSheet<String>(
-      context: context,
-      builder: (_) => SafeArea(
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          const Padding(
-            padding: EdgeInsets.all(16),
-            child: Text('Réservation reçue via',
-                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-          ),
-          for (final m in const ['Wave', 'Orange Money'])
-            ListTile(
-              leading: const Icon(Icons.account_balance_wallet,
-                  color: AppColors.vert),
-              title: Text(m),
-              onTap: () => Navigator.pop(context, m),
-            ),
-        ]),
-      ),
-    );
-  }
-
-  Future<void> _confirmReservation() async {
-    final method = await _pickReservationMethod();
-    if (method == null) return;
-    setState(() => _busyDoc = true);
-    try {
-      await ref
-          .read(vehicleOrderServiceProvider)
-          .confirmReservation(widget.order.id!, method);
-      setState(() {
-        _reservationPaid = true;
-        _status = VehicleOrderStatus.reservee;
-      });
-      ref.invalidate(vehicleOrdersAdminProvider);
-      _snack('Réservation confirmée');
-    } catch (e) {
-      _snack('Erreur : $e');
-    } finally {
-      if (mounted) setState(() => _busyDoc = false);
-    }
-  }
-
-  Future<void> _secureEncar() async {
-    setState(() => _busyDoc = true);
-    try {
-      await ref
-          .read(vehicleOrderServiceProvider)
-          .markSecuredOnEncar(widget.order.id!);
-      setState(() => _status = VehicleOrderStatus.enAttenteAcompte);
-      ref.invalidate(vehicleOrdersAdminProvider);
-      _snack('Véhicule sécurisé — en attente de l\'acompte');
-    } catch (e) {
-      _snack('Erreur : $e');
-    } finally {
-      if (mounted) setState(() => _busyDoc = false);
-    }
   }
 
   Future<void> _releaseReservation() async {
@@ -225,6 +165,53 @@ class _VehicleOrderManageScreenState
     }
   }
 
+  /// Envoi assisté : ouvre WhatsApp vers le client avec un message pré-rempli
+  /// (liens facture + contrat en URL signée 7 jours + suite du process).
+  Future<void> _sendWhatsapp() async {
+    final o = widget.order;
+    final number = o.clientWhatsapp;
+    if (number == null || number.trim().isEmpty) {
+      _snack('Numéro WhatsApp du client indisponible.');
+      return;
+    }
+    setState(() => _busyDoc = true);
+    try {
+      final svc = ref.read(vehicleOrderServiceProvider);
+      const week = Duration(days: 7);
+      final links = <String>[];
+      if (_hasInvoice) {
+        final u = await svc.documentUrl(
+            '${o.clientId}/facture-${o.id}.pdf',
+            expiry: week);
+        links.add('Facture : $u');
+      }
+      if (_hasContract) {
+        final u = await svc.documentUrl(
+            '${o.clientId}/contrat-${o.id}.pdf',
+            expiry: week);
+        links.add('Contrat : $u');
+      }
+      final vehicle =
+          ref.read(vehicleByRefProvider(o.vehicleReference)).valueOrNull;
+      final title = vehicle?.title ?? o.vehicleReference;
+      final msg = 'Bonjour ${o.clientName ?? ''},\n\n'
+          'Votre commande du véhicule $title est confirmée. Voici vos documents :\n'
+          '${links.join('\n')}\n\n'
+          'La suite du process :\n'
+          '• Achat du véhicule en Corée\n'
+          '• Préparation puis mise en container (60-90 jours)\n'
+          '• Arrivée au port (dédouanement à votre charge)\n'
+          '• Solde de 30 % avant la remise du véhicule\n\n'
+          'Merci de votre confiance — ${AppInfo.appName}.';
+      final url = AppInfo.whatsappTo(number, msg);
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    } catch (e) {
+      _snack('Envoi impossible : $e');
+    } finally {
+      if (mounted) setState(() => _busyDoc = false);
+    }
+  }
+
   void _snack(String m) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m)));
@@ -323,53 +310,29 @@ class _VehicleOrderManageScreenState
                 padding: const EdgeInsets.all(14),
                 child: Column(children: [
                   _row('Prix total', o.totalPrice),
-                  if (o.reservationFee != null)
-                    _row('Réservation', o.reservationFee,
-                        paid: _reservationPaid),
                   _row('Acompte (70%)', o.depositAmount, paid: _depositPaid),
                   _row('Solde (30%)', o.balanceAmount, paid: _balancePaid),
                 ]),
               ),
             ),
-            // --- Réservation (verrouillage véhicule) ---
-            if (_status == VehicleOrderStatus.enAttenteReservation ||
-                _status == VehicleOrderStatus.reservee ||
+            // --- Réservation (véhicule bloqué 72 h) ---
+            if (_status == VehicleOrderStatus.enAttenteAcompte ||
                 _status == VehicleOrderStatus.expiree) ...[
               const Divider(height: 32),
               const Text('Réservation',
                   style: TextStyle(fontWeight: FontWeight.w700)),
               const SizedBox(height: 4),
-              Text(
-                o.reservationMethod != null
-                    ? 'Le client déclare avoir payé via ${o.reservationMethod}.'
-                    : 'En attente de la déclaration de paiement du client.',
-                style: const TextStyle(fontSize: 12.5, color: AppColors.gris),
-              ),
-              const SizedBox(height: 10),
-              if (_status == VehicleOrderStatus.enAttenteReservation)
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: _busyDoc ? null : _confirmReservation,
-                    icon: const Icon(Icons.verified),
-                    label: Text(
-                        'Confirmer la réservation reçue (${Formatters.fcfa(o.reservationFee)})'),
-                  ),
-                ),
-              if (_status == VehicleOrderStatus.reservee)
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: _busyDoc ? null : _secureEncar,
-                    icon: const Icon(Icons.verified_user),
-                    label: const Text('Véhicule sécurisé sur Encar'),
-                  ),
-                ),
               if (_status == VehicleOrderStatus.expiree)
                 const Text('Réservation expirée — véhicule remis au catalogue.',
-                    style: TextStyle(color: AppColors.gris, fontSize: 12.5)),
-              if (_status == VehicleOrderStatus.enAttenteReservation ||
-                  _status == VehicleOrderStatus.reservee) ...[
+                    style: TextStyle(color: AppColors.gris, fontSize: 12.5))
+              else ...[
+                Text(
+                  o.reservationDeadline != null
+                      ? 'Échéance des 72 h : ${Formatters.date(o.reservationDeadline)}'
+                      : 'Véhicule réservé — acompte 70 % attendu.',
+                  style:
+                      const TextStyle(fontSize: 12.5, color: AppColors.gris),
+                ),
                 const SizedBox(height: 8),
                 SizedBox(
                   width: double.infinity,
@@ -402,10 +365,36 @@ class _VehicleOrderManageScreenState
               ),
             ],
             const Divider(height: 32),
-            // --- Confirmation des paiements (virement/espèces) ---
-            const Text('Paiements (virement / espèces)',
+            // --- Paiements (à confirmer APRÈS vérification de la réception) ---
+            const Text('Paiements',
                 style: TextStyle(fontWeight: FontWeight.w700)),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
+            if (o.depositMethod != null && !_depositPaid)
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: AppColors.ambre.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                        'Le client déclare avoir payé : ${o.depositMethod}'
+                        '${o.depositReference != null ? ' — réf ${o.depositReference}' : ''}',
+                        style: const TextStyle(
+                            fontSize: 12.5, fontWeight: FontWeight.w600)),
+                    const SizedBox(height: 4),
+                    const Text(
+                        '⚠ Vérifiez que les fonds sont bien reçus et non annulables '
+                        '(virements / mobile money réversibles) avant de confirmer.',
+                        style:
+                            TextStyle(fontSize: 11.5, color: Color(0xFF7A5A00))),
+                  ],
+                ),
+              ),
             if (!_depositPaid)
               SizedBox(
                 width: double.infinity,
@@ -413,11 +402,10 @@ class _VehicleOrderManageScreenState
                   onPressed: _busyDoc ? null : () => _confirmPayment(deposit: true),
                   icon: const Icon(Icons.check_circle),
                   label: Text(
-                      'Confirmer l\'acompte reçu (${Formatters.fcfa(o.depositAmount)})'),
+                      'Confirmer l\'acompte 70 % reçu (${Formatters.fcfa(o.depositAmount)})'),
                 ),
               ),
             if (_depositPaid && !_balancePaid) ...[
-              if (!_depositPaid) const SizedBox(height: 8),
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
@@ -476,16 +464,34 @@ class _VehicleOrderManageScreenState
                   ),
               ]),
             ],
+            if (_hasInvoice && _hasContract) ...[
+              const SizedBox(height: 8),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _busyDoc ? null : _sendWhatsapp,
+                  icon: const Icon(Icons.chat),
+                  label: const Text('Envoyer au client (WhatsApp)'),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF25D366),
+                      foregroundColor: Colors.white),
+                ),
+              ),
+              const Text(
+                  'Ouvre WhatsApp vers le client : liens des 2 documents + suite du process.',
+                  style: TextStyle(fontSize: 11, color: AppColors.gris)),
+            ],
             const Divider(height: 32),
             const Text('Faire avancer le statut',
                 style: TextStyle(fontWeight: FontWeight.w700)),
             const SizedBox(height: 8),
             DropdownButtonFormField<VehicleOrderStatus>(
-              initialValue: _status,
+              initialValue: VehicleOrderStatus.trackingSteps.contains(_status)
+                  ? _status
+                  : VehicleOrderStatus.enAttenteAcompte,
               isExpanded: true,
-              items: VehicleOrderStatus.values
-                  .map((s) => DropdownMenuItem(
-                      value: s, child: Text('${s.step}. ${s.label}')))
+              items: VehicleOrderStatus.trackingSteps
+                  .map((s) => DropdownMenuItem(value: s, child: Text(s.label)))
                   .toList(),
               onChanged: (s) => setState(() => _status = s ?? _status),
             ),

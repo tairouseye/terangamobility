@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/config/vehicle_config.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/encar_image.dart';
 import '../../core/utils/formatters.dart';
+import '../../models/vehicle_enums.dart';
 import '../../models/vehicle_listing.dart';
+import '../../models/vehicle_order.dart';
 import '../../providers/auth_providers.dart';
 import '../../providers/vehicle_catalog_providers.dart';
 import '../../providers/vehicle_order_providers.dart';
+import '../client/vehicles_kr/vehicle_tracking_screen.dart';
 import 'request_price_screen.dart';
-import 'reservation_payment_screen.dart';
 import 'widgets/customs_terms_notice.dart';
 
 /// Fiche detaillee d'un véhicule. Le prix n'est jamais affiche : un bouton
@@ -58,20 +59,18 @@ class _PriceCtaState extends ConsumerState<_PriceCta> {
 
   Future<void> _reserve() async {
     final v = widget.vehicle;
-    const fee = VehicleConfig.reservationFeeFcfa;
+    final deposit = ((v.priceFcfa ?? 0) * 0.7).round();
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
         title: const Text('Réserver ce véhicule'),
         content: Text(
-            'Pour bloquer ce véhicule et le sécuriser en Corée, un acompte de '
-            'réservation de ${Formatters.fcfa(fee)} est demandé (payable par '
-            'Wave / Orange Money).\n\n'
-            '• Réservation valable 48 h.\n'
-            '• Montant déduit du prix total.\n'
-            '• Non remboursable en cas d\'annulation de votre part.\n\n'
-            'Le reste de l\'acompte se règle ensuite en espèces (RDV agence) '
-            'ou par virement.'),
+            'La réservation est gratuite : le véhicule vous est bloqué 72 h.\n\n'
+            '• Vous avez 72 h pour payer l\'acompte de 70 % '
+            '(${Formatters.fcfa(deposit)}) et confirmer la commande.\n'
+            '• Paiement : espèces (RDV agence), virement ou mobile money.\n'
+            '• Sous réserve de disponibilité chez le fournisseur.\n\n'
+            'Passé 72 h sans paiement, le véhicule est remis au catalogue.'),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, false),
@@ -86,19 +85,25 @@ class _PriceCtaState extends ConsumerState<_PriceCta> {
 
     setState(() => _busy = true);
     try {
-      final orderId = await ref
-          .read(vehicleOrderServiceProvider)
-          .reserveVehicle(v.reference, fee);
+      final svc = ref.read(vehicleOrderServiceProvider);
+      final orderId = await svc.reserveVehicle(v.reference);
       ref.invalidate(vehicleListingsProvider);
       ref.invalidate(vehicleByRefProvider(v.reference));
       ref.invalidate(myVehicleOrdersProvider);
       if (!mounted) return;
+      // Commande locale minimale pour ouvrir directement le suivi (paiement 70%).
+      final order = VehicleOrder(
+        id: orderId,
+        clientId: ref.read(authServiceProvider).currentUser?.id,
+        vehicleReference: v.reference,
+        totalPrice: v.priceFcfa,
+        depositAmount: deposit,
+        balanceAmount: ((v.priceFcfa ?? 0) * 0.3).round(),
+        status: VehicleOrderStatus.enAttenteAcompte,
+        reservationDeadline: DateTime.now().add(const Duration(hours: 72)),
+      );
       Navigator.of(context).push(MaterialPageRoute(
-        builder: (_) => ReservationPaymentScreen(
-          orderId: orderId,
-          vehicleTitle: v.title,
-          feeFcfa: fee,
-        ),
+        builder: (_) => VehicleTrackingScreen(order: order),
       ));
     } catch (e) {
       if (mounted) {
@@ -144,9 +149,7 @@ class _PriceCtaState extends ConsumerState<_PriceCta> {
                 child: CircularProgressIndicator(
                     color: Colors.white, strokeWidth: 2))
             : const Icon(Icons.lock_clock),
-        label: Text(_busy
-            ? 'Réservation…'
-            : 'Réserver (${Formatters.fcfa(VehicleConfig.reservationFeeFcfa)})'),
+        label: Text(_busy ? 'Réservation…' : 'Réserver ce véhicule'),
       );
     } else {
       button = ElevatedButton.icon(
@@ -222,9 +225,8 @@ class _Detail extends StatelessWidget {
                   icon: Icons.bolt,
                   color: AppColors.ambre,
                   text:
-                      'Ces véhicules partent vite. Réservez-le avec un acompte de '
-                      '${Formatters.fcfa(VehicleConfig.reservationFeeFcfa)} '
-                      '(Wave / Orange Money) — valable 48 h, déduit du prix.',
+                      'Ces véhicules partent vite. Réservez-le gratuitement : '
+                      'il vous est bloqué 72 h pour payer l\'acompte de 70 %.',
                 ),
               const SizedBox(height: 16),
               const CustomsTermsNotice(),

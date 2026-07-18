@@ -9,11 +9,12 @@ class VehicleOrder {
   final num? totalPrice;
   final num? depositAmount; // 70%
   final num? balanceAmount; // 30%
-  final num? reservationFee; // acompte de reservation (montant fixe)
-  final bool reservationPaid;
-  final String? reservationMethod; // Wave / Orange Money
-  final DateTime? reservationDeadline; // fin de validite (48 h)
+  final DateTime? reservationDeadline; // echeance des 72 h pour payer les 70%
   final DateTime? depositAppointmentAt; // creneau RDV agence (cash)
+  final String? depositMethod; // Especes / Virement / Wave / Orange Money
+  final String? depositReference; // n° de transaction declare par le client
+  final String? clientName; // copie du profil a la reservation
+  final String? clientWhatsapp; // copie du profil a la reservation
   final bool depositPaid;
   final bool balancePaid;
   final String? trackingNumber;
@@ -34,11 +35,12 @@ class VehicleOrder {
     this.totalPrice,
     this.depositAmount,
     this.balanceAmount,
-    this.reservationFee,
-    this.reservationPaid = false,
-    this.reservationMethod,
     this.reservationDeadline,
     this.depositAppointmentAt,
+    this.depositMethod,
+    this.depositReference,
+    this.clientName,
+    this.clientWhatsapp,
     this.depositPaid = false,
     this.balancePaid = false,
     this.trackingNumber,
@@ -55,10 +57,8 @@ class VehicleOrder {
   bool get hasInvoice => invoicePath != null && invoicePath!.isNotEmpty;
   bool get hasContract => contractPath != null && contractPath!.isNotEmpty;
 
-  /// Reste du gros acompte a payer une fois la reservation deduite.
-  num? get depositDue => depositAmount == null
-      ? null
-      : depositAmount! - (reservationPaid ? (reservationFee ?? 0) : 0);
+  /// Montant de l'acompte 70% a regler.
+  num? get depositDue => depositAmount;
 
   /// Temps restant avant expiration de la reservation (null si non applicable).
   Duration? get reservationTimeLeft {
@@ -75,15 +75,16 @@ class VehicleOrder {
         totalPrice: j['total_price'] as num?,
         depositAmount: j['deposit_amount'] as num?,
         balanceAmount: j['balance_amount'] as num?,
-        reservationFee: j['reservation_fee'] as num?,
-        reservationPaid: (j['reservation_paid'] ?? false) as bool,
-        reservationMethod: j['reservation_method'] as String?,
         reservationDeadline: j['reservation_deadline'] != null
             ? DateTime.tryParse(j['reservation_deadline'] as String)
             : null,
         depositAppointmentAt: j['deposit_appointment_at'] != null
             ? DateTime.tryParse(j['deposit_appointment_at'] as String)
             : null,
+        depositMethod: j['deposit_method'] as String?,
+        depositReference: j['deposit_reference'] as String?,
+        clientName: j['client_name'] as String?,
+        clientWhatsapp: j['client_whatsapp'] as String?,
         depositPaid: (j['deposit_paid'] ?? false) as bool,
         balancePaid: (j['balance_paid'] ?? false) as bool,
         trackingNumber: j['tracking_number'] as String?,

@@ -6,6 +6,7 @@ import '../../core/utils/formatters.dart';
 import '../../models/parts_request.dart';
 import '../../models/quote_breakdown.dart';
 import '../../models/supplier_quote.dart';
+import '../../providers/auth_providers.dart';
 import '../../providers/partner_providers.dart';
 import '../../providers/quote_providers.dart';
 import '../shared/quote_breakdown_card.dart';
@@ -47,6 +48,99 @@ class _BuildQuoteScreenState extends ConsumerState<BuildQuoteScreen> {
       setState(() => _error = 'Calcul impossible : $e');
     } finally {
       if (mounted) setState(() => _computing = false);
+    }
+  }
+
+  /// L'admin saisit lui-meme la proposition (infos obtenues du partenaire par
+  /// WhatsApp) : cree une entree suppliers_quotes avec son propre id.
+  Future<void> _addSupplierQuote() async {
+    final priceKrw = TextEditingController();
+    final partRef = TextEditingController();
+    final weight = TextEditingController();
+    final dims = TextEditingController();
+    final lead = TextEditingController();
+    bool available = true;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setD) => AlertDialog(
+          title: const Text('Saisir la proposition'),
+          content: SingleChildScrollView(
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              TextField(
+                controller: priceKrw,
+                keyboardType: TextInputType.number,
+                decoration:
+                    const InputDecoration(labelText: 'Prix d\'achat (KRW) *'),
+              ),
+              TextField(
+                controller: partRef,
+                decoration:
+                    const InputDecoration(labelText: 'Référence pièce'),
+              ),
+              TextField(
+                controller: weight,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: 'Poids (kg)'),
+              ),
+              TextField(
+                controller: dims,
+                decoration:
+                    const InputDecoration(labelText: 'Dimensions (cm)'),
+              ),
+              TextField(
+                controller: lead,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: 'Délai (jours)'),
+              ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                value: available,
+                title: const Text('Disponible'),
+                onChanged: (v) => setD(() => available = v),
+              ),
+            ]),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: const Text('Annuler')),
+            ElevatedButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                child: const Text('Enregistrer')),
+          ],
+        ),
+      ),
+    );
+    if (ok == true) {
+      final uid = ref.read(authServiceProvider).currentUser?.id;
+      if (uid != null) {
+        try {
+          await ref.read(supplierQuoteServiceProvider).submit(SupplierQuote(
+                requestId: widget.request.id!,
+                partnerId: uid,
+                partRef: partRef.text.trim().isEmpty ? null : partRef.text.trim(),
+                available: available,
+                buyPriceKrw: num.tryParse(priceKrw.text.trim()),
+                weightKg: num.tryParse(weight.text.trim()),
+                dimensions: dims.text.trim().isEmpty ? null : dims.text.trim(),
+                leadTimeDays: int.tryParse(lead.text.trim()),
+              ));
+          ref.invalidate(quotesForRequestProvider(widget.request.id!));
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Proposition enregistrée.')));
+          }
+        } catch (e) {
+          if (mounted) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text('Erreur : $e')));
+          }
+        }
+      }
+    }
+    for (final c in [priceKrw, partRef, weight, dims, lead]) {
+      c.dispose();
     }
   }
 
@@ -93,15 +187,32 @@ class _BuildQuoteScreenState extends ConsumerState<BuildQuoteScreen> {
             Text(widget.request.vehicleLabel,
                 style: const TextStyle(color: AppColors.gris)),
             const SizedBox(height: 20),
-            const Text('1. Proposition partenaire',
-                style: TextStyle(fontWeight: FontWeight.w700)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Expanded(
+                  child: Text('1. Proposition (infos partenaire)',
+                      style: TextStyle(fontWeight: FontWeight.w700)),
+                ),
+                TextButton.icon(
+                  onPressed: _addSupplierQuote,
+                  icon: const Icon(Icons.add, size: 18),
+                  label: const Text('Saisir'),
+                ),
+              ],
+            ),
+            const Text(
+                'Obtenez le prix KRW / poids / dimensions du partenaire (WhatsApp) '
+                'et saisissez-les ici.',
+                style: TextStyle(fontSize: 11.5, color: AppColors.gris)),
             const SizedBox(height: 8),
             quotesAsync.when(
               loading: () => const LinearProgressIndicator(),
               error: (e, _) => Text('Erreur : $e'),
               data: (quotes) {
                 if (quotes.isEmpty) {
-                  return const Text('Aucune proposition reçue.',
+                  return const Text(
+                      'Aucune proposition. Cliquez « Saisir » pour l\'ajouter.',
                       style: TextStyle(color: AppColors.gris));
                 }
                 _selected ??= quotes.first;

@@ -18,8 +18,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   final _whatsapp = TextEditingController();
   final _email = TextEditingController();
   final _password = TextEditingController();
-  // Seuls client et partenaire s'auto-inscrivent ; l'admin est promu en base.
-  UserRole _role = UserRole.client;
+  // Inscription = compte client (le role partenaire n'est plus propose).
+  final UserRole _role = UserRole.client;
   bool _loading = false;
   String? _error;
 
@@ -75,21 +75,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text('Je suis :',
-                      style: TextStyle(fontWeight: FontWeight.w600)),
-                  const SizedBox(height: 8),
-                  SegmentedButton<UserRole>(
-                    segments: const [
-                      ButtonSegment(
-                          value: UserRole.client, label: Text('Client')),
-                      ButtonSegment(
-                          value: UserRole.partnerKr,
-                          label: Text('Partenaire Corée')),
-                    ],
-                    selected: {_role},
-                    onSelectionChanged: (s) => setState(() => _role = s.first),
-                  ),
-                  const SizedBox(height: 20),
+                  // Inscription = compte client. Le role partenaire n'est plus
+                  // propose (l'admin gere le sourcing pieces). _role reste client.
                   TextField(
                     controller: _fullName,
                     decoration: const InputDecoration(labelText: 'Nom complet'),

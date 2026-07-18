@@ -26,13 +26,20 @@ class AppInfo {
   static const String supportPhoneE164 = '221773435928';
   static const String supportEmail = 'gesprosn@gmail.com';
 
-  /// Lien WhatsApp avec message pre-rempli.
+  /// Lien WhatsApp (vers l'assistance) avec message pre-rempli.
   static String whatsappUrl({String? message}) {
     final text = Uri.encodeComponent(
       message ?? 'Bonjour, j\'ai besoin d\'assistance sur l\'application '
           '$appName ($appTagline).',
     );
     return 'https://wa.me/$supportPhoneE164?text=$text';
+  }
+
+  /// Lien WhatsApp vers un numero arbitraire (ex : le client), message pre-rempli.
+  /// Normalise le numero en chiffres (retire +, espaces, tirets).
+  static String whatsappTo(String number, String message) {
+    final digits = number.replaceAll(RegExp(r'[^0-9]'), '');
+    return 'https://wa.me/$digits?text=${Uri.encodeComponent(message)}';
   }
 
   static String get telUrl => 'tel:+$supportPhoneE164';

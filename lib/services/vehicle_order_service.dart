@@ -143,45 +143,32 @@ class VehicleOrderService {
   }
 
   // ------------------------------------------------------------------
-  // RESERVATION
+  // RESERVATION (hold libre 72 h -> acompte 70%)
   // ------------------------------------------------------------------
 
-  /// Client : reserve un vehicule (cree la commande + verrouille le listing 48 h).
+  /// Client : reserve un vehicule (cree la commande + verrouille le listing 72 h).
   /// Renvoie l'id de la commande creee.
-  Future<String> reserveVehicle(String reference, int reservationFee) async {
-    final id = await _client.rpc('reserve_vehicle', params: {
-      'p_reference': reference,
-      'p_reservation_fee': reservationFee,
-    });
+  Future<String> reserveVehicle(String reference) async {
+    final id = await _client
+        .rpc('reserve_vehicle', params: {'p_reference': reference});
     return id as String;
   }
 
-  /// Client : declare avoir paye l'acompte de reservation (mobile money).
-  Future<void> declareReservationPayment(String orderId, String method) async {
-    await _client.rpc('declare_reservation_payment',
-        params: {'p_order_id': orderId, 'p_method': method});
+  /// Client : declare avoir paye l'acompte 70% (methode + n° de transaction) ->
+  /// notifie l'admin qui verifie la reception puis confirme.
+  Future<void> declareDeposit(
+      String orderId, String method, String reference) async {
+    await _client.rpc('declare_vehicle_deposit', params: {
+      'p_order_id': orderId,
+      'p_method': method,
+      'p_reference': reference,
+    });
   }
 
-  /// Client : choisit un creneau de RDV en agence pour payer le gros acompte cash.
+  /// Client : choisit un creneau de RDV en agence pour payer l'acompte en especes.
   Future<void> bookDepositAppointment(String orderId, DateTime at) async {
     await _client.from('vehicle_orders').update(
         {'deposit_appointment_at': at.toIso8601String()}).eq('id', orderId);
-  }
-
-  /// Admin : confirme la reception de l'acompte de reservation -> 'reservee'.
-  Future<void> confirmReservation(String orderId, String method) async {
-    await _client.from('vehicle_orders').update({
-      'reservation_paid': true,
-      'reservation_method': method,
-      'status': 'reservee',
-    }).eq('id', orderId);
-  }
-
-  /// Admin : vehicule securise chez le fournisseur -> en attente du gros acompte.
-  Future<void> markSecuredOnEncar(String orderId) async {
-    await _client
-        .from('vehicle_orders')
-        .update({'status': 'en_attente_acompte'}).eq('id', orderId);
   }
 
   /// Admin : relache la reservation (annulation) + libere le vehicule.
@@ -268,10 +255,12 @@ class VehicleOrderService {
     });
   }
 
-  /// URL signee fraiche (1h) pour ouvrir un document par son chemin Storage.
-  Future<String> documentUrl(String path) {
+  /// URL signee pour ouvrir un document par son chemin Storage.
+  /// [expiry] par defaut 1 h (consultation) ; longue duree pour le partage WhatsApp.
+  Future<String> documentUrl(String path,
+      {Duration expiry = const Duration(hours: 1)}) {
     return _client.storage
         .from(SupabaseConfig.bucketContracts)
-        .createSignedUrl(path, 60 * 60);
+        .createSignedUrl(path, expiry.inSeconds);
   }
 }

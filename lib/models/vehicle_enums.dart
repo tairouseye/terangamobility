@@ -67,7 +67,7 @@ enum VehicleOrderStatus {
         VehicleOrderStatus.enAttenteReservation =>
           'En attente de réservation',
         VehicleOrderStatus.reservee => 'Réservé',
-        VehicleOrderStatus.enAttenteAcompte => 'En attente d\'acompte',
+        VehicleOrderStatus.enAttenteAcompte => 'Réservé — acompte 70 %',
         VehicleOrderStatus.commandeConfirmee => 'Commande confirmée',
         VehicleOrderStatus.vehiculeAchete => 'Véhicule acheté',
         VehicleOrderStatus.preparation => 'Préparation du véhicule',
@@ -105,7 +105,7 @@ enum VehicleOrderStatus {
         VehicleOrderStatus.enAttenteReservation => AppColors.ambre,
         VehicleOrderStatus.reservee => AppColors.primary,
         VehicleOrderStatus.expiree => AppColors.gris,
-        VehicleOrderStatus.enAttenteAcompte => AppColors.gris,
+        VehicleOrderStatus.enAttenteAcompte => AppColors.ambre,
         _ => AppColors.ambre,
       };
 

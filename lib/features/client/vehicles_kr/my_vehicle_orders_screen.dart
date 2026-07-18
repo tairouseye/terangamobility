@@ -99,9 +99,6 @@ class _OrderCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final vehicle = ref.watch(vehicleByRefProvider(order.vehicleReference));
     final title = vehicle.valueOrNull?.title ?? order.vehicleReference;
-    final needsReservation =
-        order.status == VehicleOrderStatus.enAttenteReservation &&
-            order.reservationMethod == null;
     final needsDeposit =
         order.status == VehicleOrderStatus.enAttenteAcompte && !order.depositPaid;
     final needsBalance =
@@ -127,7 +124,7 @@ class _OrderCard extends ConsumerWidget {
                   style: const TextStyle(color: AppColors.gris)),
               const SizedBox(height: 8),
               VehicleStatusBadge(order.status),
-              if (needsReservation || needsDeposit || needsBalance) ...[
+              if (needsDeposit || needsBalance) ...[
                 const SizedBox(height: 8),
                 Container(
                   width: double.infinity,
@@ -137,11 +134,9 @@ class _OrderCard extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    needsReservation
-                        ? 'Action : payer la réservation de ${Formatters.fcfa(order.reservationFee)}'
-                        : needsDeposit
-                            ? 'Action : payer l\'acompte de ${Formatters.fcfa(order.depositDue)}'
-                            : 'Action : payer le solde de ${Formatters.fcfa(order.balanceAmount)}',
+                    needsDeposit
+                        ? 'Action : payer l\'acompte 70 % de ${Formatters.fcfa(order.depositDue)} (72 h)'
+                        : 'Action : payer le solde de ${Formatters.fcfa(order.balanceAmount)}',
                     style: const TextStyle(
                         fontSize: 12.5,
                         color: AppColors.primary,
