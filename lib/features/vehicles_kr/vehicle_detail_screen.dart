@@ -87,15 +87,21 @@ class _Detail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Contenu borne et centre : plein ecran sur telephone, largeur maitrisee
-    // sur laptop/desktop (evite une photo geante en pleine largeur).
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 900),
-        child: ListView(
-          children: [
-            _Gallery(photos: vehicle.photos),
-            Padding(
+    // Contenu borne et centre par bloc : plein ecran sur telephone, largeur
+    // maitrisee sur laptop/desktop (evite une photo geante en pleine largeur).
+    // La ListView reste la racine pour se dimensionner correctement.
+    return ListView(
+      children: [
+        Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 900),
+            child: _Gallery(photos: vehicle.photos),
+          ),
+        ),
+        Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 900),
+            child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -169,9 +175,9 @@ class _Detail extends StatelessWidget {
             ],
           ),
         ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }
