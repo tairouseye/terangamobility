@@ -32,8 +32,8 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
 
   Future<void> _submit() async {
     final pwd = _password.text;
-    if (pwd.length < 6) {
-      setState(() => _error = 'Le mot de passe doit faire au moins 6 caractères.');
+    if (pwd.length < 8) {
+      setState(() => _error = 'Le mot de passe doit faire au moins 8 caractères.');
       return;
     }
     if (pwd != _confirm.text) {

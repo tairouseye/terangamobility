@@ -44,6 +44,11 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
           'Un numéro WhatsApp valide est obligatoire (indispensable pour le suivi de vos commandes).');
       return;
     }
+    if (_password.text.length < 8) {
+      setState(() =>
+          _error = 'Le mot de passe doit faire au moins 8 caractères.');
+      return;
+    }
     setState(() {
       _loading = true;
       _error = null;
@@ -108,7 +113,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     controller: _password,
                     obscureText: _obscure,
                     decoration: InputDecoration(
-                      labelText: 'Mot de passe (min. 6 caractères)',
+                      labelText: 'Mot de passe (min. 8 caractères)',
                       suffixIcon: IconButton(
                         tooltip: _obscure ? 'Afficher' : 'Masquer',
                         icon: Icon(_obscure
