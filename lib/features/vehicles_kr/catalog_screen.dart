@@ -124,41 +124,20 @@ class _VehicleCatalogScreenState extends ConsumerState<VehicleCatalogScreen> {
                                   fontSize: 16, fontWeight: FontWeight.w600))),
                     ]);
                   }
+                  // Liste PARESSEUSE (ne construit/charge que les cartes
+                  // visibles) : indispensable pour la memoire sur mobile —
+                  // un Wrap chargerait les ~100 vehicules + images d'un coup
+                  // et fait planter Safari iOS. Centree/bornee sur grand ecran.
                   return LayoutBuilder(
                     builder: (context, cns) {
-                      // Grille responsive centree, largeur max 1200 :
-                      // telephone 1 colonne, tablette/laptop 2, desktop 3.
-                      const gap = 14.0;
-                      const hPad = 16.0;
-                      final contentW =
-                          cns.maxWidth > 1200 ? 1200.0 : cns.maxWidth;
-                      final cols = contentW >= 1040
-                          ? 3
-                          : contentW >= 700
-                              ? 2
-                              : 1;
-                      final cardW =
-                          (contentW - hPad * 2 - gap * (cols - 1)) / cols;
-                      return SingleChildScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        padding: const EdgeInsets.fromLTRB(hPad, 4, hPad, 20),
-                        child: Center(
-                          child: ConstrainedBox(
-                            constraints:
-                                const BoxConstraints(maxWidth: 1200),
-                            child: Wrap(
-                              spacing: gap,
-                              runSpacing: gap,
-                              children: [
-                                for (final v in vehicles)
-                                  SizedBox(
-                                    width: cardW,
-                                    child: _VehicleCard(vehicle: v),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ),
+                      final w = cns.maxWidth;
+                      final side = w > 732 ? (w - 700) / 2 : 16.0;
+                      return ListView.separated(
+                        padding: EdgeInsets.fromLTRB(side, 8, side, 20),
+                        itemCount: vehicles.length,
+                        separatorBuilder: (_, _) => const SizedBox(height: 14),
+                        itemBuilder: (context, i) =>
+                            _VehicleCard(vehicle: vehicles[i]),
                       );
                     },
                   );
@@ -233,6 +212,17 @@ class _VehicleCard extends StatelessWidget {
                         _Chip(Icons.settings, vehicle.transmission!),
                     ],
                   ),
+                  if (vehicle.importedAt != null) ...[
+                    const SizedBox(height: 8),
+                    Row(children: [
+                      const Icon(Icons.event_available,
+                          size: 13, color: AppColors.gris),
+                      const SizedBox(width: 4),
+                      Text('Ajouté le ${Formatters.date(vehicle.importedAt)}',
+                          style: const TextStyle(
+                              fontSize: 11.5, color: AppColors.gris)),
+                    ]),
+                  ],
                   const SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -287,7 +277,8 @@ class _Photo extends StatelessWidget {
               : encarPhotoAdaptive(raw,
                   logicalWidth: c.maxWidth,
                   devicePixelRatio: dpr,
-                  ratio: 16 / 9);
+                  ratio: 16 / 9,
+                  maxHeight: 640); // carte : image legere (memoire mobile)
           return Container(
             color: AppColors.grisClair,
             child: url == null

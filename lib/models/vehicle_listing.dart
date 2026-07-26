@@ -26,6 +26,7 @@ class VehicleListing {
   final num? priceFcfa; // prix affiche en FCFA (converti + marge)
   final bool isActive;
   final String availability; // available | reserved | sold | unavailable
+  final DateTime? importedAt; // date d'ajout au catalogue
 
   const VehicleListing({
     required this.id,
@@ -51,6 +52,7 @@ class VehicleListing {
     this.priceFcfa,
     this.isActive = true,
     this.availability = 'available',
+    this.importedAt,
   });
 
   bool get isAvailable => availability == 'available';
@@ -106,5 +108,8 @@ class VehicleListing {
         priceFcfa: j['price_fcfa'] as num?,
         isActive: (j['is_active'] ?? true) as bool,
         availability: (j['availability'] ?? 'available') as String,
+        importedAt: j['imported_at'] != null
+            ? DateTime.tryParse(j['imported_at'] as String)
+            : null,
       );
 }
