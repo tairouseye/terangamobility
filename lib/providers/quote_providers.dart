@@ -15,6 +15,12 @@ final orderServiceProvider = Provider<OrderService>((ref) {
   return OrderService(ref.watch(supabaseClientProvider));
 });
 
+/// Admin : demandes a sourcer (nouvelle / recherche, pas encore de proposition).
+final newPartsRequestsProvider =
+    FutureProvider<List<PartsRequest>>((ref) async {
+  return ref.watch(quoteServiceProvider).listNewRequests();
+});
+
 /// Admin : demandes pretes a chiffrer (statut piece_trouvee).
 final requestsToQuoteProvider = FutureProvider<List<PartsRequest>>((ref) async {
   return ref.watch(quoteServiceProvider).listRequestsToQuote();

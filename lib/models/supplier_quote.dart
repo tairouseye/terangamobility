@@ -10,6 +10,8 @@ class SupplierQuote {
   final String? dimensions;
   final String? photoUrl;
   final int? leadTimeDays;
+  final String? source; // ex. 'partswini' (interne)
+  final String? sourceUrl; // lien du listing (interne)
   final DateTime? createdAt;
 
   const SupplierQuote({
@@ -23,6 +25,8 @@ class SupplierQuote {
     this.dimensions,
     this.photoUrl,
     this.leadTimeDays,
+    this.source,
+    this.sourceUrl,
     this.createdAt,
   });
 
@@ -37,6 +41,8 @@ class SupplierQuote {
         dimensions: j['dimensions'] as String?,
         photoUrl: j['photo_url'] as String?,
         leadTimeDays: j['lead_time_days'] as int?,
+        source: j['source'] as String?,
+        sourceUrl: j['source_url'] as String?,
         createdAt: j['created_at'] != null
             ? DateTime.tryParse(j['created_at'] as String)
             : null,
@@ -53,5 +59,7 @@ class SupplierQuote {
         'dimensions': dimensions,
         'photo_url': photoUrl,
         'lead_time_days': leadTimeDays,
+        'source': source,
+        'source_url': sourceUrl,
       };
 }

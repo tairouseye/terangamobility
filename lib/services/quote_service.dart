@@ -55,6 +55,18 @@ class QuoteService {
     return CustomerQuote.fromJson(inserted);
   }
 
+  /// Demandes a sourcer (pas encore de proposition) : nouvelle / recherche.
+  Future<List<PartsRequest>> listNewRequests() async {
+    final rows = await _client
+        .from('parts_requests')
+        .select()
+        .inFilter('status', ['nouvelle_demande', 'recherche_coree'])
+        .order('created_at', ascending: false);
+    return (rows as List)
+        .map((e) => PartsRequest.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
   /// Demandes pretes a chiffrer (une proposition partenaire recue).
   Future<List<PartsRequest>> listRequestsToQuote() async {
     final rows = await _client

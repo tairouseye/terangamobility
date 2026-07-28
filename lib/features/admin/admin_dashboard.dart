@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_theme.dart';
 import '../../providers/auth_providers.dart';
 import '../shared/dashboard_scaffold.dart';
+import 'parts_requests_screen.dart';
 import 'quote_requests_screen.dart';
 import 'orders_screen.dart';
 import 'clients_screen.dart';
@@ -25,12 +26,14 @@ class AdminDashboard extends ConsumerWidget {
         const SizedBox(height: 20),
         const _SectionLabel('Pièces détachées'),
         _Grid(children: [
-          _AdminTile(Icons.people, 'Clients', AppColors.vert,
-              onTap: () => _go(context, const ClientsScreen())),
-          _AdminTile(Icons.fact_check, 'Valider devis', AppColors.primary,
+          _AdminTile(Icons.search, 'Demandes de pièces', AppColors.primary,
+              onTap: () => _go(context, const PartsRequestsScreen())),
+          _AdminTile(Icons.fact_check, 'Valider devis', AppColors.vert,
               onTap: () => _go(context, const QuoteRequestsScreen())),
           _AdminTile(Icons.inventory_2, 'Commandes', AppColors.ambre,
               onTap: () => _go(context, const OrdersScreen())),
+          _AdminTile(Icons.people, 'Clients', AppColors.anthracite,
+              onTap: () => _go(context, const ClientsScreen())),
         ]),
         const SizedBox(height: 20),
         const _SectionLabel('Véhicules Corée'),
