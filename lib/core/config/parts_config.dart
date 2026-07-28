@@ -9,8 +9,8 @@
 class PartsConfig {
   const PartsConfig._();
 
-  /// Contact WhatsApp du fournisseur / sourcing Partswini (a remplacer).
-  static const String partswiniWhatsapp = '+221 77 343 59 28';
+  /// Contact WhatsApp du fournisseur / sourcing Partswini (Coree).
+  static const String partswiniWhatsapp = '+82 10 2964 5765';
 
   /// Catalogue de recherche des pieces Partswini (version mobile).
   static const String partswiniCatalogUrl =

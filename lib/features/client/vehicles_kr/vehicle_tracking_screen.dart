@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/config/app_info.dart';
+import '../../../core/config/vehicle_config.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/utils/open_external.dart';
@@ -369,7 +370,37 @@ class _VehicleTrackingScreenState extends ConsumerState<VehicleTrackingScreen> {
                   ),
                 ]),
               )
-            else
+            else ...[
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                decoration: BoxDecoration(
+                  color: AppColors.blanc,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(children: [
+                  Icon(
+                      _channel == 'Mobile money'
+                          ? Icons.account_balance_wallet
+                          : Icons.account_balance,
+                      size: 18,
+                      color: AppColors.primary),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _channel == 'Mobile money'
+                        ? Text(
+                            'Envoyez ${Formatters.fcfa(o.depositDue)} par Wave ou '
+                            'Orange Money au ${VehicleConfig.waveNumber}',
+                            style: const TextStyle(
+                                fontSize: 13, fontWeight: FontWeight.w600))
+                        : const Text(
+                            'Virement bancaire : contactez-nous ci-dessous pour '
+                            'obtenir le RIB, puis indiquez la référence.',
+                            style: TextStyle(fontSize: 13)),
+                  ),
+                ]),
+              ),
+              const SizedBox(height: 8),
               TextField(
                 controller: _reference,
                 decoration: const InputDecoration(
@@ -378,6 +409,7 @@ class _VehicleTrackingScreenState extends ConsumerState<VehicleTrackingScreen> {
                   isDense: true,
                 ),
               ),
+            ],
             const SizedBox(height: 8),
             const Text(
               'Pour les virements et mobile money, la commande est confirmée '
