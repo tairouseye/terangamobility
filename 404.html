@@ -3,6 +3,14 @@
 <head>
   <base href="/">
 
+  <!-- Force HTTPS : redirige tout visiteur arrive en http:// vers https://
+       (le certificat TLS est en place). Complete « Enforce HTTPS » de GitHub. -->
+  <script>
+    if (location.protocol === 'http:') {
+      location.replace('https:' + location.href.substring(location.protocol.length));
+    }
+  </script>
+
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description"
