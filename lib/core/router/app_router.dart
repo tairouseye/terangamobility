@@ -13,13 +13,16 @@ import '../../features/client/client_dashboard.dart';
 import '../../features/partner_kr/partner_dashboard.dart';
 import '../../features/admin/admin_dashboard.dart';
 import '../../features/vehicles_kr/catalog_screen.dart';
+import '../../features/vehicles_kr/vehicle_detail_screen.dart';
 
 /// Chemins accessibles SANS compte.
 /// Le catalogue vehicules est volontairement public (vitrine commerciale) :
 /// il ne contient ni prix ni donnee personnelle. Le compte n'est exige qu'au
 /// moment de « Demander le prix ».
 bool _isPublic(String loc) =>
-    loc == '/login' || loc == '/signup' || loc.startsWith('/vehicules');
+    loc == '/login' ||
+    loc == '/signup' ||
+    loc.startsWith('/vehicule'); // couvre /vehicules et /vehicule/:ref
 
 /// Routeur global avec redirection selon l'etat d'auth et le role.
 final routerProvider = Provider<GoRouter>((ref) {
@@ -38,6 +41,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       // Catalogue public (visiteurs anonymes bienvenus).
       GoRoute(
           path: '/vehicules', builder: (_, _) => const VehicleCatalogScreen()),
+      // Fiche vehicule partageable (lien profond pour Facebook / WhatsApp).
+      GoRoute(
+        path: '/vehicule/:ref',
+        builder: (_, s) =>
+            VehicleDetailScreen(reference: s.pathParameters['ref']!),
+      ),
       GoRoute(path: '/client', builder: (_, _) => const ClientDashboard()),
       GoRoute(path: '/partner', builder: (_, _) => const PartnerDashboard()),
       GoRoute(path: '/admin', builder: (_, _) => const AdminDashboard()),

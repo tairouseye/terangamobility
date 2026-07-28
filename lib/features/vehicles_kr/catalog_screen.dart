@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/analytics/fb_pixel.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/encar_image.dart';
 import '../../core/utils/formatters.dart';
@@ -23,6 +24,15 @@ class VehicleCatalogScreen extends ConsumerStatefulWidget {
 
 class _VehicleCatalogScreenState extends ConsumerState<VehicleCatalogScreen> {
   final _search = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    fbTrack('ViewContent', {
+      'content_type': 'vehicle',
+      'content_name': 'Catalogue Véhicules Corée',
+    });
+  }
 
   @override
   void dispose() {

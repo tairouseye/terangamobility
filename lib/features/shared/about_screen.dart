@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../core/config/app_info.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/teranga_logo.dart';
+import 'privacy_screen.dart';
 
 /// Ecran « A propos & Assistance » : version de l'application, éditeur et
 /// contacts de support cliquables.
@@ -148,7 +149,16 @@ class _AboutScreenState extends State<AboutScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
+            Center(
+              child: TextButton(
+                onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => const PrivacyScreen(),
+                )),
+                child: const Text('Politique de confidentialité'),
+              ),
+            ),
+            const SizedBox(height: 8),
             Text(
               '© ${DateTime.now().year} ${AppInfo.publisher} — '
               'Tous droits reserves',

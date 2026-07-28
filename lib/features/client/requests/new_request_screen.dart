@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../core/analytics/fb_pixel.dart';
 import '../../../core/data/part_catalog.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../models/parts_request.dart';
@@ -89,6 +90,10 @@ class _NewRequestScreenState extends ConsumerState<NewRequestScreen> {
       );
 
       await ref.read(requestServiceProvider).create(request);
+      fbTrack('Lead', {
+        'content_type': 'product',
+        'content_name': _resolvedPartName,
+      });
       ref.invalidate(myRequestsProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

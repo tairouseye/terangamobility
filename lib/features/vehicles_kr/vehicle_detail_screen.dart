@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../../core/analytics/fb_pixel.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/encar_image.dart';
 import '../../core/utils/formatters.dart';
@@ -21,11 +23,38 @@ class VehicleDetailScreen extends ConsumerWidget {
   final String reference;
   const VehicleDetailScreen({super.key, required this.reference});
 
+  static String shareUrl(String reference) =>
+      'https://terangamobility.gesprosn.org/#/vehicule/$reference';
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(vehicleByRefProvider(reference));
+    // Pixel : ViewContent une seule fois quand le véhicule est chargé.
+    ref.listen(vehicleByRefProvider(reference), (prev, next) {
+      final v = next.valueOrNull;
+      if (v != null && (prev == null || prev.valueOrNull == null)) {
+        fbTrack('ViewContent', {
+          'content_type': 'vehicle',
+          'content_ids': [v.reference],
+          'content_name': v.title,
+          if (v.priceFcfa != null) 'value': v.priceFcfa,
+          'currency': 'XOF',
+        });
+      }
+    });
+    final vehicle = async.valueOrNull;
     return Scaffold(
-      appBar: AppBar(title: const Text('Fiche véhicule')),
+      appBar: AppBar(
+        title: const Text('Fiche véhicule'),
+        actions: [
+          if (vehicle != null)
+            IconButton(
+              tooltip: 'Partager',
+              icon: const Icon(Icons.share),
+              onPressed: () => _share(context, vehicle),
+            ),
+        ],
+      ),
       body: async.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Erreur : $e')),
@@ -39,6 +68,47 @@ class VehicleDetailScreen extends ConsumerWidget {
       bottomNavigationBar: async.valueOrNull == null
           ? null
           : _PriceCta(vehicle: async.value!),
+    );
+  }
+
+  void _share(BuildContext context, VehicleListing v) {
+    final url = shareUrl(v.reference);
+    final text = '${v.title} — TerangaMobility\n$url';
+    showModalBottomSheet(
+      context: context,
+      builder: (_) => SafeArea(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          const Padding(
+            padding: EdgeInsets.all(16),
+            child: Text('Partager ce véhicule',
+                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+          ),
+          ListTile(
+            leading: const Icon(Icons.facebook, color: Color(0xFF1877F2)),
+            title: const Text('Partager sur Facebook'),
+            onTap: () {
+              Navigator.pop(context);
+              fbTrack('Lead', {'content_type': 'vehicle', 'content_name': v.title});
+              launchUrl(
+                Uri.parse(
+                    'https://www.facebook.com/sharer/sharer.php?u=${Uri.encodeComponent(url)}'),
+                mode: LaunchMode.externalApplication,
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.chat, color: AppColors.vert),
+            title: const Text('Partager sur WhatsApp'),
+            onTap: () {
+              Navigator.pop(context);
+              launchUrl(
+                Uri.parse('https://wa.me/?text=${Uri.encodeComponent(text)}'),
+                mode: LaunchMode.externalApplication,
+              );
+            },
+          ),
+        ]),
+      ),
     );
   }
 }
@@ -87,6 +157,13 @@ class _PriceCtaState extends ConsumerState<_PriceCta> {
     try {
       final svc = ref.read(vehicleOrderServiceProvider);
       final orderId = await svc.reserveVehicle(v.reference);
+      fbTrack('Lead', {
+        'content_type': 'vehicle',
+        'content_ids': [v.reference],
+        'content_name': v.title,
+        if (v.priceFcfa != null) 'value': v.priceFcfa,
+        'currency': 'XOF',
+      });
       ref.invalidate(vehicleListingsProvider);
       ref.invalidate(vehicleByRefProvider(v.reference));
       ref.invalidate(myVehicleOrdersProvider);
