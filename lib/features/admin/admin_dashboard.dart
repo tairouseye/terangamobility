@@ -10,6 +10,7 @@ import 'orders_screen.dart';
 import 'clients_screen.dart';
 import 'vehicle_requests_admin_screen.dart';
 import 'vehicle_orders_admin_screen.dart';
+import '../vehicles_kr/catalog_screen.dart';
 
 /// Espace Admin Teranga Parts (pilotage global).
 class AdminDashboard extends ConsumerWidget {
@@ -38,6 +39,10 @@ class AdminDashboard extends ConsumerWidget {
         const SizedBox(height: 20),
         const _SectionLabel('Véhicules Corée'),
         _Grid(children: [
+          _AdminTile(
+              Icons.directions_car_filled, 'Catalogue véhicules',
+              AppColors.vert,
+              onTap: () => _go(context, const VehicleCatalogScreen())),
           _AdminTile(
               Icons.request_quote, 'Demandes véhicule', AppColors.primary,
               onTap: () =>
