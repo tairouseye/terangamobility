@@ -60,45 +60,81 @@
   <link rel="manifest" href="manifest.json">
 
   <style>
-    /* Ecran de chargement affiche AVANT que Flutter ne demarre :
-       l'utilisateur voit immediatement la marque, pas une page blanche. */
+    /* Ecran de demarrage affiche AVANT Flutter : intro GesPro (bref) puis
+       marque TerangaMobility, avec une barre de chargement. */
     html, body { margin: 0; padding: 0; height: 100%; background: #1E3A5F; }
     #boot {
       position: fixed; inset: 0; z-index: 9999;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
       background: linear-gradient(160deg, #1E3A5F 0%, #15293F 100%);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      transition: opacity .35s ease;
+      transition: opacity .4s ease;
     }
-    #boot .badge {
-      width: 76px; height: 76px; border-radius: 18px; background: #fff;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 12px 30px rgba(0,0,0,.35); margin-bottom: 20px;
-    }
-    #boot .badge span { font-size: 40px; line-height: 1; }
-    #boot .brand { color: #fff; font-size: 24px; font-weight: 800; letter-spacing: -.5px; }
-    #boot .brand em { color: #C9A24B; font-style: normal; }
-    #boot .scope {
-      color: #C9A24B; font-size: 12px; letter-spacing: 2.5px;
-      font-weight: 700; margin-top: 6px;
-    }
-    #boot .ring {
-      margin-top: 28px; width: 34px; height: 34px; border-radius: 50%;
-      border: 3px solid rgba(255,255,255,.25); border-top-color: #C9A24B;
-      animation: spin .9s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
     #boot.hide { opacity: 0; pointer-events: none; }
+
+    /* Deux phases superposees, centrees, en fondu. */
+    #boot .phase {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      opacity: 0; transition: opacity .5s ease;
+    }
+    #boot .phase.show { opacity: 1; }
+
+    /* Phase 1 — GesPro */
+    #boot .gp-mark { color: #fff; font-size: 40px; font-weight: 800; letter-spacing: -1px; }
+    #boot .gp-mark em { color: #C9A24B; font-style: normal; }
+    #boot .gp-sub { color: #C9A24B; font-size: 12px; letter-spacing: 5px; font-weight: 700; margin-top: 8px; }
+    #boot .gp-tag { color: rgba(255,255,255,.5); font-size: 12.5px; margin-top: 24px; letter-spacing: .5px; }
+
+    /* Phase 2 — TerangaMobility (logo agrandi) */
+    #boot .badge {
+      width: 116px; height: 116px; border-radius: 26px; background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 18px 44px rgba(0,0,0,.42); margin-bottom: 26px;
+    }
+    #boot .badge span { font-size: 62px; line-height: 1; }
+    #boot .brand { color: #fff; font-size: 32px; font-weight: 800; letter-spacing: -.5px; }
+    #boot .brand em { color: #C9A24B; font-style: normal; }
+    #boot .scope { color: #C9A24B; font-size: 12px; letter-spacing: 3px; font-weight: 700; margin-top: 8px; }
+
+    /* Barre de chargement indeterminee (bas de l'ecran) */
+    #boot .loadbar {
+      position: absolute; left: 50%; bottom: 12%; transform: translateX(-50%);
+      width: 190px; height: 4px; border-radius: 4px;
+      background: rgba(255,255,255,.16); overflow: hidden;
+    }
+    #boot .loadbar::before {
+      content: ''; position: absolute; top: 0; height: 100%; width: 45%;
+      border-radius: 4px; background: #C9A24B;
+      animation: slide 1.15s cubic-bezier(.4,0,.2,1) infinite;
+    }
+    @keyframes slide { 0% { left: -45%; } 100% { left: 100%; } }
   </style>
 </head>
 <body>
   <div id="boot">
-    <div class="badge"><span>⚙️</span></div>
-    <div class="brand">Teranga<em>Mobility</em></div>
-    <div class="scope">PARTS &amp; VEHICULES</div>
-    <div class="ring"></div>
+    <div class="phase show" id="phase-gespro">
+      <div class="gp-mark">Ges<em>Pro</em></div>
+      <div class="gp-sub">DIGITAL</div>
+      <div class="gp-tag">vous présente</div>
+    </div>
+    <div class="phase" id="phase-teranga">
+      <div class="badge"><span>⚙️</span></div>
+      <div class="brand">Teranga<em>Mobility</em></div>
+      <div class="scope">PARTS &amp; VÉHICULES</div>
+    </div>
+    <div class="loadbar"></div>
   </div>
+
+  <script>
+    // Enchaine l'intro : GesPro (bref) puis TerangaMobility.
+    setTimeout(function () {
+      var g = document.getElementById('phase-gespro');
+      var t = document.getElementById('phase-teranga');
+      if (g) g.classList.remove('show');
+      if (t) t.classList.add('show');
+    }, 1300);
+  </script>
 
   <script>
     // Anti-cache : desinscrit tout ancien service worker et vide ses caches.
