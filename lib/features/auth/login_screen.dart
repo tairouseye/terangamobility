@@ -112,7 +112,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(height: 28),
-                  const Center(child: TerangaLockup(badgeSize: 92)),
+                  const Center(child: TerangaLockup(badgeSize: 132)),
                   const SizedBox(height: 36),
                   TextField(
                     controller: _email,
