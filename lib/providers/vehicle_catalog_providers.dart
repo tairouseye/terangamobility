@@ -31,6 +31,12 @@ final vehicleListingsProvider = FutureProvider<List<VehicleListing>>((ref) {
   return ref.watch(vehicleCatalogRepositoryProvider).search(filter);
 });
 
+/// Candidats a la selection Facebook (km <= param), regroupes cote UI.
+final facebookSelectionProvider =
+    FutureProvider.family<List<VehicleListing>, int>((ref, maxKm) {
+  return ref.watch(vehicleCatalogRepositoryProvider).forSelection(maxKm: maxKm);
+});
+
 /// Une fiche vehicule par reference.
 final vehicleByRefProvider =
     FutureProvider.family<VehicleListing?, String>((ref, reference) {

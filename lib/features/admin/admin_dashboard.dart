@@ -11,6 +11,7 @@ import 'clients_screen.dart';
 import 'vehicle_requests_admin_screen.dart';
 import 'vehicle_orders_admin_screen.dart';
 import '../vehicles_kr/catalog_screen.dart';
+import 'facebook_selection_screen.dart';
 
 /// Espace Admin Teranga Parts (pilotage global).
 class AdminDashboard extends ConsumerWidget {
@@ -50,6 +51,8 @@ class AdminDashboard extends ConsumerWidget {
           _AdminTile(
               Icons.directions_boat, 'Commandes véhicule', AppColors.ambre,
               onTap: () => _go(context, const VehicleOrdersAdminScreen())),
+          _AdminTile(Icons.campaign, 'Sélection Facebook', AppColors.primary,
+              onTap: () => _go(context, const FacebookSelectionScreen())),
         ]),
       ],
     );

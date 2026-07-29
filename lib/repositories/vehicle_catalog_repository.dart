@@ -15,6 +15,9 @@ class VehicleCatalogRepository {
   Future<VehicleListing?> byReference(String reference) =>
       _source.fetchByReference(reference);
 
+  Future<List<VehicleListing>> forSelection({int maxKm = 120000}) =>
+      _source.fetchForSelection(maxKm: maxKm);
+
   Future<List<String>> brands() => _source.distinctValues('brand');
   Future<List<String>> modelsForBrand(String brand) =>
       _source.modelsForBrand(brand);

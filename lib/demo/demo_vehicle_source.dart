@@ -175,6 +175,18 @@ class DemoVehicleDataSource implements VehicleDataSource {
   }
 
   @override
+  Future<List<VehicleListing>> fetchForSelection({int maxKm = 120000}) async {
+    return _listings
+        .where((v) =>
+            v.mileageKm != null &&
+            v.mileageKm! <= maxKm &&
+            v.priceFcfa != null &&
+            v.priceFcfa! >= 3000000 &&
+            v.priceFcfa! < 15000000)
+        .toList();
+  }
+
+  @override
   Future<VehicleListing?> fetchByReference(String reference) async {
     for (final v in _listings) {
       if (v.reference == reference) return v;

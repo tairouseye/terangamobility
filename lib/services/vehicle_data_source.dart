@@ -11,6 +11,10 @@ abstract class VehicleDataSource {
   Future<List<VehicleListing>> fetchListings(VehicleFilter filter);
   Future<VehicleListing?> fetchByReference(String reference);
 
+  /// Vehicules candidats a la selection Facebook : disponibles, prix 3M-15M,
+  /// km <= maxKm. Le regroupement par tranche + score se fait cote UI.
+  Future<List<VehicleListing>> fetchForSelection({int maxKm});
+
   /// Valeurs distinctes pour alimenter les filtres (marques, carburants...).
   Future<List<String>> distinctValues(String field);
 
@@ -56,6 +60,23 @@ class SupabaseVehicleDataSource implements VehicleDataSource {
     }
 
     final rows = await query.order('imported_at', ascending: false).limit(100);
+    return (rows as List)
+        .map((e) => VehicleListing.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  @override
+  Future<List<VehicleListing>> fetchForSelection({int maxKm = 120000}) async {
+    var query = _client
+        .from(_table)
+        .select()
+        .eq('is_active', true)
+        .eq('availability', 'available')
+        .gte('price_fcfa', 3000000)
+        .lt('price_fcfa', 15000000)
+        .not('mileage_km', 'is', null)
+        .lte('mileage_km', maxKm);
+    final rows = await query.order('price_fcfa', ascending: true).limit(500);
     return (rows as List)
         .map((e) => VehicleListing.fromJson(e as Map<String, dynamic>))
         .toList();
