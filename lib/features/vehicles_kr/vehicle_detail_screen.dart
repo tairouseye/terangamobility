@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../core/analytics/fb_pixel.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/encar_image.dart';
+import '../../core/utils/encar_price.dart';
 import '../../core/utils/formatters.dart';
 import '../../models/enums.dart';
 import '../../models/vehicle_enums.dart';
@@ -18,6 +19,17 @@ import '../client/vehicles_kr/vehicle_tracking_screen.dart';
 import 'facebook_post_helper.dart';
 import 'request_price_screen.dart';
 import 'widgets/customs_terms_notice.dart';
+
+/// Separateur de milliers (pour USD / KRW cote admin).
+String _thousands(int v) {
+  final s = v.abs().toString();
+  final b = StringBuffer();
+  for (var i = 0; i < s.length; i++) {
+    if (i > 0 && (s.length - i) % 3 == 0) b.write(' ');
+    b.write(s[i]);
+  }
+  return b.toString();
+}
 
 /// Fiche detaillee d'un véhicule. Le prix n'est jamais affiche : un bouton
 /// « Demander le prix » ouvre le formulaire de demande.
@@ -69,7 +81,7 @@ class VehicleDetailScreen extends ConsumerWidget {
           if (v == null) {
             return const Center(child: Text('Véhicule introuvable'));
           }
-          return _Detail(vehicle: v);
+          return _Detail(vehicle: v, isAdmin: isAdmin);
         },
       ),
       bottomNavigationBar: async.valueOrNull == null
@@ -257,13 +269,18 @@ class _PriceCtaState extends ConsumerState<_PriceCta> {
 
 class _Detail extends StatelessWidget {
   final VehicleListing vehicle;
-  const _Detail({required this.vehicle});
+  final bool isAdmin;
+  const _Detail({required this.vehicle, this.isAdmin = false});
 
   @override
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        _Gallery(photos: vehicle.photos),
+        _Gallery(
+          photos: isAdmin
+              ? [...vehicle.photos, ...extraEncarPhotos(vehicle.photos)]
+              : vehicle.photos,
+        ),
         Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
@@ -298,6 +315,31 @@ class _Detail extends StatelessWidget {
                   ),
                 ],
               ),
+              // Controle admin : prix d'achat Encar estime (brut, sans marge).
+              if (isAdmin && estimatedEncarPrice(vehicle.priceFcfa) != null)
+                Builder(builder: (_) {
+                  final e = estimatedEncarPrice(vehicle.priceFcfa)!;
+                  return Container(
+                    margin: const EdgeInsets.only(top: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: AppColors.ambre.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      const Icon(Icons.visibility, size: 14, color: Color(0xFF7A5A00)),
+                      const SizedBox(width: 6),
+                      Text(
+                          'Prix Encar ≈ \$${_thousands(e.usd)} (brut, sans marge) · '
+                          '${_thousands(e.krw)} ₩ · estimé',
+                          style: const TextStyle(
+                              fontSize: 11.5,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF7A5A00))),
+                    ]),
+                  );
+                }),
               const SizedBox(height: 12),
               if (!vehicle.isAvailable)
                 _banner(

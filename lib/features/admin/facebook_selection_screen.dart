@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/encar_image.dart';
+import '../../core/utils/encar_price.dart';
 import '../../core/utils/formatters.dart';
 import '../../models/vehicle_listing.dart';
 import '../../providers/vehicle_catalog_providers.dart';
@@ -194,6 +195,10 @@ class _FacebookSelectionScreenState
                       style: const TextStyle(
                           fontWeight: FontWeight.w800,
                           color: AppColors.primary)),
+                  if (estimatedEncarPrice(v.priceFcfa) case final e?)
+                    Text('Encar ≈ \$${e.usd} (brut)',
+                        style: const TextStyle(
+                            fontSize: 10.5, color: Color(0xFF7A5A00))),
                   const SizedBox(height: 6),
                   Row(children: [
                     Expanded(

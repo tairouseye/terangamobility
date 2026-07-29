@@ -15,6 +15,27 @@ String encarPhoto(String url, {int height = 720, double ratio = 16 / 9}) {
   return '$url${sep}impolicy=heightRate&rh=$height&cw=$w&ch=$height&cg=Center';
 }
 
+/// Derive des URL de photos Encar supplementaires (autres indices) a partir des
+/// photos existantes (motif `.../<id>_NNN.jpg`). Pour l'apercu ADMIN uniquement.
+/// Repli propre si une image derivee n'existe pas (gere par errorBuilder).
+List<String> extraEncarPhotos(List<String> photos,
+    {List<int> indices = const [2, 5]}) {
+  if (photos.isEmpty) return const [];
+  final base = RegExp(r'^(.*_)(\d{3})(\.jpg.*)$').firstMatch(photos.first);
+  if (base == null) return const [];
+  final existing = <int>{};
+  for (final p in photos) {
+    final m = RegExp(r'_(\d{3})\.jpg').firstMatch(p);
+    if (m != null) existing.add(int.parse(m.group(1)!));
+  }
+  final out = <String>[];
+  for (final i in indices) {
+    if (existing.contains(i)) continue;
+    out.add('${base.group(1)}${i.toString().padLeft(3, '0')}${base.group(3)}');
+  }
+  return out;
+}
+
 /// Variante adaptative : la resolution demandee s'ajuste a la place reellement
 /// occupee a l'ecran (largeur logique du conteneur x densite de pixels de
 /// l'appareil). Nette sur desktop/retina, legere sur telephone.
