@@ -15,6 +15,17 @@ String encarPhoto(String url, {int height = 720, double ratio = 16 / 9}) {
   return '$url${sep}impolicy=heightRate&rh=$height&cw=$w&ch=$height&cg=Center';
 }
 
+/// Version HAUTE QUALITE, sans recadrage : le ratio d'origine de la photo est
+/// preserve (contrairement a [encarPhoto] qui recadre en 16:9). A utiliser pour
+/// le telechargement et les publications reseaux sociaux, ou l'on veut la photo
+/// entiere et nette. `height` = hauteur cible en pixels (1080 par defaut).
+String encarPhotoFull(String url, {int height = 1080}) {
+  if (!url.contains('ci.encar.com')) return url;
+  if (url.contains('impolicy=')) return url;
+  final sep = url.contains('?') ? '&' : '?';
+  return '$url${sep}impolicy=heightRate&rh=$height';
+}
+
 /// Derive des URL de photos Encar supplementaires (autres indices) a partir des
 /// photos existantes (motif `.../<id>_NNN.jpg`). Pour l'apercu ADMIN uniquement.
 /// Repli propre si une image derivee n'existe pas (gere par errorBuilder).

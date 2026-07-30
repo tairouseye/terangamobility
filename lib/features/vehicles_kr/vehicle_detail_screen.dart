@@ -7,6 +7,7 @@ import '../../core/analytics/fb_pixel.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/encar_image.dart';
 import '../../core/utils/encar_price.dart';
+import '../../core/utils/encar_source.dart';
 import '../../core/utils/formatters.dart';
 import '../../models/enums.dart';
 import '../../models/vehicle_enums.dart';
@@ -60,12 +61,21 @@ class VehicleDetailScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Fiche véhicule'),
         actions: [
-          if (vehicle != null && isAdmin)
+          if (vehicle != null && isAdmin) ...[
+            if (encarListingUrl(vehicle.reference) != null)
+              IconButton(
+                tooltip: 'Vérifier la disponibilité sur Encar',
+                icon: const Icon(Icons.travel_explore),
+                onPressed: () => launchUrl(
+                    Uri.parse(encarListingUrl(vehicle.reference)!),
+                    mode: LaunchMode.externalApplication),
+              ),
             IconButton(
               tooltip: 'Préparer un post Facebook',
               icon: const Icon(Icons.campaign),
               onPressed: () => prepareFacebookPost(context, vehicle),
             ),
+          ],
           if (vehicle != null)
             IconButton(
               tooltip: 'Partager',

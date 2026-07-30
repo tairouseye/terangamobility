@@ -3,7 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/config/facebook_config.dart';
+import '../../core/theme/app_theme.dart';
+import '../../core/utils/download_file.dart';
 import '../../core/utils/encar_image.dart';
+import '../../core/utils/encar_source.dart';
 import '../../core/utils/formatters.dart';
 import '../../models/vehicle_listing.dart';
 
@@ -37,56 +40,207 @@ String fbCaption(VehicleListing v) {
   return lines.join('\n');
 }
 
-/// Publication assistee : copie le texte, propose la photo HD + le composeur.
+/// Nom de fichier propose au telechargement d'une photo.
+String _photoFilename(VehicleListing v, int index) {
+  final slug = '${v.brand}_${v.model}'
+      .toLowerCase()
+      .replaceAll(RegExp(r'[^a-z0-9]+'), '_')
+      .replaceAll(RegExp(r'^_|_$'), '');
+  return 'teranga_${slug}_${v.reference}_${index + 1}.jpg';
+}
+
+/// Publication assistee : copie le texte, propose de telecharger les photos HD
+/// (pour les joindre au post) et d'ouvrir le composeur Facebook. Un bouton
+/// « Voir sur Encar » permet de verifier que le vehicule est toujours en vente.
 Future<void> prepareFacebookPost(
     BuildContext context, VehicleListing v) async {
   final caption = fbCaption(v);
   await Clipboard.setData(ClipboardData(text: caption));
   if (!context.mounted) return;
-  showDialog(
+  final encarUrl = encarListingUrl(v.reference);
+
+  await showModalBottomSheet(
     context: context,
-    builder: (_) => AlertDialog(
-      title: const Text('Publier sur Facebook'),
-      content: const Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+    isScrollControlled: true,
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (ctx) {
+      return DraggableScrollableSheet(
+        initialChildSize: 0.72,
+        minChildSize: 0.4,
+        maxChildSize: 0.95,
+        expand: false,
+        builder: (_, scroll) => ListView(
+          controller: scroll,
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                    color: AppColors.grisClair,
+                    borderRadius: BorderRadius.circular(2)),
+              ),
+            ),
+            Text('Publier « ${v.title} »',
+                style: const TextStyle(
+                    fontSize: 16, fontWeight: FontWeight.w800)),
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: AppColors.vert.withValues(alpha: 0.10),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Row(children: [
+                Icon(Icons.check_circle, color: AppColors.vert, size: 18),
+                SizedBox(width: 8),
+                Expanded(
+                    child: Text('Le texte du post est déjà copié.',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w700, fontSize: 13))),
+              ]),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+                '1. Téléchargez les photos ci-dessous.\n'
+                '2. Ouvrez Facebook → « Créer une publication ».\n'
+                '3. Collez le texte + ajoutez les photos → Publiez.',
+                style: TextStyle(fontSize: 12.5, color: AppColors.gris)),
+            const SizedBox(height: 14),
+            if (v.photos.isNotEmpty) ...[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Photos (${v.photos.length})',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w700, fontSize: 14)),
+                  TextButton.icon(
+                    onPressed: () async {
+                      for (var i = 0; i < v.photos.length; i++) {
+                        await downloadImage(
+                            encarPhotoFull(v.photos[i], height: 1200),
+                            _photoFilename(v, i));
+                        await Future.delayed(const Duration(milliseconds: 400));
+                      }
+                    },
+                    icon: const Icon(Icons.download, size: 18),
+                    label: const Text('Tout télécharger'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                  'Astuce : touchez une photo pour l\'ouvrir en grand, '
+                  'puis « Enregistrer l\'image ».',
+                  style: TextStyle(fontSize: 11, color: AppColors.gris)),
+              const SizedBox(height: 10),
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: [
+                  for (var i = 0; i < v.photos.length; i++)
+                    _PhotoTile(
+                      thumbUrl: encarPhoto(v.photos[i], height: 240),
+                      fullUrl: encarPhotoFull(v.photos[i], height: 1200),
+                      filename: _photoFilename(v, i),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 18),
+            ],
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () => launchUrl(Uri.parse(FacebookConfig.composerUrl),
+                      mode: LaunchMode.externalApplication),
+                  icon: const Icon(Icons.facebook, size: 18),
+                  label: const Text('Ouvrir Facebook'),
+                ),
+                OutlinedButton.icon(
+                  onPressed: () {
+                    Clipboard.setData(ClipboardData(text: caption));
+                    ScaffoldMessenger.of(ctx).showSnackBar(
+                        const SnackBar(content: Text('Texte recopié.')));
+                  },
+                  icon: const Icon(Icons.copy, size: 18),
+                  label: const Text('Recopier le texte'),
+                ),
+                if (encarUrl != null)
+                  OutlinedButton.icon(
+                    onPressed: () => launchUrl(Uri.parse(encarUrl),
+                        mode: LaunchMode.externalApplication),
+                    icon: const Icon(Icons.travel_explore, size: 18),
+                    label: const Text('Voir sur Encar'),
+                  ),
+              ],
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+/// Miniature cliquable : ouvre la photo HD (pour enregistrer) + bouton
+/// telechargement direct.
+class _PhotoTile extends StatelessWidget {
+  final String thumbUrl;
+  final String fullUrl;
+  final String filename;
+  const _PhotoTile(
+      {required this.thumbUrl,
+      required this.fullUrl,
+      required this.filename});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 104,
+      height: 74,
+      child: Stack(
+        fit: StackFit.expand,
         children: [
-          Text('✅ Le texte du post est copié.',
-              style: TextStyle(fontWeight: FontWeight.w700)),
-          SizedBox(height: 8),
-          Text(
-              '1. Enregistre la photo (bouton ci-dessous).\n'
-              '2. Ouvre Facebook → « Créer une publication ».\n'
-              '3. Colle le texte + ajoute la photo → Publie.',
-              style: TextStyle(fontSize: 13)),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: GestureDetector(
+              onTap: () => launchUrl(Uri.parse(fullUrl),
+                  mode: LaunchMode.externalApplication),
+              child: Image.network(
+                thumbUrl,
+                fit: BoxFit.cover,
+                webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
+                errorBuilder: (_, _, _) => Container(
+                    color: AppColors.grisClair,
+                    child: const Icon(Icons.directions_car,
+                        color: AppColors.gris)),
+              ),
+            ),
+          ),
+          Positioned(
+            right: 2,
+            bottom: 2,
+            child: Material(
+              color: Colors.black54,
+              shape: const CircleBorder(),
+              child: InkWell(
+                customBorder: const CircleBorder(),
+                onTap: () => downloadImage(fullUrl, filename),
+                child: const Padding(
+                  padding: EdgeInsets.all(4),
+                  child: Icon(Icons.download, size: 16, color: Colors.white),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
-      actions: [
-        if (v.photos.isNotEmpty)
-          TextButton.icon(
-            onPressed: () => launchUrl(
-              Uri.parse(
-                  encarPhoto(v.photos.first, height: 1080, ratio: 16 / 9)),
-              mode: LaunchMode.externalApplication,
-            ),
-            icon: const Icon(Icons.image, size: 18),
-            label: const Text('Photo'),
-          ),
-        TextButton(
-          onPressed: () {
-            Clipboard.setData(ClipboardData(text: caption));
-            ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Texte recopié.')));
-          },
-          child: const Text('Copier'),
-        ),
-        ElevatedButton.icon(
-          onPressed: () => launchUrl(Uri.parse(FacebookConfig.composerUrl),
-              mode: LaunchMode.externalApplication),
-          icon: const Icon(Icons.facebook, size: 18),
-          label: const Text('Ouvrir Facebook'),
-        ),
-      ],
-    ),
-  );
+    );
+  }
 }
