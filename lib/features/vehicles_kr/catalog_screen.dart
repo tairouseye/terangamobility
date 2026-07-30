@@ -5,11 +5,14 @@ import 'package:go_router/go_router.dart';
 import '../../core/analytics/fb_pixel.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/encar_image.dart';
+import '../../core/utils/encar_price.dart';
 import '../../core/utils/formatters.dart';
+import '../../models/enums.dart';
 import '../../models/vehicle_listing.dart';
 import '../../providers/auth_providers.dart';
 import '../../providers/vehicle_catalog_providers.dart';
 import '../shared/app_footer.dart';
+import 'facebook_post_helper.dart';
 import 'vehicle_detail_screen.dart';
 import 'widgets/vehicle_filter_sheet.dart';
 
@@ -52,6 +55,8 @@ class _VehicleCatalogScreenState extends ConsumerState<VehicleCatalogScreen> {
     final filter = ref.watch(vehicleFilterProvider);
     // Le catalogue est public : un visiteur non connecte peut tout parcourir.
     final isLoggedIn = ref.watch(authServiceProvider).currentUser != null;
+    final isAdmin =
+        ref.watch(currentProfileProvider).valueOrNull?.role == UserRole.admin;
 
     return Scaffold(
       appBar: AppBar(
@@ -147,7 +152,8 @@ class _VehicleCatalogScreenState extends ConsumerState<VehicleCatalogScreen> {
                         itemCount: vehicles.length,
                         separatorBuilder: (_, _) => const SizedBox(height: 14),
                         itemBuilder: (context, i) =>
-                            _VehicleCard(vehicle: vehicles[i]),
+                            _VehicleCard(
+                                vehicle: vehicles[i], isAdmin: isAdmin),
                       );
                     },
                   );
@@ -184,7 +190,8 @@ class _FilterButton extends StatelessWidget {
 
 class _VehicleCard extends StatelessWidget {
   final VehicleListing vehicle;
-  const _VehicleCard({required this.vehicle});
+  final bool isAdmin;
+  const _VehicleCard({required this.vehicle, this.isAdmin = false});
 
   @override
   Widget build(BuildContext context) {
@@ -254,9 +261,24 @@ class _VehicleCard extends StatelessWidget {
                                 fontWeight: FontWeight.w800,
                                 color: AppColors.primary),
                           ),
+                          if (estimatedEncarPrice(vehicle.priceFcfa)
+                              case final e? when isAdmin)
+                            Text('Encar ≈ ${Formatters.fcfa(e.fcfa)} brut',
+                                style: const TextStyle(
+                                    fontSize: 10.5, color: Color(0xFF7A5A00))),
                         ],
                       ),
-                      const Icon(Icons.chevron_right, color: AppColors.primary),
+                      if (isAdmin)
+                        IconButton(
+                          tooltip: 'Poster sur Facebook',
+                          icon: const Icon(Icons.campaign,
+                              color: AppColors.primary),
+                          visualDensity: VisualDensity.compact,
+                          onPressed: () => prepareFacebookPost(context, vehicle),
+                        )
+                      else
+                        const Icon(Icons.chevron_right,
+                            color: AppColors.primary),
                     ],
                   ),
                 ],

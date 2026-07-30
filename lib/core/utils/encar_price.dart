@@ -7,7 +7,8 @@
 class EncarPriceEstimate {
   final int krw; // won coreens
   final int usd; // dollars (approx)
-  const EncarPriceEstimate(this.krw, this.usd);
+  final int fcfa; // FCFA brut (converti, AVANT marge)
+  const EncarPriceEstimate(this.krw, this.usd, this.fcfa);
 }
 
 // Taux utilises a l'import (coherents entre eux) : 1 KRW = 0.45 FCFA,
@@ -26,5 +27,5 @@ EncarPriceEstimate? estimatedEncarPrice(num? priceFcfa) {
   if (raw <= 0) return null;
   final krw = (raw / kKrwToFcfa).round();
   final usd = (krw / kUsdToKrw).round();
-  return EncarPriceEstimate(krw, usd);
+  return EncarPriceEstimate(krw, usd, raw.round());
 }

@@ -196,7 +196,7 @@ class _FacebookSelectionScreenState
                           fontWeight: FontWeight.w800,
                           color: AppColors.primary)),
                   if (estimatedEncarPrice(v.priceFcfa) case final e?)
-                    Text('Encar ≈ \$${e.usd} (brut)',
+                    Text('Encar brut ≈ ${Formatters.fcfa(e.fcfa)} · \$${e.usd}',
                         style: const TextStyle(
                             fontSize: 10.5, color: Color(0xFF7A5A00))),
                   const SizedBox(height: 6),

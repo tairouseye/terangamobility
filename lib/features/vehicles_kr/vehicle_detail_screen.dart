@@ -330,13 +330,16 @@ class _Detail extends StatelessWidget {
                     child: Row(mainAxisSize: MainAxisSize.min, children: [
                       const Icon(Icons.visibility, size: 14, color: Color(0xFF7A5A00)),
                       const SizedBox(width: 6),
-                      Text(
-                          'Prix Encar ≈ \$${_thousands(e.usd)} (brut, sans marge) · '
-                          '${_thousands(e.krw)} ₩ · estimé',
-                          style: const TextStyle(
-                              fontSize: 11.5,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF7A5A00))),
+                      Flexible(
+                        child: Text(
+                            'Encar brut ≈ ${_thousands(e.fcfa)} FCFA · '
+                            '\$${_thousands(e.usd)} · ${_thousands(e.krw)} ₩ '
+                            '(avant marge, estimé)',
+                            style: const TextStyle(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF7A5A00))),
+                      ),
                     ]),
                   );
                 }),
