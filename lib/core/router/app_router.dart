@@ -66,8 +66,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       final session = ref.read(authServiceProvider).currentSession;
       final onAuthPage = loc == '/login' || loc == '/signup';
 
-      // Non connecte : login/signup + catalogue public.
+      // Non connecte : le catalogue est la vitrine commerciale -> un visiteur
+      // qui arrive sur la racine (ex: lien Facebook vers le domaine) voit
+      // directement les vehicules, PAS un mur de connexion. Le compte n'est
+      // demande qu'au moment de « Demander le prix » / « Reserver ».
       if (session == null) {
+        if (loc == '/') return '/vehicules';
         return _isPublic(loc) ? null : '/login';
       }
 
