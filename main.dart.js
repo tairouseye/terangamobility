@@ -116556,8 +116556,8 @@ if(m.glr())return l==="/"?o:"/"
 s=n.bC($.hs(),t.R).a.gdU().e.a
 r=l!=="/login"
 q=!r||l==="/signup"
-if(s==null)return!r||l==="/signup"||B.n.bw(l,"/vehicule")?o:"/login"
-p=n.bC($.tP(),t.uN).gq()
+if(s==null){if(l==="/")return"/vehicules"
+return!r||l==="/signup"||B.n.bw(l,"/vehicule")?o:"/login"}p=n.bC($.tP(),t.uN).gq()
 if(p==null)return l==="/"?o:"/"
 switch(p.d.a){case 0:n="/client"
 break
@@ -120264,7 +120264,7 @@ A.abo.prototype={
 E(a){return A.b89(new A.aXy(this),A.Ip(),t.A9)}}
 A.aXy.prototype={
 $2(a,b){var s=null,r=b.b,q=r!=null?"v"+r.c:"v\u2026"
-return A.L(q+" \xb7 2026-07-30",s,s,s,A.cT(s,s,this.a.c,s,s,s,s,s,s,s,s,11,s,s,B.b8,s,s,!0,s,s,s,s,s,s,s,s),s,s,s)},
+return A.L(q+" \xb7 2026-08-02",s,s,s,A.cT(s,s,this.a.c,s,s,s,s,s,s,s,s,11,s,s,B.b8,s,s,!0,s,s,s,s,s,s,s,s),s,s,s)},
 $S:282}
 A.UI.prototype={
 ec(a,b){var s=null,r=A.L(this.e,s,s,s,s,s,s,s)
@@ -120323,7 +120323,7 @@ A.abp.prototype={
 E(a){return A.b89(new A.aXz(),A.Ip(),t.A9)}}
 A.aXz.prototype={
 $2(a,b){var s=null,r=b.b,q=r!=null?"v"+r.c:"v\u2026"
-return A.L(q+" \xb7 2026-07-30",s,s,s,B.aVb,s,s,s)},
+return A.L(q+" \xb7 2026-08-02",s,s,s,B.aVb,s,s,s)},
 $S:282}
 A.Aj.prototype={
 ec(a,b){var s=null,r=b.aN($.b5W(),t._Z),q=new A.ati(b)
