@@ -23,6 +23,7 @@ class AppColors {
   static const Color gris = Color(0xFF6B7280);
   static const Color grisClair = Color(0xFFF4F6F8); // fonds de cartes / app
   static const Color ambre = Color(0xFFE4A11B); // alertes / etapes en cours
+  static const Color danger = Color(0xFFC0392B); // erreurs / actions destructives
 }
 
 class AppTheme {

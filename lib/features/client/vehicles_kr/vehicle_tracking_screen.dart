@@ -34,6 +34,7 @@ class _VehicleTrackingScreenState extends ConsumerState<VehicleTrackingScreen> {
   String _channel = 'Mobile money'; // Espèces | Virement | Mobile money
   final _reference = TextEditingController();
   late bool _declared; // acompte déjà déclaré ?
+  bool _balanceDeclared = false; // solde déjà déclaré ? (session)
   DateTime? _rdv;
 
   @override
@@ -78,8 +79,9 @@ class _VehicleTrackingScreenState extends ConsumerState<VehicleTrackingScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Erreur : $e')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Impossible d\'enregistrer votre paiement. '
+                'Vérifiez votre connexion et réessayez.')));
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -92,14 +94,18 @@ class _VehicleTrackingScreenState extends ConsumerState<VehicleTrackingScreen> {
       await ref
           .read(vehicleOrderServiceProvider)
           .declarePayment(widget.order.id!, 'balance');
+      ref.invalidate(myVehicleOrdersProvider);
       if (mounted) {
+        setState(() => _balanceDeclared = true);
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text('Merci ! Notre équipe vérifie et confirme sous peu.')));
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Erreur : $e')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text(
+                'Impossible d\'enregistrer votre paiement. '
+                'Vérifiez votre connexion et réessayez.')));
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -132,8 +138,8 @@ class _VehicleTrackingScreenState extends ConsumerState<VehicleTrackingScreen> {
       if (mounted) setState(() => _rdv = at);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Erreur : $e')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Impossible d\'enregistrer le rendez-vous. Réessayez.')));
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -147,8 +153,8 @@ class _VehicleTrackingScreenState extends ConsumerState<VehicleTrackingScreen> {
           ref.read(vehicleOrderServiceProvider).documentUrl(path));
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Ouverture impossible : $e')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Impossible d\'ouvrir le document. Réessayez.')));
       }
     }
   }
@@ -469,29 +475,42 @@ class _VehicleTrackingScreenState extends ConsumerState<VehicleTrackingScreen> {
             style: TextStyle(fontSize: 12.5, color: AppColors.anthracite),
           ),
           const SizedBox(height: 10),
-          Row(children: [
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: () => _openWhatsapp('solde'),
-                icon: const Icon(Icons.chat, size: 18),
-                label: const Text('Nous contacter'),
+          if (_balanceDeclared)
+            const Row(children: [
+              Icon(Icons.check_circle, size: 18, color: AppColors.vert),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text('Paiement déclaré — en attente de vérification.',
+                    style: TextStyle(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.vert)),
               ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: ElevatedButton.icon(
-                onPressed: _busy ? null : _declareBalance,
-                icon: _busy
-                    ? const SizedBox(
-                        height: 16,
-                        width: 16,
-                        child: CircularProgressIndicator(
-                            color: Colors.white, strokeWidth: 2))
-                    : const Icon(Icons.check, size: 18),
-                label: const Text('J\'ai payé'),
+            ])
+          else
+            Row(children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () => _openWhatsapp('solde'),
+                  icon: const Icon(Icons.chat, size: 18),
+                  label: const Text('Nous contacter'),
+                ),
               ),
-            ),
-          ]),
+              const SizedBox(width: 8),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: _busy ? null : _declareBalance,
+                  icon: _busy
+                      ? const SizedBox(
+                          height: 16,
+                          width: 16,
+                          child: CircularProgressIndicator(
+                              color: Colors.white, strokeWidth: 2))
+                      : const Icon(Icons.check, size: 18),
+                  label: const Text('J\'ai payé'),
+                ),
+              ),
+            ]),
         ],
       ),
     );

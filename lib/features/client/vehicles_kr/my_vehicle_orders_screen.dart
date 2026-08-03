@@ -25,6 +25,7 @@ class MyVehicleOrdersScreen extends ConsumerWidget {
         onRefresh: () async {
           ref.invalidate(myVehicleRequestsProvider);
           ref.invalidate(myVehicleOrdersProvider);
+          await ref.read(myVehicleOrdersProvider.future);
         },
         child: ListView(
           padding: const EdgeInsets.all(16),
@@ -68,7 +69,12 @@ class MyVehicleOrdersScreen extends ConsumerWidget {
             orders.when(
               loading: () =>
                   const Padding(padding: EdgeInsets.all(24), child: Center(child: CircularProgressIndicator())),
-              error: (e, _) => Text('Erreur : $e'),
+              error: (e, _) => const Padding(
+                padding: EdgeInsets.symmetric(vertical: 24),
+                child: Center(
+                    child: Text('Impossible de charger vos commandes.',
+                        style: TextStyle(color: AppColors.gris))),
+              ),
               data: (list) {
                 if (list.isEmpty) {
                   return const Padding(

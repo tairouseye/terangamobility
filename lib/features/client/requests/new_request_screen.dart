@@ -102,7 +102,8 @@ class _NewRequestScreenState extends ConsumerState<NewRequestScreen> {
         Navigator.of(context).pop();
       }
     } catch (e) {
-      setState(() => _error = 'Envoi impossible : $e');
+      setState(() => _error =
+          'Envoi impossible. Vérifiez votre connexion et réessayez.');
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -128,7 +129,9 @@ class _NewRequestScreenState extends ConsumerState<NewRequestScreen> {
               const SizedBox(height: 8),
               vehiclesAsync.when(
                 loading: () => const LinearProgressIndicator(),
-                error: (e, _) => Text('Erreur véhicules : $e'),
+                error: (e, _) => const Text(
+                    'Impossible de charger vos véhicules.',
+                    style: TextStyle(color: AppColors.gris)),
                 data: (vehicles) {
                   if (vehicles.isEmpty) {
                     return _AddVehiclePrompt(onAdded: () =>
@@ -219,7 +222,7 @@ class _NewRequestScreenState extends ConsumerState<NewRequestScreen> {
               ),
               if (_error != null) ...[
                 const SizedBox(height: 12),
-                Text(_error!, style: const TextStyle(color: AppColors.primary)),
+                Text(_error!, style: const TextStyle(color: AppColors.danger)),
               ],
               const SizedBox(height: 24),
               ElevatedButton(

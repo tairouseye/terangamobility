@@ -19,10 +19,15 @@ class MyQuotesScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Mes devis')),
       body: RefreshIndicator(
-        onRefresh: () async => ref.invalidate(myQuotesProvider),
+        onRefresh: () async {
+          ref.invalidate(myQuotesProvider);
+          await ref.read(myQuotesProvider.future);
+        },
         child: async.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(child: Text('Erreur : $e')),
+          error: (e, _) => const Center(
+              child: Text('Impossible de charger vos devis.',
+                  style: TextStyle(color: AppColors.gris))),
           data: (quotes) {
             if (quotes.isEmpty) {
               return ListView(
@@ -93,7 +98,9 @@ class _QuoteCardState extends ConsumerState<_QuoteCard> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Paiement impossible : $e')),
+          const SnackBar(
+              content: Text('Paiement impossible pour le moment. '
+                  'Réessayez ou contactez-nous.')),
         );
       }
     } finally {
