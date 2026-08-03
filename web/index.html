@@ -86,16 +86,12 @@
     #boot .gp-sub { color: #C9A24B; font-size: 16px; letter-spacing: 7px; font-weight: 700; margin-top: 12px; }
     #boot .gp-tag { color: rgba(255,255,255,.55); font-size: 15px; margin-top: 30px; letter-spacing: .5px; }
 
-    /* Phase 2 — TerangaMobility (logo agrandi) */
-    #boot .badge {
-      width: 176px; height: 176px; border-radius: 38px; background: #fff;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 22px 54px rgba(0,0,0,.45); margin-bottom: 30px;
+    /* Phase 2 — TerangaMobility : logo complet sur carte blanche */
+    #boot .logo-card {
+      background: #fff; border-radius: 28px; padding: 24px 30px;
+      box-shadow: 0 22px 54px rgba(0,0,0,.45); max-width: 82vw;
     }
-    #boot .badge img { width: 82%; height: 82%; object-fit: contain; }
-    #boot .brand { color: #fff; font-size: 42px; font-weight: 800; letter-spacing: -.5px; }
-    #boot .brand em { color: #C9A24B; font-style: normal; }
-    #boot .scope { color: #C9A24B; font-size: 14px; letter-spacing: 4px; font-weight: 700; margin-top: 10px; }
+    #boot .logo-card img { display: block; width: 340px; max-width: 68vw; height: auto; }
 
     /* Barre de chargement indeterminee (bas de l'ecran) */
     #boot .loadbar {
@@ -119,21 +115,20 @@
       <div class="gp-tag">vous présente</div>
     </div>
     <div class="phase" id="phase-teranga">
-      <div class="badge"><img src="icons/Icon-512.png" alt="TerangaMobility"></div>
-      <div class="brand">Teranga<em>Mobility</em></div>
-      <div class="scope">PARTS &amp; VÉHICULES</div>
+      <div class="logo-card"><img src="logo.png" alt="TerangaMobility"></div>
     </div>
     <div class="loadbar"></div>
   </div>
 
   <script>
     // Enchaine l'intro : GesPro (bref) puis TerangaMobility.
+    var bootStart = Date.now();
     setTimeout(function () {
       var g = document.getElementById('phase-gespro');
       var t = document.getElementById('phase-teranga');
       if (g) g.classList.remove('show');
       if (t) t.classList.add('show');
-    }, 1300);
+    }, 1000);
   </script>
 
   <script>
@@ -153,12 +148,18 @@
   </script>
 
   <script>
-    // Retire l'ecran de chargement des que Flutter affiche sa 1re image.
+    // Retire l'ecran de chargement quand Flutter est pret, MAIS garde une duree
+    // minimale d'affichage pour que le logo TerangaMobility soit bien visible
+    // (sinon il « passe trop vite » si Flutter charge instantanement).
+    var MIN_SHOWN = 2800; // ms
     window.addEventListener('flutter-first-frame', function () {
       var boot = document.getElementById('boot');
       if (!boot) return;
-      boot.classList.add('hide');
-      setTimeout(function () { boot.remove(); }, 400);
+      var wait = Math.max(0, MIN_SHOWN - (Date.now() - (window.bootStart || bootStart)));
+      setTimeout(function () {
+        boot.classList.add('hide');
+        setTimeout(function () { boot.remove(); }, 400);
+      }, wait);
     });
   </script>
 
