@@ -45,7 +45,8 @@ class _BuildQuoteScreenState extends ConsumerState<BuildQuoteScreen> {
           );
       setState(() => _breakdown = b);
     } catch (e) {
-      setState(() => _error = 'Calcul impossible : $e');
+      setState(() => _error =
+          'Calcul impossible. Vérifiez les données et réessayez.');
     } finally {
       if (mounted) setState(() => _computing = false);
     }
@@ -133,8 +134,8 @@ class _BuildQuoteScreenState extends ConsumerState<BuildQuoteScreen> {
           }
         } catch (e) {
           if (mounted) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text('Erreur : $e')));
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('Enregistrement impossible. Réessayez.')));
           }
         }
       }
@@ -165,7 +166,7 @@ class _BuildQuoteScreenState extends ConsumerState<BuildQuoteScreen> {
         Navigator.of(context).pop();
       }
     } catch (e) {
-      setState(() => _error = 'Envoi impossible : $e');
+      setState(() => _error = 'Envoi impossible. Réessayez.');
     } finally {
       if (mounted) setState(() => _sending = false);
     }
@@ -208,7 +209,8 @@ class _BuildQuoteScreenState extends ConsumerState<BuildQuoteScreen> {
             const SizedBox(height: 8),
             quotesAsync.when(
               loading: () => const LinearProgressIndicator(),
-              error: (e, _) => Text('Erreur : $e'),
+              error: (e, _) => const Text('Impossible de charger les propositions.',
+                  style: TextStyle(color: AppColors.gris)),
               data: (quotes) {
                 if (quotes.isEmpty) {
                   return const Text(
@@ -284,7 +286,7 @@ class _BuildQuoteScreenState extends ConsumerState<BuildQuoteScreen> {
             ],
             if (_error != null) ...[
               const SizedBox(height: 12),
-              Text(_error!, style: const TextStyle(color: AppColors.primary)),
+              Text(_error!, style: const TextStyle(color: AppColors.danger)),
             ],
           ],
         ),

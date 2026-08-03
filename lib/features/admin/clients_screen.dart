@@ -65,7 +65,9 @@ class _ClientsScreenState extends ConsumerState<ClientsScreen> {
                 error: (e, _) => Center(
                   child: Padding(
                     padding: const EdgeInsets.all(24),
-                    child: Text('Erreur : $e', textAlign: TextAlign.center),
+                    child: const Text('Impossible de charger les clients.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: AppColors.gris)),
                   ),
                 ),
                 data: (clients) {

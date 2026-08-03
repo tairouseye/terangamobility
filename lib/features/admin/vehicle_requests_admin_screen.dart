@@ -21,7 +21,9 @@ class VehicleRequestsAdminScreen extends ConsumerWidget {
         onRefresh: () async => ref.invalidate(vehicleRequestsAdminProvider),
         child: async.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(child: Text('Erreur : $e')),
+          error: (e, _) => const Center(
+              child: Text('Impossible de charger.',
+                  style: TextStyle(color: AppColors.gris))),
           data: (requests) {
             if (requests.isEmpty) {
               return ListView(children: const [
@@ -158,8 +160,8 @@ class _RequestCard extends ConsumerWidget {
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Erreur : $e')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Envoi du devis impossible. Réessayez.')));
       }
     }
   }

@@ -37,7 +37,9 @@ class _FacebookSelectionScreenState
       appBar: AppBar(title: const Text('Sélection Facebook')),
       body: async.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Erreur : $e')),
+        error: (e, _) => const Center(
+            child: Text('Impossible de charger.',
+                style: TextStyle(color: AppColors.gris))),
         data: (all) {
           final brands = (all.map((v) => v.brand).toSet().toList()..sort());
           // Filtre marques

@@ -80,7 +80,7 @@ class _VehicleOrderManageScreenState
       ref.invalidate(vehicleListingsProvider);
       _snack('Réservation relâchée, véhicule remis au catalogue');
     } catch (e) {
-      _snack('Erreur : $e');
+      _snack('Action impossible. Réessayez.');
     } finally {
       if (mounted) setState(() => _busyDoc = false);
     }
@@ -129,7 +129,7 @@ class _VehicleOrderManageScreenState
       ref.invalidate(vehicleOrdersAdminProvider);
       _snack(deposit ? 'Acompte confirme' : 'Solde confirme');
     } catch (e) {
-      _snack('Erreur : $e');
+      _snack('Action impossible. Réessayez.');
     } finally {
       if (mounted) setState(() => _busyDoc = false);
     }
@@ -149,7 +149,7 @@ class _VehicleOrderManageScreenState
       ref.invalidate(vehicleOrdersAdminProvider);
       _snack(invoice ? 'Facture générée' : 'Contrat généré');
     } catch (e) {
-      _snack('Erreur : $e');
+      _snack('Action impossible. Réessayez.');
     } finally {
       if (mounted) setState(() => _busyDoc = false);
     }
@@ -161,7 +161,7 @@ class _VehicleOrderManageScreenState
       await openSignedUrl(
           ref.read(vehicleOrderServiceProvider).documentUrl(path));
     } catch (e) {
-      _snack('Ouverture impossible : $e');
+      _snack('Impossible d\'ouvrir le document. Réessayez.');
     }
   }
 
@@ -239,7 +239,8 @@ class _VehicleOrderManageScreenState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Erreur : $e')));
+            .showSnackBar(const SnackBar(
+            content: Text('Action impossible. Réessayez.')));
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -266,7 +267,8 @@ class _VehicleOrderManageScreenState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Erreur : $e')));
+            .showSnackBar(const SnackBar(
+            content: Text('Action impossible. Réessayez.')));
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -541,7 +543,7 @@ class _VehicleOrderManageScreenState
             const Text('Historique',
                 style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
             const SizedBox(height: 12),
-            VehicleTimeline(current: o.status),
+            VehicleTimeline(current: _status),
           ],
         ),
       ),

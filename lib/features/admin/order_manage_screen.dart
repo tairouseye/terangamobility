@@ -52,7 +52,7 @@ class _OrderManageScreenState extends ConsumerState<OrderManageScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur : $e')),
+          const SnackBar(content: Text('Action impossible. Réessayez.')),
         );
       }
     } finally {
@@ -80,7 +80,7 @@ class _OrderManageScreenState extends ConsumerState<OrderManageScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur : $e')),
+          const SnackBar(content: Text('Action impossible. Réessayez.')),
         );
       }
     } finally {

@@ -50,7 +50,8 @@ class ClientDetailScreen extends ConsumerWidget {
               title: 'Véhicules',
               child: vehicles.when(
                 loading: () => const LinearProgressIndicator(),
-                error: (e, _) => Text('Erreur : $e'),
+                error: (e, _) => const Text('Impossible de charger.',
+                    style: TextStyle(color: AppColors.gris)),
                 data: (list) => list.isEmpty
                     ? const _Empty('Aucun véhicule enregistre')
                     : Column(
@@ -81,7 +82,8 @@ class ClientDetailScreen extends ConsumerWidget {
               title: 'Demandes de pièces',
               child: requests.when(
                 loading: () => const LinearProgressIndicator(),
-                error: (e, _) => Text('Erreur : $e'),
+                error: (e, _) => const Text('Impossible de charger.',
+                    style: TextStyle(color: AppColors.gris)),
                 data: (list) => list.isEmpty
                     ? const _Empty('Aucune demande')
                     : Column(
@@ -124,7 +126,8 @@ class ClientDetailScreen extends ConsumerWidget {
               title: 'Commandes',
               child: orders.when(
                 loading: () => const LinearProgressIndicator(),
-                error: (e, _) => Text('Erreur : $e'),
+                error: (e, _) => const Text('Impossible de charger.',
+                    style: TextStyle(color: AppColors.gris)),
                 data: (list) => list.isEmpty
                     ? const _Empty('Aucune commande')
                     : Column(
@@ -177,7 +180,8 @@ class ClientDetailScreen extends ConsumerWidget {
               title: 'Paiements',
               child: payments.when(
                 loading: () => const LinearProgressIndicator(),
-                error: (e, _) => Text('Erreur : $e'),
+                error: (e, _) => const Text('Impossible de charger.',
+                    style: TextStyle(color: AppColors.gris)),
                 data: (list) => list.isEmpty
                     ? const _Empty('Aucun paiement enregistre')
                     : Column(

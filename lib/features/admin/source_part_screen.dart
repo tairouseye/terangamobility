@@ -106,7 +106,7 @@ class _SourcePartScreenState extends ConsumerState<SourcePartScreen> {
         ));
       }
     } catch (e) {
-      setState(() => _error = 'Enregistrement impossible : $e');
+      setState(() => _error = 'Enregistrement impossible. Réessayez.');
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -194,7 +194,7 @@ class _SourcePartScreenState extends ConsumerState<SourcePartScreen> {
                   keyboard: TextInputType.url),
               if (_error != null) ...[
                 const SizedBox(height: 8),
-                Text(_error!, style: const TextStyle(color: AppColors.primary)),
+                Text(_error!, style: const TextStyle(color: AppColors.danger)),
               ],
               const SizedBox(height: 16),
               ElevatedButton.icon(

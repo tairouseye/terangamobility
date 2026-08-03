@@ -19,7 +19,9 @@ class PartsRequestsScreen extends ConsumerWidget {
         onRefresh: () async => ref.invalidate(newPartsRequestsProvider),
         child: async.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(child: Text('Erreur : $e')),
+          error: (e, _) => const Center(
+              child: Text('Impossible de charger.',
+                  style: TextStyle(color: AppColors.gris))),
           data: (requests) {
             if (requests.isEmpty) {
               return ListView(

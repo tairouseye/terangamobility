@@ -22,7 +22,9 @@ class VehicleOrdersAdminScreen extends ConsumerWidget {
         onRefresh: () async => ref.invalidate(vehicleOrdersAdminProvider),
         child: async.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(child: Text('Erreur : $e')),
+          error: (e, _) => const Center(
+              child: Text('Impossible de charger.',
+                  style: TextStyle(color: AppColors.gris))),
           data: (orders) {
             if (orders.isEmpty) {
               return ListView(children: const [
