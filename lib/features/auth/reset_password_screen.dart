@@ -76,7 +76,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(height: 28),
-                  const Center(child: TerangaLockup(badgeSize: 110)),
+                  const Center(child: TerangaLogo(width: 230)),
                   const SizedBox(height: 28),
                   const Text('Nouveau mot de passe',
                       textAlign: TextAlign.center,

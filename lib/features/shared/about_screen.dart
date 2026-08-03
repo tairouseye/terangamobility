@@ -56,7 +56,7 @@ class _AboutScreenState extends State<AboutScreen> {
           padding: const EdgeInsets.all(24),
           children: [
             const SizedBox(height: 8),
-            const Center(child: TerangaLockup(badgeSize: 84)),
+            const Center(child: TerangaLogo(width: 200)),
             const SizedBox(height: 14),
             Center(
               child: Container(

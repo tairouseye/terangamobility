@@ -23,7 +23,7 @@ class SplashScreen extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TerangaLockup(badgeSize: 140, onDark: true),
+              TerangaLogo(width: 260, onDark: true),
               SizedBox(height: 36),
               SizedBox(
                 width: 26,

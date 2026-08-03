@@ -39,7 +39,7 @@ class _DemoLanding extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(height: 12),
-                  const TerangaLockup(badgeSize: 88, onDark: true),
+                  const TerangaLogo(width: 210, onDark: true),
                   const SizedBox(height: 10),
                   Container(
                     alignment: Alignment.center,

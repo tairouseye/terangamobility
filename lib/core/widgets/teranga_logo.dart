@@ -159,6 +159,37 @@ class TerangaLockup extends StatelessWidget {
   }
 }
 
+/// Logo officiel TerangaMobility (image). Sur fond clair : image seule.
+/// Sur fond sombre (`onDark`) : posee sur une carte blanche arrondie (le logo
+/// a un fond blanc), pour un rendu propre.
+class TerangaLogo extends StatelessWidget {
+  final double width;
+  final bool onDark;
+  const TerangaLogo({super.key, this.width = 240, this.onDark = false});
+
+  @override
+  Widget build(BuildContext context) {
+    final img = Image.asset('assets/images/teranga_logo.png',
+        width: width, fit: BoxFit.contain);
+    if (!onDark) return img;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.18),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: img,
+    );
+  }
+}
+
 /// Variante du badge posee sur fond bleu nuit : tuile blanche, engrenage
 /// bleu nuit, chevron or.
 class TerangaBadgeOnDark extends StatelessWidget {
