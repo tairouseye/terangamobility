@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_theme.dart';
 import '../../providers/auth_providers.dart';
 import '../shared/dashboard_scaffold.dart';
+import '../shared/section_group.dart';
 import 'parts_requests_screen.dart';
 import 'quote_requests_screen.dart';
 import 'orders_screen.dart';
@@ -26,52 +27,50 @@ class AdminDashboard extends ConsumerWidget {
         Text('Bonjour ${profile?.fullName ?? ''} 👋',
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
         const SizedBox(height: 20),
-        const _SectionLabel('Pièces détachées'),
-        _Grid(children: [
-          _AdminTile(Icons.search, 'Demandes de pièces', AppColors.primary,
-              onTap: () => _go(context, const PartsRequestsScreen())),
-          _AdminTile(Icons.fact_check, 'Valider devis', AppColors.vert,
-              onTap: () => _go(context, const QuoteRequestsScreen())),
-          _AdminTile(Icons.inventory_2, 'Commandes', AppColors.ambre,
-              onTap: () => _go(context, const OrdersScreen())),
-          _AdminTile(Icons.people, 'Clients', AppColors.anthracite,
-              onTap: () => _go(context, const ClientsScreen())),
-        ]),
-        const SizedBox(height: 20),
-        const _SectionLabel('Véhicules Corée'),
-        _Grid(children: [
-          _AdminTile(
-              Icons.directions_car_filled, 'Catalogue véhicules',
-              AppColors.vert,
-              onTap: () => _go(context, const VehicleCatalogScreen())),
-          _AdminTile(
-              Icons.request_quote, 'Demandes véhicule', AppColors.primary,
-              onTap: () =>
-                  _go(context, const VehicleRequestsAdminScreen())),
-          _AdminTile(
-              Icons.directions_boat, 'Commandes véhicule', AppColors.ambre,
-              onTap: () => _go(context, const VehicleOrdersAdminScreen())),
-          _AdminTile(Icons.campaign, 'Sélection Facebook', AppColors.primary,
-              onTap: () => _go(context, const FacebookSelectionScreen())),
-        ]),
+        SectionGroup(
+          color: AppColors.primary,
+          icon: Icons.directions_car_filled,
+          title: 'Véhicules Corée',
+          subtitle: 'Catalogue, demandes, commandes & marketing',
+          child: _Grid(children: [
+            _AdminTile(
+                Icons.directions_car_filled, 'Catalogue véhicules',
+                AppColors.primary,
+                onTap: () => _go(context, const VehicleCatalogScreen())),
+            _AdminTile(
+                Icons.request_quote, 'Demandes véhicule', AppColors.ambre,
+                onTap: () =>
+                    _go(context, const VehicleRequestsAdminScreen())),
+            _AdminTile(
+                Icons.directions_boat, 'Commandes véhicule', AppColors.vert,
+                onTap: () => _go(context, const VehicleOrdersAdminScreen())),
+            _AdminTile(Icons.campaign, 'Sélection Facebook', AppColors.anthracite,
+                onTap: () => _go(context, const FacebookSelectionScreen())),
+          ]),
+        ),
+        const SizedBox(height: 16),
+        SectionGroup(
+          color: AppColors.or,
+          icon: Icons.build,
+          title: 'Pièces détachées',
+          subtitle: 'Demandes, devis, commandes & clients',
+          child: _Grid(children: [
+            _AdminTile(Icons.search, 'Demandes de pièces', AppColors.primary,
+                onTap: () => _go(context, const PartsRequestsScreen())),
+            _AdminTile(Icons.fact_check, 'Valider devis', AppColors.vert,
+                onTap: () => _go(context, const QuoteRequestsScreen())),
+            _AdminTile(Icons.inventory_2, 'Commandes', AppColors.ambre,
+                onTap: () => _go(context, const OrdersScreen())),
+            _AdminTile(Icons.people, 'Clients', AppColors.anthracite,
+                onTap: () => _go(context, const ClientsScreen())),
+          ]),
+        ),
       ],
     );
   }
 
   void _go(BuildContext context, Widget page) =>
       Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
-}
-
-class _SectionLabel extends StatelessWidget {
-  final String text;
-  const _SectionLabel(this.text);
-  @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(bottom: 10, left: 2),
-        child: Text(text,
-            style: const TextStyle(
-                fontWeight: FontWeight.w700, color: AppColors.gris)),
-      );
 }
 
 class _Grid extends StatelessWidget {

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_theme.dart';
 import '../../providers/auth_providers.dart';
 import '../shared/dashboard_scaffold.dart';
+import '../shared/section_group.dart';
 import 'vehicles/vehicles_screen.dart';
 import 'requests/new_request_screen.dart';
 import 'requests/requests_screen.dart';
@@ -33,45 +34,43 @@ class ClientDashboard extends ConsumerWidget {
           onTap: () => _go(context, const VehicleCatalogScreen()),
         ),
         const SizedBox(height: 20),
-        const _SectionLabel('Véhicules Corée'),
-        _Tiles(items: [
-          _TileData(Icons.directions_car_filled, 'Catalogue véhicules',
-              AppColors.primary, () => _go(context, const VehicleCatalogScreen())),
-          _TileData(Icons.directions_boat, 'Mes commandes véhicule',
-              AppColors.ambre, () => _go(context, const MyVehicleOrdersScreen())),
-        ]),
-        const SizedBox(height: 20),
-        const _SectionLabel('Pièces détachées'),
-        _Tiles(items: [
-          _TileData(Icons.add_shopping_cart, 'Nouvelle demande',
-              AppColors.primary, () => _go(context, const NewRequestScreen())),
-          _TileData(Icons.inventory_2, 'Mes demandes', AppColors.ambre,
-              () => _go(context, const RequestsScreen())),
-          _TileData(Icons.receipt_long, 'Mes devis', AppColors.vert,
-              () => _go(context, const MyQuotesScreen())),
-          _TileData(Icons.local_shipping, 'Suivi commandes',
-              AppColors.anthracite, () => _go(context, const MyOrdersScreen())),
-          _TileData(Icons.directions_car, 'Mes véhicules', AppColors.vert,
-              () => _go(context, const VehiclesScreen())),
-        ]),
+        SectionGroup(
+          color: AppColors.primary,
+          icon: Icons.directions_car_filled,
+          title: 'Véhicules Corée',
+          subtitle: 'Import & réservation de voitures',
+          child: _Tiles(items: [
+            _TileData(Icons.directions_car_filled, 'Catalogue véhicules',
+                AppColors.primary, () => _go(context, const VehicleCatalogScreen())),
+            _TileData(Icons.directions_boat, 'Mes commandes véhicule',
+                AppColors.ambre, () => _go(context, const MyVehicleOrdersScreen())),
+          ]),
+        ),
+        const SizedBox(height: 16),
+        SectionGroup(
+          color: AppColors.or,
+          icon: Icons.build,
+          title: 'Pièces détachées',
+          subtitle: 'Devis & commandes de pièces',
+          child: _Tiles(items: [
+            _TileData(Icons.add_shopping_cart, 'Nouvelle demande',
+                AppColors.primary, () => _go(context, const NewRequestScreen())),
+            _TileData(Icons.inventory_2, 'Mes demandes', AppColors.ambre,
+                () => _go(context, const RequestsScreen())),
+            _TileData(Icons.receipt_long, 'Mes devis', AppColors.vert,
+                () => _go(context, const MyQuotesScreen())),
+            _TileData(Icons.local_shipping, 'Suivi commandes',
+                AppColors.anthracite, () => _go(context, const MyOrdersScreen())),
+            _TileData(Icons.directions_car, 'Mes véhicules', AppColors.vert,
+                () => _go(context, const VehiclesScreen())),
+          ]),
+        ),
       ],
     );
   }
 
   void _go(BuildContext context, Widget page) =>
       Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
-}
-
-class _SectionLabel extends StatelessWidget {
-  final String text;
-  const _SectionLabel(this.text);
-  @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(bottom: 10, left: 2),
-        child: Text(text,
-            style: const TextStyle(
-                fontWeight: FontWeight.w700, color: AppColors.gris)),
-      );
 }
 
 class _TileData {
