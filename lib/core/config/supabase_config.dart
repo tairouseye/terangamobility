@@ -15,13 +15,13 @@ class SupabaseConfig {
 
   static const String url = String.fromEnvironment(
     'SUPABASE_URL',
-    defaultValue: 'https://dfjikxgklnvqgjlexurv.supabase.co',
+    defaultValue: 'https://ffzoohoxuapntwwhajgx.supabase.co',
   );
 
   /// Nouvelle generation de cle Supabase (remplace l'ancienne cle `anon` JWT).
   static const String publishableKey = String.fromEnvironment(
     'SUPABASE_PUBLISHABLE_KEY',
-    defaultValue: 'sb_publishable_BA0xa93kWrMnZ_RTEGydSQ_IpcW88bz',
+    defaultValue: 'sb_publishable_LjQ03_agLYYYxvRdcqJvgQ_buIgB-Wj',
   );
 
   /// Buckets Storage (crees par la migration 0006).

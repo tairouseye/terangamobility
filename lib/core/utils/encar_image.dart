@@ -1,3 +1,22 @@
+import '../config/supabase_config.dart';
+
+/// URL passant par notre proxy (Edge Function `img`) : la photo Encar est
+/// resservie avec le bon type `image/jpeg` + en-tetes CORS. Indispensable pour
+/// enregistrer la photo dans « Photos » (l'appui long « Enregistrer l'image »
+/// fonctionne alors), la partager, ou la telecharger (`download:true` force la
+/// piece jointe avec un nom de fichier propre).
+/// Les URL non-Encar (placeholders) sont renvoyees telles quelles.
+String imageProxyUrl(String encarUrl, {bool download = false, String? name}) {
+  if (!encarUrl.contains('ci.encar.com')) return encarUrl;
+  final buf = StringBuffer('${SupabaseConfig.url}/functions/v1/img'
+      '?u=${Uri.encodeComponent(encarUrl)}');
+  if (download) {
+    buf.write('&dl=1');
+    if (name != null) buf.write('&name=${Uri.encodeComponent(name)}');
+  }
+  return buf.toString();
+}
+
 /// Amelioration de la qualite des photos Encar.
 ///
 /// Les URLs stockees pointent vers la vignette WebP par defaut (~16 Ko, floue).

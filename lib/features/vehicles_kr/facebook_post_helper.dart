@@ -122,9 +122,13 @@ Future<void> prepareFacebookPost(
                   TextButton.icon(
                     onPressed: () async {
                       for (var i = 0; i < v.photos.length; i++) {
+                        final name = _photoFilename(v, i);
                         await downloadImage(
-                            encarPhotoFull(v.photos[i], height: 1200),
-                            _photoFilename(v, i));
+                            imageProxyUrl(
+                                encarPhotoFull(v.photos[i], height: 1200),
+                                download: true,
+                                name: name),
+                            name);
                         await Future.delayed(const Duration(milliseconds: 400));
                       }
                     },
@@ -210,7 +214,9 @@ class _PhotoTile extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: GestureDetector(
-              onTap: () => launchUrl(Uri.parse(fullUrl),
+              // Ouverture via le proxy : type image/jpeg correct -> l'appui
+              // long « Enregistrer l'image » range directement dans Photos.
+              onTap: () => launchUrl(Uri.parse(imageProxyUrl(fullUrl)),
                   mode: LaunchMode.externalApplication),
               child: Image.network(
                 thumbUrl,
@@ -231,7 +237,9 @@ class _PhotoTile extends StatelessWidget {
               shape: const CircleBorder(),
               child: InkWell(
                 customBorder: const CircleBorder(),
-                onTap: () => downloadImage(fullUrl, filename),
+                onTap: () => downloadImage(
+                    imageProxyUrl(fullUrl, download: true, name: filename),
+                    filename),
                 child: const Padding(
                   padding: EdgeInsets.all(4),
                   child: Icon(Icons.download, size: 16, color: Colors.white),
