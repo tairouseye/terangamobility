@@ -10,32 +10,23 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primary,
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppColors.primary, AppColors.primaryDark],
-          ),
-        ),
-        child: const Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TerangaLogo(width: 260, onDark: true),
-              SizedBox(height: 36),
-              SizedBox(
-                width: 26,
-                height: 26,
-                child: CircularProgressIndicator(
-                    color: Colors.white, strokeWidth: 2.5),
-              ),
-            ],
-          ),
+      backgroundColor: Colors.white,
+      body: const Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TerangaLogo(width: 280),
+            SizedBox(height: 36),
+            SizedBox(
+              width: 26,
+              height: 26,
+              child: CircularProgressIndicator(
+                  color: AppColors.primary, strokeWidth: 2.5),
+            ),
+          ],
         ),
       ),
-      bottomNavigationBar: const AppFooter(onDark: true),
+      bottomNavigationBar: const AppFooter(),
     );
   }
 }

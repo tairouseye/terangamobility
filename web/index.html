@@ -86,12 +86,12 @@
     #boot .gp-sub { color: #C9A24B; font-size: 16px; letter-spacing: 7px; font-weight: 700; margin-top: 12px; }
     #boot .gp-tag { color: rgba(255,255,255,.55); font-size: 15px; margin-top: 30px; letter-spacing: .5px; }
 
-    /* Phase 2 — TerangaMobility : logo complet sur carte blanche */
-    #boot .logo-card {
-      background: #fff; border-radius: 28px; padding: 24px 30px;
-      box-shadow: 0 22px 54px rgba(0,0,0,.45); max-width: 82vw;
-    }
-    #boot .logo-card img { display: block; width: 340px; max-width: 68vw; height: auto; }
+    /* Phase 2 — TerangaMobility : fond blanc plein, logo SANS cadre.
+       (Le logo a un fond blanc + du texte bleu nuit : sur un fond blanc il se
+       fond parfaitement, aucun cadre visible.) */
+    #boot #phase-teranga { background: #fff; }
+    #boot .logo-card { max-width: 88vw; }
+    #boot .logo-card img { display: block; width: 360px; max-width: 76vw; height: auto; }
 
     /* Barre de chargement indeterminee (bas de l'ecran) */
     #boot .loadbar {
