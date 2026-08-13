@@ -30,11 +30,28 @@ class _FacebookSelectionScreenState
   double _score(VehicleListing v) =>
       (v.year ?? 2000).toDouble() - (v.mileageKm ?? 999999) / 20000;
 
+  // Tampon de candidats verifies par tranche (on en garde 2 vivants sur 4).
+  static const _bufferPerBracket = 4;
+
+  Future<void> _refresh() async {
+    ref.invalidate(facebookSelectionProvider(_maxKm));
+    await ref.read(facebookSelectionProvider(_maxKm).future);
+  }
+
   @override
   Widget build(BuildContext context) {
     final async = ref.watch(facebookSelectionProvider(_maxKm));
     return Scaffold(
-      appBar: AppBar(title: const Text('Sélection Facebook')),
+      appBar: AppBar(
+        title: const Text('Sélection Facebook'),
+        actions: [
+          IconButton(
+            tooltip: 'Rafraîchir',
+            icon: const Icon(Icons.refresh),
+            onPressed: _refresh,
+          ),
+        ],
+      ),
       body: async.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => const Center(
@@ -46,7 +63,7 @@ class _FacebookSelectionScreenState
           final filtered = _brands.isEmpty
               ? all
               : all.where((v) => _brands.contains(v.brand)).toList();
-          // Regroupe par tranche 3..14 et garde les 2 meilleurs.
+          // Regroupe par tranche 3..14 et trie par score (recent + peu roule).
           final byBracket = <int, List<VehicleListing>>{};
           for (final v in filtered) {
             final p = v.priceFcfa;
@@ -60,24 +77,80 @@ class _FacebookSelectionScreenState
           }
           final brackets = [for (var b = 3; b <= 14; b++) b];
 
+          // Tampon : on retient les meilleurs candidats par tranche, puis on
+          // verifie EN DIRECT sur Encar lesquels sont encore en vente. On
+          // affiche 2 vivants par tranche (les vendus sont ecartes).
+          final buffered = <int, List<VehicleListing>>{
+            for (final b in brackets)
+              if ((byBracket[b] ?? const []).isNotEmpty)
+                b: byBracket[b]!.take(_bufferPerBracket).toList(),
+          };
+          final candidateRefs = <String>[
+            for (final list in buffered.values)
+              for (final v in list) v.reference,
+          ]..sort();
+          final deadAsync =
+              ref.watch(deadEncarRefsProvider(candidateRefs.join(',')));
+          final dead = deadAsync.value ?? const <String>{};
+          final verifying = deadAsync.isLoading;
+
           return Column(
             children: [
               _filters(brands),
+              _encarStatusBar(verifying, dead.length),
               const Divider(height: 1),
               Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
-                  children: [
-                    for (final b in brackets)
-                      if ((byBracket[b] ?? const []).isNotEmpty)
-                        _bracketSection(b, byBracket[b]!.take(2).toList()),
-                  ],
+                child: RefreshIndicator(
+                  onRefresh: _refresh,
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
+                    children: [
+                      for (final b in brackets)
+                        if (buffered[b] != null)
+                          () {
+                            final alive = buffered[b]!
+                                .where((v) => !dead.contains(v.reference))
+                                .take(2)
+                                .toList();
+                            return alive.isEmpty
+                                ? const SizedBox.shrink()
+                                : _bracketSection(b, alive);
+                          }(),
+                    ],
+                  ),
                 ),
               ),
             ],
           );
         },
       ),
+    );
+  }
+
+  /// Bandeau d'etat de la verification Encar.
+  Widget _encarStatusBar(bool verifying, int removed) {
+    final (icon, color, text) = verifying
+        ? (Icons.sync, AppColors.gris, 'Vérification sur Encar…')
+        : removed > 0
+            ? (
+                Icons.filter_alt_off,
+                AppColors.ambre,
+                '$removed véhicule(s) retiré(s) — plus en vente sur Encar'
+              )
+            : (Icons.verified, AppColors.vert, 'À jour avec Encar');
+    return Container(
+      width: double.infinity,
+      color: color.withValues(alpha: 0.08),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      child: Row(children: [
+        Icon(icon, size: 15, color: color),
+        const SizedBox(width: 6),
+        Expanded(
+          child: Text(text,
+              style: TextStyle(fontSize: 11.5, color: color, fontWeight: FontWeight.w600)),
+        ),
+      ]),
     );
   }
 

@@ -49,6 +49,15 @@ String _photoFilename(VehicleListing v, int index) {
   return 'teranga_${slug}_${v.reference}_${index + 1}.jpg';
 }
 
+/// Nom du ZIP « toutes les photos ».
+String _zipFilename(VehicleListing v) {
+  final slug = '${v.brand}_${v.model}'
+      .toLowerCase()
+      .replaceAll(RegExp(r'[^a-z0-9]+'), '_')
+      .replaceAll(RegExp(r'^_|_$'), '');
+  return 'teranga_${slug}_${v.reference}_photos.zip';
+}
+
 /// Publication assistee : copie le texte, propose de telecharger les photos HD
 /// (pour les joindre au post) et d'ouvrir le composeur Facebook. Un bouton
 /// « Voir sur Encar » permet de verifier que le vehicule est toujours en vente.
@@ -121,19 +130,28 @@ Future<void> prepareFacebookPost(
                           fontWeight: FontWeight.w700, fontSize: 14)),
                   TextButton.icon(
                     onPressed: () async {
-                      for (var i = 0; i < v.photos.length; i++) {
-                        final name = _photoFilename(v, i);
-                        await downloadImage(
-                            imageProxyUrl(
-                                encarPhotoFull(v.photos[i], height: 1200),
-                                download: true,
-                                name: name),
-                            name);
-                        await Future.delayed(const Duration(milliseconds: 400));
+                      final messenger = ScaffoldMessenger.of(ctx);
+                      messenger.showSnackBar(SnackBar(
+                          content: Text(
+                              'Préparation de ${v.photos.length} photos…')));
+                      try {
+                        final urls = [
+                          for (final p in v.photos)
+                            imageProxyUrl(encarPhotoFull(p, height: 1200))
+                        ];
+                        final names = [
+                          for (var i = 0; i < v.photos.length; i++)
+                            _photoFilename(v, i)
+                        ];
+                        await downloadImagesZip(urls, names, _zipFilename(v));
+                      } catch (_) {
+                        messenger.showSnackBar(const SnackBar(
+                            content: Text(
+                                'Téléchargement impossible. Touchez chaque photo pour l\'enregistrer.')));
                       }
                     },
                     icon: const Icon(Icons.download, size: 18),
-                    label: const Text('Tout télécharger'),
+                    label: const Text('Tout télécharger (ZIP)'),
                   ),
                 ],
               ),

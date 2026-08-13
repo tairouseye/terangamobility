@@ -32,9 +32,36 @@ final vehicleListingsProvider = FutureProvider<List<VehicleListing>>((ref) {
 });
 
 /// Candidats a la selection Facebook (km <= param), regroupes cote UI.
+///
+/// `autoDispose` : la selection est RECALCULEE a chaque ouverture de l'ecran
+/// (plus de cache fige) — elle reflete donc l'etat courant du catalogue.
 final facebookSelectionProvider =
-    FutureProvider.family<List<VehicleListing>, int>((ref, maxKm) {
+    FutureProvider.autoDispose.family<List<VehicleListing>, int>((ref, maxKm) {
   return ref.watch(vehicleCatalogRepositoryProvider).forSelection(maxKm: maxKm);
+});
+
+/// Verifie en direct sur Encar quelles references `EC-nnn` ont disparu.
+/// L'argument est la liste de references jointe par des virgules (cle de cache).
+/// Retourne l'ensemble des references « mortes » (annonce retiree d'Encar).
+/// En cas d'erreur reseau ou de reponse invalide : ensemble vide (on affiche
+/// tout — jamais de suppression a tort).
+final deadEncarRefsProvider =
+    FutureProvider.autoDispose.family<Set<String>, String>((ref, refsCsv) async {
+  final refs = refsCsv.split(',').where((r) => r.isNotEmpty).toList();
+  if (refs.isEmpty) return <String>{};
+  try {
+    final res = await ref
+        .watch(supabaseClientProvider)
+        .functions
+        .invoke('encar-status', body: {'refs': refs});
+    final data = res.data;
+    final dead = (data is Map && data['dead'] is List)
+        ? (data['dead'] as List).map((e) => e.toString()).toSet()
+        : <String>{};
+    return dead;
+  } catch (_) {
+    return <String>{};
+  }
 });
 
 /// Une fiche vehicule par reference.
