@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/config/facebook_config.dart';
 import '../../core/theme/app_theme.dart';
@@ -8,6 +7,7 @@ import '../../core/utils/download_file.dart';
 import '../../core/utils/encar_image.dart';
 import '../../core/utils/encar_source.dart';
 import '../../core/utils/formatters.dart';
+import '../../core/utils/open_tab.dart';
 import '../../models/vehicle_listing.dart';
 
 /// Lien profond partageable d'un vehicule.
@@ -157,8 +157,9 @@ Future<void> prepareFacebookPost(
               ),
               const SizedBox(height: 4),
               const Text(
-                  'Astuce : touchez une photo pour l\'ouvrir en grand, '
-                  'puis « Enregistrer l\'image ».',
+                  'Astuce : touchez une photo pour l\'ouvrir en grand '
+                  '(dans l\'app) puis la télécharger, ou utilisez le bouton ⬇ '
+                  'sur chaque vignette.',
                   style: TextStyle(fontSize: 11, color: AppColors.gris)),
               const SizedBox(height: 10),
               Wrap(
@@ -180,8 +181,7 @@ Future<void> prepareFacebookPost(
               runSpacing: 10,
               children: [
                 ElevatedButton.icon(
-                  onPressed: () => launchUrl(Uri.parse(FacebookConfig.composerUrl),
-                      mode: LaunchMode.externalApplication),
+                  onPressed: () => openInNewTab(FacebookConfig.composerUrl),
                   icon: const Icon(Icons.facebook, size: 18),
                   label: const Text('Ouvrir Facebook'),
                 ),
@@ -196,8 +196,7 @@ Future<void> prepareFacebookPost(
                 ),
                 if (encarUrl != null)
                   OutlinedButton.icon(
-                    onPressed: () => launchUrl(Uri.parse(encarUrl),
-                        mode: LaunchMode.externalApplication),
+                    onPressed: () => openInNewTab(encarUrl),
                     icon: const Icon(Icons.travel_explore, size: 18),
                     label: const Text('Voir sur Encar'),
                   ),
@@ -232,10 +231,10 @@ class _PhotoTile extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: GestureDetector(
-              // Ouverture via le proxy : type image/jpeg correct -> l'appui
-              // long « Enregistrer l'image » range directement dans Photos.
-              onTap: () => launchUrl(Uri.parse(imageProxyUrl(fullUrl)),
-                  mode: LaunchMode.externalApplication),
+              // Ouverture EN PLEIN ECRAN DANS L'APP (aucune navigation externe :
+              // l'onglet courant n'est jamais remplace, l'app n'est pas
+              // rechargee). Un bouton de telechargement est propose dans la vue.
+              onTap: () => showPhotoViewer(context, fullUrl, filename),
               child: Image.network(
                 thumbUrl,
                 fit: BoxFit.cover,
@@ -269,4 +268,69 @@ class _PhotoTile extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Visionneuse plein ecran EN INTERNE (aucune navigation, l'app reste vivante).
+/// Zoom/deplacement + bouton telechargement (via le proxy, en blob local).
+void showPhotoViewer(
+    BuildContext context, String encarFullUrl, String filename) {
+  final viewUrl = imageProxyUrl(encarPhotoFull(encarFullUrl, height: 1200));
+  final dlUrl = imageProxyUrl(encarPhotoFull(encarFullUrl, height: 1200),
+      download: true, name: filename);
+  showDialog<void>(
+    context: context,
+    barrierColor: Colors.black.withValues(alpha: 0.92),
+    builder: (ctx) => Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: EdgeInsets.zero,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: InteractiveViewer(
+              minScale: 1,
+              maxScale: 4,
+              child: Center(
+                child: Image.network(
+                  viewUrl,
+                  fit: BoxFit.contain,
+                  webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
+                  loadingBuilder: (_, child, progress) => progress == null
+                      ? child
+                      : const Center(
+                          child: CircularProgressIndicator(color: Colors.white)),
+                  errorBuilder: (_, _, _) => const Center(
+                      child: Icon(Icons.broken_image,
+                          color: Colors.white54, size: 48)),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 8,
+            right: 8,
+            child: SafeArea(
+              child: IconButton(
+                icon: const Icon(Icons.close, color: Colors.white, size: 28),
+                onPressed: () => Navigator.of(ctx).pop(),
+              ),
+            ),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 24,
+            child: SafeArea(
+              child: Center(
+                child: FilledButton.icon(
+                  onPressed: () => downloadImage(dlUrl, filename),
+                  icon: const Icon(Icons.download),
+                  label: const Text('Télécharger cette photo'),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }

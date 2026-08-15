@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/config/app_info.dart';
 import '../../core/config/parts_config.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/formatters.dart';
+import '../../core/utils/open_tab.dart';
 import '../../models/parts_request.dart';
 import '../../models/supplier_quote.dart';
 import '../../providers/auth_providers.dart';
@@ -68,9 +68,7 @@ class _SourcePartScreenState extends ConsumerState<SourcePartScreen> {
     return lines.join('\n');
   }
 
-  Future<void> _open(String url) async {
-    await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-  }
+  void _open(String url) => openInNewTab(url);
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;

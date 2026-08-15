@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/config/app_info.dart';
 import '../../../core/config/vehicle_config.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/utils/open_external.dart';
+import '../../../core/utils/open_tab.dart';
 import '../../../models/vehicle_enums.dart';
 import '../../../models/vehicle_order.dart';
 import '../../../providers/vehicle_catalog_providers.dart';
@@ -163,7 +163,7 @@ class _VehicleTrackingScreenState extends ConsumerState<VehicleTrackingScreen> {
     final url = AppInfo.whatsappUrl(
         message: 'Bonjour, je souhaite régler le $subject de ma commande '
             'véhicule (${widget.order.vehicleReference}).');
-    await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    openInNewTab(url);
   }
 
   @override

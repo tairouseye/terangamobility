@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/config/app_info.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/utils/open_external.dart';
+import '../../core/utils/open_tab.dart';
 import '../../models/vehicle_enums.dart';
 import '../../models/vehicle_order.dart';
 import '../../providers/vehicle_catalog_providers.dart';
@@ -204,7 +204,7 @@ class _VehicleOrderManageScreenState
           '• Solde de 30 % avant la remise du véhicule\n\n'
           'Merci de votre confiance — ${AppInfo.appName}.';
       final url = AppInfo.whatsappTo(number, msg);
-      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+      openInNewTab(url);
     } catch (e) {
       _snack('Envoi impossible : $e');
     } finally {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/analytics/fb_pixel.dart';
 import '../../core/theme/app_theme.dart';
@@ -9,6 +8,7 @@ import '../../core/utils/encar_image.dart';
 import '../../core/utils/encar_price.dart';
 import '../../core/utils/encar_source.dart';
 import '../../core/utils/formatters.dart';
+import '../../core/utils/open_tab.dart';
 import '../../models/enums.dart';
 import '../../models/vehicle_enums.dart';
 import '../../models/vehicle_listing.dart';
@@ -66,9 +66,8 @@ class VehicleDetailScreen extends ConsumerWidget {
               IconButton(
                 tooltip: 'Vérifier la disponibilité sur Encar',
                 icon: const Icon(Icons.travel_explore),
-                onPressed: () => launchUrl(
-                    Uri.parse(encarListingUrl(vehicle.reference)!),
-                    mode: LaunchMode.externalApplication),
+                onPressed: () =>
+                    openInNewTab(encarListingUrl(vehicle.reference)!),
               ),
             IconButton(
               tooltip: 'Préparer un post Facebook',
@@ -118,11 +117,8 @@ class VehicleDetailScreen extends ConsumerWidget {
             onTap: () {
               Navigator.pop(context);
               fbTrack('Lead', {'content_type': 'vehicle', 'content_name': v.title});
-              launchUrl(
-                Uri.parse(
-                    'https://www.facebook.com/sharer/sharer.php?u=${Uri.encodeComponent(url)}'),
-                mode: LaunchMode.externalApplication,
-              );
+              openInNewTab(
+                  'https://www.facebook.com/sharer/sharer.php?u=${Uri.encodeComponent(url)}');
             },
           ),
           ListTile(
@@ -130,10 +126,7 @@ class VehicleDetailScreen extends ConsumerWidget {
             title: const Text('Partager sur WhatsApp'),
             onTap: () {
               Navigator.pop(context);
-              launchUrl(
-                Uri.parse('https://wa.me/?text=${Uri.encodeComponent(text)}'),
-                mode: LaunchMode.externalApplication,
-              );
+              openInNewTab('https://wa.me/?text=${Uri.encodeComponent(text)}');
             },
           ),
         ]),
