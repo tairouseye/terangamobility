@@ -187,6 +187,16 @@ class DemoVehicleDataSource implements VehicleDataSource {
   }
 
   @override
+  Future<List<VehicleListing>> fetchElectric() async => _listings
+      .where((v) => (v.fuel ?? '').toLowerCase().startsWith('electri'))
+      .toList();
+
+  @override
+  Future<int> countRecentlyAdded(
+          {Duration window = const Duration(hours: 24)}) async =>
+      0;
+
+  @override
   Future<VehicleListing?> fetchByReference(String reference) async {
     for (final v in _listings) {
       if (v.reference == reference) return v;

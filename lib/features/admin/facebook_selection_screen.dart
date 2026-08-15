@@ -35,6 +35,8 @@ class _FacebookSelectionScreenState
 
   Future<void> _refresh() async {
     ref.invalidate(facebookSelectionProvider(_maxKm));
+    ref.invalidate(electricVehiclesProvider);
+    ref.invalidate(recentlyAddedCountProvider);
     await ref.read(facebookSelectionProvider(_maxKm).future);
   }
 
@@ -85,19 +87,34 @@ class _FacebookSelectionScreenState
               if ((byBracket[b] ?? const []).isNotEmpty)
                 b: byBracket[b]!.take(_bufferPerBracket).toList(),
           };
-          final candidateRefs = <String>[
+
+          // TOUS les electriques disponibles (section dediee), filtres marque.
+          final electricAll = ref.watch(electricVehiclesProvider).valueOrNull ??
+              const <VehicleListing>[];
+          final electric = _brands.isEmpty
+              ? electricAll
+              : electricAll.where((v) => _brands.contains(v.brand)).toList();
+
+          // References a verifier sur Encar : tranches + electriques.
+          final candidateRefs = <String>{
             for (final list in buffered.values)
               for (final v in list) v.reference,
-          ]..sort();
+            for (final v in electric) v.reference,
+          }.toList()
+            ..sort();
           final deadAsync =
               ref.watch(deadEncarRefsProvider(candidateRefs.join(',')));
           final dead = deadAsync.value ?? const <String>{};
           final verifying = deadAsync.isLoading;
+          final addedCount = ref.watch(recentlyAddedCountProvider).valueOrNull;
+
+          final electricAlive =
+              electric.where((v) => !dead.contains(v.reference)).toList();
 
           return Column(
             children: [
               _filters(brands),
-              _encarStatusBar(verifying, dead.length),
+              _statusBar(verifying, dead.length, addedCount),
               const Divider(height: 1),
               Expanded(
                 child: RefreshIndicator(
@@ -106,6 +123,8 @@ class _FacebookSelectionScreenState
                     physics: const AlwaysScrollableScrollPhysics(),
                     padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
                     children: [
+                      if (electricAlive.isNotEmpty)
+                        _electricSection(electricAlive),
                       for (final b in brackets)
                         if (buffered[b] != null)
                           () {
@@ -128,29 +147,76 @@ class _FacebookSelectionScreenState
     );
   }
 
-  /// Bandeau d'etat de la verification Encar.
-  Widget _encarStatusBar(bool verifying, int removed) {
-    final (icon, color, text) = verifying
-        ? (Icons.sync, AppColors.gris, 'Vérification sur Encar…')
+  /// Bandeau d'etat : ajouts recents + verification Encar (retraits).
+  Widget _statusBar(bool verifying, int removed, int? added) {
+    final (encIcon, encColor, encText) = verifying
+        ? (Icons.sync, AppColors.gris, 'Vérification Encar…')
         : removed > 0
             ? (
                 Icons.filter_alt_off,
                 AppColors.ambre,
-                '$removed véhicule(s) retiré(s) — plus en vente sur Encar'
+                '$removed retiré(s) (plus en vente)'
               )
             : (Icons.verified, AppColors.vert, 'À jour avec Encar');
     return Container(
       width: double.infinity,
-      color: color.withValues(alpha: 0.08),
+      color: AppColors.grisClair.withValues(alpha: 0.5),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      child: Row(children: [
-        Icon(icon, size: 15, color: color),
-        const SizedBox(width: 6),
-        Expanded(
-          child: Text(text,
-              style: TextStyle(fontSize: 11.5, color: color, fontWeight: FontWeight.w600)),
+      child: Wrap(
+        spacing: 14,
+        runSpacing: 4,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          _statusChip(
+              Icons.add_circle,
+              AppColors.vert,
+              added == null
+                  ? 'Ajouts : …'
+                  : '$added ajouté(s) (24 h)'),
+          _statusChip(encIcon, encColor, encText),
+        ],
+      ),
+    );
+  }
+
+  Widget _statusChip(IconData icon, Color color, String text) => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 15, color: color),
+          const SizedBox(width: 5),
+          Text(text,
+              style: TextStyle(
+                  fontSize: 11.5, color: color, fontWeight: FontWeight.w600)),
+        ],
+      );
+
+  /// Section « Véhicules électriques » : TOUS les électriques disponibles.
+  Widget _electricSection(List<VehicleListing> vehicles) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 8, bottom: 6, left: 4),
+          child: Row(children: [
+            const Icon(Icons.electric_bolt, size: 18, color: AppColors.vert),
+            const SizedBox(width: 4),
+            Text('Électriques (${vehicles.length})',
+                style: const TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 15,
+                    color: AppColors.vert)),
+          ]),
         ),
-      ]),
+        for (final v in vehicles) _card(v),
+        const Padding(
+          padding: EdgeInsets.only(top: 10, bottom: 2, left: 4),
+          child: Text('Par tranche de prix',
+              style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 13,
+                  color: AppColors.gris)),
+        ),
+      ],
     );
   }
 

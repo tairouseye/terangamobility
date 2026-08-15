@@ -15,6 +15,12 @@ abstract class VehicleDataSource {
   /// km <= maxKm. Le regroupement par tranche + score se fait cote UI.
   Future<List<VehicleListing>> fetchForSelection({int maxKm});
 
+  /// TOUS les vehicules electriques disponibles (pour la selection Facebook).
+  Future<List<VehicleListing>> fetchElectric();
+
+  /// Nombre de vehicules disponibles AJOUTES recemment (fenetre par defaut 24 h).
+  Future<int> countRecentlyAdded({Duration window});
+
   /// Valeurs distinctes pour alimenter les filtres (marques, carburants...).
   Future<List<String>> distinctValues(String field);
 
@@ -80,6 +86,36 @@ class SupabaseVehicleDataSource implements VehicleDataSource {
     return (rows as List)
         .map((e) => VehicleListing.fromJson(e as Map<String, dynamic>))
         .toList();
+  }
+
+  @override
+  Future<List<VehicleListing>> fetchElectric() async {
+    final rows = await _client
+        .from(_table)
+        .select()
+        .eq('is_active', true)
+        .eq('availability', 'available')
+        .ilike('fuel', 'electri%') // « Electrique » (import) + variantes
+        .order('year', ascending: false)
+        .order('mileage_km', ascending: true, nullsFirst: false)
+        .limit(200);
+    return (rows as List)
+        .map((e) => VehicleListing.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  @override
+  Future<int> countRecentlyAdded(
+      {Duration window = const Duration(hours: 24)}) async {
+    final since = DateTime.now().toUtc().subtract(window).toIso8601String();
+    final rows = await _client
+        .from(_table)
+        .select('reference')
+        .eq('is_active', true)
+        .eq('availability', 'available')
+        .gte('imported_at', since)
+        .limit(2000);
+    return (rows as List).length;
   }
 
   @override

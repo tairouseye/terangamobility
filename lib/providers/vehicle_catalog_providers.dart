@@ -40,6 +40,15 @@ final facebookSelectionProvider =
   return ref.watch(vehicleCatalogRepositoryProvider).forSelection(maxKm: maxKm);
 });
 
+/// TOUS les vehicules electriques disponibles (recalcules a chaque ouverture).
+final electricVehiclesProvider =
+    FutureProvider.autoDispose<List<VehicleListing>>(
+        (ref) => ref.watch(vehicleCatalogRepositoryProvider).electric());
+
+/// Nombre de vehicules disponibles ajoutes dans les dernieres 24 h.
+final recentlyAddedCountProvider = FutureProvider.autoDispose<int>(
+    (ref) => ref.watch(vehicleCatalogRepositoryProvider).recentlyAddedCount());
+
 /// Verifie en direct sur Encar quelles references `EC-nnn` ont disparu.
 /// L'argument est la liste de references jointe par des virgules (cle de cache).
 /// Retourne l'ensemble des references « mortes » (annonce retiree d'Encar).

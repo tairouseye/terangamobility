@@ -18,6 +18,12 @@ class VehicleCatalogRepository {
   Future<List<VehicleListing>> forSelection({int maxKm = 120000}) =>
       _source.fetchForSelection(maxKm: maxKm);
 
+  Future<List<VehicleListing>> electric() => _source.fetchElectric();
+
+  Future<int> recentlyAddedCount(
+          {Duration window = const Duration(hours: 24)}) =>
+      _source.countRecentlyAdded(window: window);
+
   Future<List<String>> brands() => _source.distinctValues('brand');
   Future<List<String>> modelsForBrand(String brand) =>
       _source.modelsForBrand(brand);
