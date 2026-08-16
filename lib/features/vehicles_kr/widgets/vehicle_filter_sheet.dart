@@ -19,6 +19,14 @@ class _VehicleFilterSheetState extends ConsumerState<VehicleFilterSheet> {
 
   static const _mileageTiers = [50000, 100000, 150000, 200000];
 
+  // Paliers de prix en FCFA (1 M -> 20 M).
+  static const _priceTiers = [
+    1000000, 2000000, 3000000, 4000000, 5000000, 6000000, 7000000, 8000000,
+    10000000, 12000000, 15000000, 20000000,
+  ];
+
+  static String _priceLabel(int fcfa) => '${(fcfa / 1000000).round()} M';
+
   @override
   void initState() {
     super.initState();
@@ -88,15 +96,61 @@ class _VehicleFilterSheetState extends ConsumerState<VehicleFilterSheet> {
               onChanged: (v) => setState(() => _draft = _draft.copyWith(model: v)),
             ),
 
-            // --- Année a partir de ---
-            _dropdown<int>(
-              label: 'Année (à partir de)',
-              value: _draft.year,
-              hint: 'Toutes',
-              items: years,
-              itemLabel: (y) => 'À partir de $y',
-              onChanged: (v) => setState(() => _draft = _draft.copyWith(year: v)),
-            ),
+            // --- Plage d'année (min / max) ---
+            const _SectionLabel('Année'),
+            Row(children: [
+              Expanded(
+                child: _dropdown<int>(
+                  label: 'À partir de',
+                  value: _draft.year,
+                  hint: 'Min',
+                  items: years,
+                  itemLabel: (y) => '$y',
+                  onChanged: (v) =>
+                      setState(() => _draft = _draft.copyWith(year: v)),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _dropdown<int>(
+                  label: 'Jusqu\'à',
+                  value: _draft.yearMax,
+                  hint: 'Max',
+                  items: years,
+                  itemLabel: (y) => '$y',
+                  onChanged: (v) =>
+                      setState(() => _draft = _draft.copyWith(yearMax: v)),
+                ),
+              ),
+            ]),
+
+            // --- Plage de prix (min / max), en millions de FCFA ---
+            const _SectionLabel('Prix (FCFA)'),
+            Row(children: [
+              Expanded(
+                child: _dropdown<int>(
+                  label: 'À partir de',
+                  value: _draft.priceMin,
+                  hint: 'Min',
+                  items: _priceTiers,
+                  itemLabel: _priceLabel,
+                  onChanged: (v) =>
+                      setState(() => _draft = _draft.copyWith(priceMin: v)),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _dropdown<int>(
+                  label: 'Jusqu\'à',
+                  value: _draft.priceMax,
+                  hint: 'Max',
+                  items: _priceTiers,
+                  itemLabel: _priceLabel,
+                  onChanged: (v) =>
+                      setState(() => _draft = _draft.copyWith(priceMax: v)),
+                ),
+              ),
+            ]),
 
             // --- Carburant / Transmission / Couleur ---
             _dropdown<String>(
@@ -193,4 +247,20 @@ class _VehicleFilterSheetState extends ConsumerState<VehicleFilterSheet> {
       ),
     );
   }
+}
+
+/// Petit intitule de section au-dessus d'un groupe de champs.
+class _SectionLabel extends StatelessWidget {
+  final String text;
+  const _SectionLabel(this.text);
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.only(bottom: 6, top: 2, left: 2),
+        child: Text(text,
+            style: const TextStyle(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w700,
+                color: Colors.black54)),
+      );
 }

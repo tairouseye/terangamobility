@@ -20,6 +20,7 @@ import '../client/vehicles_kr/vehicle_tracking_screen.dart';
 import 'facebook_post_helper.dart';
 import 'request_price_screen.dart';
 import 'widgets/customs_terms_notice.dart';
+import 'widgets/favorite_button.dart';
 
 /// Separateur de milliers (pour USD / KRW cote admin).
 String _thousands(int v) {
@@ -75,6 +76,8 @@ class VehicleDetailScreen extends ConsumerWidget {
               onPressed: () => prepareFacebookPost(context, vehicle),
             ),
           ],
+          if (vehicle != null)
+            FavoriteButton(reference: vehicle.reference),
           if (vehicle != null)
             IconButton(
               tooltip: 'Partager',

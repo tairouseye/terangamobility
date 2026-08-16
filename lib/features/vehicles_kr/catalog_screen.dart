@@ -4,19 +4,17 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/analytics/fb_pixel.dart';
 import '../../core/theme/app_theme.dart';
-import '../../core/utils/encar_image.dart';
-import '../../core/utils/encar_price.dart';
-import '../../core/utils/formatters.dart';
 import '../../models/enums.dart';
-import '../../models/vehicle_listing.dart';
+import '../../models/vehicle_filter.dart';
 import '../../providers/auth_providers.dart';
+import '../../providers/favorites_providers.dart';
 import '../../providers/vehicle_catalog_providers.dart';
 import '../shared/app_footer.dart';
-import 'facebook_post_helper.dart';
-import 'vehicle_detail_screen.dart';
+import 'favorites_screen.dart';
+import 'widgets/vehicle_card.dart';
 import 'widgets/vehicle_filter_sheet.dart';
 
-/// Onglet « Véhicules Corée » : catalogue avec recherche + filtres.
+/// Onglet « Véhicules Corée » : catalogue avec recherche + filtres + tri.
 class VehicleCatalogScreen extends ConsumerStatefulWidget {
   const VehicleCatalogScreen({super.key});
 
@@ -49,6 +47,11 @@ class _VehicleCatalogScreenState extends ConsumerState<VehicleCatalogScreen> {
         f.copyWith(keyword: v.trim());
   }
 
+  void _applySort(VehicleSort s) {
+    final f = ref.read(vehicleFilterProvider);
+    ref.read(vehicleFilterProvider.notifier).state = f.copyWith(sort: s);
+  }
+
   @override
   Widget build(BuildContext context) {
     final listingsAsync = ref.watch(vehicleListingsProvider);
@@ -57,11 +60,33 @@ class _VehicleCatalogScreenState extends ConsumerState<VehicleCatalogScreen> {
     final isLoggedIn = ref.watch(authServiceProvider).currentUser != null;
     final isAdmin =
         ref.watch(currentProfileProvider).valueOrNull?.role == UserRole.admin;
+    final favCount = ref.watch(favoriteRefsProvider).valueOrNull?.length ?? 0;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Véhicules Corée'),
         actions: [
+          if (isLoggedIn)
+            IconButton(
+              tooltip: 'Mes favoris',
+              icon: Badge(
+                isLabelVisible: favCount > 0,
+                label: Text('$favCount'),
+                child: const Icon(Icons.favorite),
+              ),
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => const FavoritesScreen())),
+            ),
+          PopupMenuButton<VehicleSort>(
+            tooltip: 'Trier',
+            icon: const Icon(Icons.sort),
+            initialValue: filter.sort,
+            onSelected: _applySort,
+            itemBuilder: (_) => [
+              for (final s in VehicleSort.values)
+                PopupMenuItem(value: s, child: Text(s.label)),
+            ],
+          ),
           if (!isLoggedIn)
             Padding(
               padding: const EdgeInsets.only(right: 8),
@@ -152,8 +177,7 @@ class _VehicleCatalogScreenState extends ConsumerState<VehicleCatalogScreen> {
                         itemCount: vehicles.length,
                         separatorBuilder: (_, _) => const SizedBox(height: 14),
                         itemBuilder: (context, i) =>
-                            _VehicleCard(
-                                vehicle: vehicles[i], isAdmin: isAdmin),
+                            VehicleCard(vehicle: vehicles[i], isAdmin: isAdmin),
                       );
                     },
                   );
@@ -184,177 +208,6 @@ class _FilterButton extends StatelessWidget {
         icon: const Icon(Icons.tune, size: 18),
         label: const Text('Filtres'),
       ),
-    );
-  }
-}
-
-class _VehicleCard extends StatelessWidget {
-  final VehicleListing vehicle;
-  final bool isAdmin;
-  const _VehicleCard({required this.vehicle, this.isAdmin = false});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () => Navigator.of(context).push(MaterialPageRoute(
-          builder: (_) => VehicleDetailScreen(reference: vehicle.reference),
-        )),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _Photo(vehicle: vehicle),
-            Padding(
-              padding: const EdgeInsets.all(14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(vehicle.title,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w800)),
-                  if (vehicle.version != null)
-                    Text(vehicle.version!,
-                        style: const TextStyle(color: AppColors.gris)),
-                  const SizedBox(height: 10),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 6,
-                    children: [
-                      if (vehicle.mileageLabel != null)
-                        _Chip(Icons.speed, vehicle.mileageLabel!),
-                      if (vehicle.fuel != null)
-                        _Chip(Icons.local_gas_station, vehicle.fuel!),
-                      if (vehicle.transmission != null)
-                        _Chip(Icons.settings, vehicle.transmission!),
-                    ],
-                  ),
-                  if (vehicle.importedAt != null) ...[
-                    const SizedBox(height: 8),
-                    Row(children: [
-                      const Icon(Icons.event_available,
-                          size: 13, color: AppColors.gris),
-                      const SizedBox(width: 4),
-                      Text('Ajouté le ${Formatters.date(vehicle.importedAt)}',
-                          style: const TextStyle(
-                              fontSize: 11.5, color: AppColors.gris)),
-                    ]),
-                  ],
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Ref ${vehicle.reference}',
-                              style: const TextStyle(
-                                  fontSize: 11, color: AppColors.gris)),
-                          const SizedBox(height: 2),
-                          Text(
-                            vehicle.priceFcfa != null
-                                ? Formatters.fcfa(vehicle.priceFcfa)
-                                : 'Prix sur demande',
-                            style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w800,
-                                color: AppColors.primary),
-                          ),
-                          if (estimatedEncarPrice(vehicle.priceFcfa)
-                              case final e? when isAdmin)
-                            Text('Encar ≈ ${Formatters.fcfa(e.fcfa)} brut',
-                                style: const TextStyle(
-                                    fontSize: 10.5, color: Color(0xFF7A5A00))),
-                        ],
-                      ),
-                      if (isAdmin)
-                        IconButton(
-                          tooltip: 'Poster sur Facebook',
-                          icon: const Icon(Icons.campaign,
-                              color: AppColors.primary),
-                          visualDensity: VisualDensity.compact,
-                          onPressed: () => prepareFacebookPost(context, vehicle),
-                        )
-                      else
-                        const Icon(Icons.chevron_right,
-                            color: AppColors.primary),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _Photo extends StatelessWidget {
-  final VehicleListing vehicle;
-  const _Photo({required this.vehicle});
-
-  @override
-  Widget build(BuildContext context) {
-    final raw = vehicle.photos.isNotEmpty ? vehicle.photos.first : null;
-    final dpr = MediaQuery.of(context).devicePixelRatio;
-    return AspectRatio(
-      aspectRatio: 16 / 9,
-      child: LayoutBuilder(
-        builder: (context, c) {
-          // Carte 16:9 : resolution ajustee a la largeur reelle de la carte.
-          final url = raw == null
-              ? null
-              : encarPhotoAdaptive(raw,
-                  logicalWidth: c.maxWidth,
-                  devicePixelRatio: dpr,
-                  ratio: 16 / 9,
-                  maxHeight: 640); // carte : image legere (memoire mobile)
-          return Container(
-            color: AppColors.grisClair,
-            child: url == null
-                ? const Center(
-                    child: Icon(Icons.directions_car,
-                        size: 48, color: AppColors.gris))
-                : Image.network(
-                    url,
-                    fit: BoxFit.cover,
-                    // Images externes (Encar) sans en-tete CORS : on affiche
-                    // directement via un element <img> HTML (pas de fetch).
-                    webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
-                    errorBuilder: (_, _, _) => const Center(
-                        child: Icon(Icons.directions_car,
-                            size: 48, color: AppColors.gris)),
-                    loadingBuilder: (c, child, progress) => progress == null
-                        ? child
-                        : const Center(child: CircularProgressIndicator()),
-                  ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class _Chip extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  const _Chip(this.icon, this.label);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        color: AppColors.grisClair,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(mainAxisSize: MainAxisSize.min, children: [
-        Icon(icon, size: 14, color: AppColors.gris),
-        const SizedBox(width: 5),
-        Text(label, style: const TextStyle(fontSize: 12)),
-      ]),
     );
   }
 }

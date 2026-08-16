@@ -50,6 +50,13 @@ class SupabaseVehicleDataSource implements VehicleDataSource {
     if (filter.brand != null) query = query.eq('brand', filter.brand!);
     if (filter.model != null) query = query.eq('model', filter.model!);
     if (filter.year != null) query = query.gte('year', filter.year!); // a partir de
+    if (filter.yearMax != null) query = query.lte('year', filter.yearMax!);
+    if (filter.priceMin != null) {
+      query = query.gte('price_fcfa', filter.priceMin!);
+    }
+    if (filter.priceMax != null) {
+      query = query.lte('price_fcfa', filter.priceMax!);
+    }
     if (filter.fuel != null) query = query.eq('fuel', filter.fuel!);
     if (filter.transmission != null) {
       query = query.eq('transmission', filter.transmission!);
@@ -65,7 +72,18 @@ class SupabaseVehicleDataSource implements VehicleDataSource {
       );
     }
 
-    final rows = await query.order('imported_at', ascending: false).limit(100);
+    // Tri demande par l'utilisateur (defaut : plus recemment ajoutes).
+    final rows = await switch (filter.sort) {
+      VehicleSort.recent => query.order('imported_at', ascending: false),
+      VehicleSort.priceAsc =>
+        query.order('price_fcfa', ascending: true, nullsFirst: false),
+      VehicleSort.priceDesc =>
+        query.order('price_fcfa', ascending: false, nullsFirst: false),
+      VehicleSort.yearDesc => query.order('year', ascending: false),
+      VehicleSort.mileageAsc =>
+        query.order('mileage_km', ascending: true, nullsFirst: false),
+    }
+        .limit(100);
     return (rows as List)
         .map((e) => VehicleListing.fromJson(e as Map<String, dynamic>))
         .toList();

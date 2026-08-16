@@ -9,6 +9,7 @@ import '../../models/vehicle_listing.dart';
 import '../../providers/vehicle_catalog_providers.dart';
 import '../vehicles_kr/facebook_post_helper.dart';
 import '../vehicles_kr/vehicle_detail_screen.dart';
+import '../vehicles_kr/widgets/favorite_button.dart';
 
 /// Admin : suggestion de vehicules a poster sur Facebook.
 /// 2 vehicules par tranche de prix (3M -> 14M FCFA), tries par score mixte
@@ -362,6 +363,7 @@ class _FacebookSelectionScreenState
                       child: const Text('Fiche',
                           style: TextStyle(fontSize: 12)),
                     ),
+                    FavoriteButton(reference: v.reference, size: 20),
                   ]),
                 ],
               ),

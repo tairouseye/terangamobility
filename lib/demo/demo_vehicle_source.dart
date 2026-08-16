@@ -155,6 +155,13 @@ class DemoVehicleDataSource implements VehicleDataSource {
           (v) => v.model.toLowerCase().contains(f.model!.toLowerCase()));
     }
     if (f.year != null) r = r.where((v) => (v.year ?? 0) >= f.year!);
+    if (f.yearMax != null) r = r.where((v) => (v.year ?? 9999) <= f.yearMax!);
+    if (f.priceMin != null) {
+      r = r.where((v) => (v.priceFcfa ?? 0) >= f.priceMin!);
+    }
+    if (f.priceMax != null) {
+      r = r.where((v) => (v.priceFcfa ?? 1 << 62) <= f.priceMax!);
+    }
     if (f.fuel != null) r = r.where((v) => v.fuel == f.fuel);
     if (f.transmission != null) {
       r = r.where((v) => v.transmission == f.transmission);
@@ -171,7 +178,21 @@ class DemoVehicleDataSource implements VehicleDataSource {
           (v.version ?? '').toLowerCase().contains(k) ||
           v.reference.toLowerCase().contains(k));
     }
-    return r.toList();
+    final list = r.toList();
+    int cmpNum(num? a, num? b) => (a ?? 0).compareTo(b ?? 0);
+    switch (f.sort) {
+      case VehicleSort.recent:
+        break;
+      case VehicleSort.priceAsc:
+        list.sort((a, b) => cmpNum(a.priceFcfa, b.priceFcfa));
+      case VehicleSort.priceDesc:
+        list.sort((a, b) => cmpNum(b.priceFcfa, a.priceFcfa));
+      case VehicleSort.yearDesc:
+        list.sort((a, b) => cmpNum(b.year, a.year));
+      case VehicleSort.mileageAsc:
+        list.sort((a, b) => cmpNum(a.mileageKm, b.mileageKm));
+    }
+    return list;
   }
 
   @override
