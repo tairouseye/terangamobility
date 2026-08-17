@@ -8,7 +8,9 @@ import '../models/vehicle_listing.dart';
 /// site source (Encar). Pour changer de fournisseur (API officielle, autre
 /// site...), il suffit de fournir une nouvelle implementation.
 abstract class VehicleDataSource {
-  Future<List<VehicleListing>> fetchListings(VehicleFilter filter);
+  /// Page du catalogue : `offset`/`limit` pour le défilement infini.
+  Future<List<VehicleListing>> fetchListings(VehicleFilter filter,
+      {int offset, int limit});
   Future<VehicleListing?> fetchByReference(String reference);
 
   /// Vehicules candidats a la selection Facebook : disponibles, prix 3M-15M,
@@ -37,7 +39,8 @@ class SupabaseVehicleDataSource implements VehicleDataSource {
   static const _table = 'vehicle_listings';
 
   @override
-  Future<List<VehicleListing>> fetchListings(VehicleFilter filter) async {
+  Future<List<VehicleListing>> fetchListings(VehicleFilter filter,
+      {int offset = 0, int limit = 30}) async {
     // Regle metier : uniquement les vehicules de moins de 10 ans.
     final minYear = DateTime.now().year - 10;
     var query = _client
@@ -83,7 +86,7 @@ class SupabaseVehicleDataSource implements VehicleDataSource {
       VehicleSort.mileageAsc =>
         query.order('mileage_km', ascending: true, nullsFirst: false),
     }
-        .limit(100);
+        .range(offset, offset + limit - 1);
     return (rows as List)
         .map((e) => VehicleListing.fromJson(e as Map<String, dynamic>))
         .toList();

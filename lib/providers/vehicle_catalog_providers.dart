@@ -25,11 +25,49 @@ final vehicleRequestServiceProvider = Provider<VehicleRequestService>((ref) {
 final vehicleFilterProvider =
     StateProvider<VehicleFilter>((ref) => const VehicleFilter());
 
-/// Resultats du catalogue selon le filtre courant.
-final vehicleListingsProvider = FutureProvider<List<VehicleListing>>((ref) {
-  final filter = ref.watch(vehicleFilterProvider);
-  return ref.watch(vehicleCatalogRepositoryProvider).search(filter);
-});
+/// Catalogue paginé (défilement infini). Rebuild = page 1 à chaque changement
+/// de filtre/tri ; `loadMore()` ajoute la page suivante.
+class VehicleCatalogNotifier
+    extends AutoDisposeAsyncNotifier<List<VehicleListing>> {
+  static const pageSize = 30;
+  bool _hasMore = true;
+  bool _loadingMore = false;
+
+  /// Reste-t-il des véhicules à charger ?
+  bool get hasMore => _hasMore;
+
+  @override
+  Future<List<VehicleListing>> build() async {
+    final filter = ref.watch(vehicleFilterProvider);
+    final first = await ref
+        .read(vehicleCatalogRepositoryProvider)
+        .search(filter, offset: 0, limit: pageSize);
+    _hasMore = first.length == pageSize;
+    return first;
+  }
+
+  /// Charge la page suivante et l'ajoute à la liste (idempotent/concurrent-safe).
+  Future<void> loadMore() async {
+    if (_loadingMore || !_hasMore) return;
+    final current = state.valueOrNull;
+    if (current == null) return;
+    _loadingMore = true;
+    try {
+      final filter = ref.read(vehicleFilterProvider);
+      final next = await ref
+          .read(vehicleCatalogRepositoryProvider)
+          .search(filter, offset: current.length, limit: pageSize);
+      _hasMore = next.length == pageSize;
+      state = AsyncData([...current, ...next]);
+    } finally {
+      _loadingMore = false;
+    }
+  }
+}
+
+/// Resultats du catalogue selon le filtre courant (paginés).
+final vehicleListingsProvider = AutoDisposeAsyncNotifierProvider<
+    VehicleCatalogNotifier, List<VehicleListing>>(VehicleCatalogNotifier.new);
 
 /// Candidats a la selection Facebook (km <= param), regroupes cote UI.
 ///

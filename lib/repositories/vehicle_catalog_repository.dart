@@ -9,8 +9,9 @@ class VehicleCatalogRepository {
   final VehicleDataSource _source;
   VehicleCatalogRepository(this._source);
 
-  Future<List<VehicleListing>> search(VehicleFilter filter) =>
-      _source.fetchListings(filter);
+  Future<List<VehicleListing>> search(VehicleFilter filter,
+          {int offset = 0, int limit = 30}) =>
+      _source.fetchListings(filter, offset: offset, limit: limit);
 
   Future<VehicleListing?> byReference(String reference) =>
       _source.fetchByReference(reference);

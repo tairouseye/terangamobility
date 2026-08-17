@@ -25,6 +25,7 @@ class VehicleCatalogScreen extends ConsumerStatefulWidget {
 
 class _VehicleCatalogScreenState extends ConsumerState<VehicleCatalogScreen> {
   final _search = TextEditingController();
+  final _scroll = ScrollController();
 
   @override
   void initState() {
@@ -33,12 +34,24 @@ class _VehicleCatalogScreenState extends ConsumerState<VehicleCatalogScreen> {
       'content_type': 'vehicle',
       'content_name': 'Catalogue Véhicules Corée',
     });
+    _scroll.addListener(_onScroll);
   }
 
   @override
   void dispose() {
+    _scroll.removeListener(_onScroll);
+    _scroll.dispose();
     _search.dispose();
     super.dispose();
+  }
+
+  /// Charge la page suivante quand on approche du bas de la liste.
+  void _onScroll() {
+    if (!_scroll.hasClients) return;
+    final pos = _scroll.position;
+    if (pos.pixels >= pos.maxScrollExtent - 500) {
+      ref.read(vehicleListingsProvider.notifier).loadMore();
+    }
   }
 
   void _applyKeyword(String v) {
@@ -168,16 +181,35 @@ class _VehicleCatalogScreenState extends ConsumerState<VehicleCatalogScreen> {
                   // visibles) : indispensable pour la memoire sur mobile —
                   // un Wrap chargerait les ~100 vehicules + images d'un coup
                   // et fait planter Safari iOS. Centree/bornee sur grand ecran.
+                  final hasMore =
+                      ref.read(vehicleListingsProvider.notifier).hasMore;
                   return LayoutBuilder(
                     builder: (context, cns) {
                       final w = cns.maxWidth;
                       final side = w > 732 ? (w - 700) / 2 : 16.0;
                       return ListView.separated(
+                        controller: _scroll,
                         padding: EdgeInsets.fromLTRB(side, 8, side, 20),
-                        itemCount: vehicles.length,
+                        itemCount: vehicles.length + (hasMore ? 1 : 0),
                         separatorBuilder: (_, _) => const SizedBox(height: 14),
-                        itemBuilder: (context, i) =>
-                            VehicleCard(vehicle: vehicles[i], isAdmin: isAdmin),
+                        itemBuilder: (context, i) {
+                          if (i >= vehicles.length) {
+                            // Pied de liste : indicateur de chargement.
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 20),
+                              child: Center(
+                                child: SizedBox(
+                                  width: 26,
+                                  height: 26,
+                                  child: CircularProgressIndicator(
+                                      strokeWidth: 2.5),
+                                ),
+                              ),
+                            );
+                          }
+                          return VehicleCard(
+                              vehicle: vehicles[i], isAdmin: isAdmin);
+                        },
                       );
                     },
                   );

@@ -147,7 +147,8 @@ class DemoVehicleDataSource implements VehicleDataSource {
   ];
 
   @override
-  Future<List<VehicleListing>> fetchListings(VehicleFilter f) async {
+  Future<List<VehicleListing>> fetchListings(VehicleFilter f,
+      {int offset = 0, int limit = 30}) async {
     Iterable<VehicleListing> r = _listings;
     if (f.brand != null) r = r.where((v) => v.brand == f.brand);
     if (f.model != null) {
@@ -192,7 +193,7 @@ class DemoVehicleDataSource implements VehicleDataSource {
       case VehicleSort.mileageAsc:
         list.sort((a, b) => cmpNum(a.mileageKm, b.mileageKm));
     }
-    return list;
+    return list.skip(offset).take(limit).toList();
   }
 
   @override
