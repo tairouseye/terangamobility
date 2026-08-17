@@ -112,6 +112,28 @@ class _FacebookSelectionScreenState
           final electricAlive =
               electric.where((v) => !dead.contains(v.reference)).toList();
 
+          // Liste PLATE d'éléments (en-têtes + cartes) rendue PARESSEUSEMENT via
+          // ListView.builder : seules les cartes visibles montent leurs images.
+          // (Avant : un ListView(children:) montait ~58 Image.network d'un coup
+          // -> pic mémoire -> l'onglet se rechargeait sur mobile = « redémarre ».)
+          final items = <Widget>[];
+          if (electricAlive.isNotEmpty) {
+            items.add(_electricHeader(electricAlive.length));
+            items.addAll(electricAlive.map(_card));
+            items.add(_bracketsLabel());
+          }
+          for (final b in brackets) {
+            final list = buffered[b];
+            if (list == null) continue;
+            final alive = list
+                .where((v) => !dead.contains(v.reference))
+                .take(2)
+                .toList();
+            if (alive.isEmpty) continue;
+            items.add(_bracketHeader(b));
+            items.addAll(alive.map(_card));
+          }
+
           return Column(
             children: [
               _filters(brands),
@@ -120,24 +142,11 @@ class _FacebookSelectionScreenState
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: _refresh,
-                  child: ListView(
+                  child: ListView.builder(
                     physics: const AlwaysScrollableScrollPhysics(),
                     padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
-                    children: [
-                      if (electricAlive.isNotEmpty)
-                        _electricSection(electricAlive),
-                      for (final b in brackets)
-                        if (buffered[b] != null)
-                          () {
-                            final alive = buffered[b]!
-                                .where((v) => !dead.contains(v.reference))
-                                .take(2)
-                                .toList();
-                            return alive.isEmpty
-                                ? const SizedBox.shrink()
-                                : _bracketSection(b, alive);
-                          }(),
-                    ],
+                    itemCount: items.length,
+                    itemBuilder: (_, i) => items[i],
                   ),
                 ),
               ),
@@ -191,35 +200,29 @@ class _FacebookSelectionScreenState
         ],
       );
 
-  /// Section « Véhicules électriques » : TOUS les électriques disponibles.
-  Widget _electricSection(List<VehicleListing> vehicles) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 8, bottom: 6, left: 4),
-          child: Row(children: [
-            const Icon(Icons.electric_bolt, size: 18, color: AppColors.vert),
-            const SizedBox(width: 4),
-            Text('Électriques (${vehicles.length})',
-                style: const TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 15,
-                    color: AppColors.vert)),
-          ]),
-        ),
-        for (final v in vehicles) _card(v),
-        const Padding(
-          padding: EdgeInsets.only(top: 10, bottom: 2, left: 4),
-          child: Text('Par tranche de prix',
-              style: TextStyle(
+  /// En-tête « Véhicules électriques (N) ».
+  Widget _electricHeader(int count) => Padding(
+        padding: const EdgeInsets.only(top: 8, bottom: 6, left: 4),
+        child: Row(children: [
+          const Icon(Icons.electric_bolt, size: 18, color: AppColors.vert),
+          const SizedBox(width: 4),
+          Text('Électriques ($count)',
+              style: const TextStyle(
                   fontWeight: FontWeight.w800,
-                  fontSize: 13,
-                  color: AppColors.gris)),
-        ),
-      ],
-    );
-  }
+                  fontSize: 15,
+                  color: AppColors.vert)),
+        ]),
+      );
+
+  /// Séparateur « Par tranche de prix » entre électriques et tranches.
+  Widget _bracketsLabel() => const Padding(
+        padding: EdgeInsets.only(top: 10, bottom: 2, left: 4),
+        child: Text('Par tranche de prix',
+            style: TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 13,
+                color: AppColors.gris)),
+      );
 
   Widget _filters(List<String> brands) {
     return Padding(
@@ -266,22 +269,15 @@ class _FacebookSelectionScreenState
     );
   }
 
-  Widget _bracketSection(int bracketM, List<VehicleListing> vehicles) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 14, bottom: 6, left: 4),
-          child: Text('≈ ${Formatters.fcfa(bracketM * 1000000)}',
-              style: const TextStyle(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 15,
-                  color: AppColors.primary)),
-        ),
-        for (final v in vehicles) _card(v),
-      ],
-    );
-  }
+  /// En-tête d'une tranche de prix (« ≈ 3 000 000 FCFA »).
+  Widget _bracketHeader(int bracketM) => Padding(
+        padding: const EdgeInsets.only(top: 14, bottom: 6, left: 4),
+        child: Text('≈ ${Formatters.fcfa(bracketM * 1000000)}',
+            style: const TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 15,
+                color: AppColors.primary)),
+      );
 
   Widget _card(VehicleListing v) {
     final subtitle = [
