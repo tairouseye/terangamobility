@@ -63,7 +63,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
           );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Compte cree. Tu peux te connecter.')),
+          const SnackBar(
+              content: Text('Compte créé. Vous pouvez vous connecter.')),
         );
         context.go('/login');
       }
@@ -77,7 +78,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Creer un compte')),
+      appBar: AppBar(title: const Text('Créer un compte')),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -125,7 +126,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   ),
                   if (_error != null) ...[
                     const SizedBox(height: 12),
-                    Text(_error!, style: const TextStyle(color: AppColors.primary)),
+                    Text(_error!, style: const TextStyle(color: AppColors.danger)),
                   ],
                   const SizedBox(height: 20),
                   ElevatedButton(
@@ -136,7 +137,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             width: 20,
                             child: CircularProgressIndicator(
                                 color: Colors.white, strokeWidth: 2))
-                        : const Text('Creer mon compte'),
+                        : const Text('Créer mon compte'),
                   ),
                 ],
               ),

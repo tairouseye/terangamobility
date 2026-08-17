@@ -30,7 +30,7 @@ class VehiclesScreen extends ConsumerWidget {
           TextButton(
               onPressed: () => Navigator.pop(context, true),
               child: const Text('Supprimer',
-                  style: TextStyle(color: AppColors.primary))),
+                  style: TextStyle(color: AppColors.danger))),
         ],
       ),
     );
@@ -113,11 +113,11 @@ class _EmptyState extends StatelessWidget {
           children: [
             Icon(Icons.directions_car_outlined, size: 64, color: AppColors.gris),
             SizedBox(height: 16),
-            Text('Aucun véhicule enregistre',
+            Text('Aucun véhicule enregistré',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             SizedBox(height: 8),
             Text(
-              'Ajoutez votre véhicule pour commander des pièces adaptees.',
+              'Ajoutez votre véhicule pour commander des pièces adaptées.',
               textAlign: TextAlign.center,
               style: TextStyle(color: AppColors.gris),
             ),

@@ -63,8 +63,36 @@ async function isGone(id: string): Promise<boolean> {
   return false;
 }
 
+function jsonError(message: string, status: number): Response {
+  return new Response(JSON.stringify({ error: message }), {
+    status,
+    headers: { ...CORS, "Content-Type": "application/json" },
+  });
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
+
+  // --- Garde : reserve aux ADMIN connectes ------------------------------
+  // La cle publishable passe `verify_jwt` (role anon) ; on valide donc ici
+  // que l'appelant est un vrai utilisateur ET qu'il a le role admin, car
+  // cette fonction ecrit en base (is_active=false).
+  const supabase = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  );
+  const authHeader = req.headers.get("Authorization") ?? "";
+  const token = authHeader.replace(/^Bearer\s+/i, "");
+  const { data: { user } } = await supabase.auth.getUser(token);
+  if (!user) return jsonError("Authentification requise.", 401);
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .maybeSingle();
+  if (profile?.role !== "admin") {
+    return jsonError("Reserve aux administrateurs.", 403);
+  }
 
   let refs: string[] = [];
   try {
@@ -82,10 +110,6 @@ Deno.serve(async (req) => {
 
   if (dead.length > 0) {
     try {
-      const supabase = createClient(
-        Deno.env.get("SUPABASE_URL")!,
-        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-      );
       await supabase
         .from("vehicle_listings")
         .update({ is_active: false })

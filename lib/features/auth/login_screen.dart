@@ -40,7 +40,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           );
       // La redirection est geree par le routeur (refresh sur authState).
     } catch (e) {
-      setState(() => _error = 'Connexion impossible. Verifie tes identifiants.');
+      setState(() =>
+          _error = 'Connexion impossible. Vérifiez vos identifiants.');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -160,7 +161,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   const SizedBox(height: 12),
                   TextButton(
                     onPressed: () => context.push('/signup'),
-                    child: const Text('Creer un compte'),
+                    child: const Text('Créer un compte'),
                   ),
                   const SizedBox(height: 8),
                   const Row(children: [
@@ -183,7 +184,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   const SizedBox(height: 6),
                   const Text(
-                    'Consultation libre — un compte n\'est necessaire que pour '
+                    'Consultation libre — un compte n\'est nécessaire que pour '
                     'demander un prix.',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 11.5, color: AppColors.gris),
