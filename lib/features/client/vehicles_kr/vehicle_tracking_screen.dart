@@ -150,7 +150,8 @@ class _VehicleTrackingScreenState extends ConsumerState<VehicleTrackingScreen> {
     final path = '${widget.order.clientId}/$name-${widget.order.id}.pdf';
     try {
       await openSignedUrl(
-          ref.read(vehicleOrderServiceProvider).documentUrl(path));
+          ref.read(vehicleOrderServiceProvider).documentUrl(path),
+          filename: '$name-${widget.order.vehicleReference}.pdf');
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
