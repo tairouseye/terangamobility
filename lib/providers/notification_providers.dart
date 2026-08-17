@@ -11,7 +11,12 @@ final myNotificationsProvider = FutureProvider<List<AppNotification>>((ref) {
   return ref.watch(notificationServiceProvider).list();
 });
 
-/// Nombre de notifications non lues (pour le badge de la cloche).
-final unreadCountProvider = FutureProvider<int>((ref) {
-  return ref.watch(notificationServiceProvider).unreadCount();
+/// Nombre de notifications non lues (badge de la cloche), EN TEMPS RÉEL.
+/// Se met à jour tout seul à l'arrivée d'une notification ou au passage en
+/// « lu ». Rebranché à chaque changement d'auth (connexion/déconnexion).
+final unreadCountProvider = StreamProvider<int>((ref) {
+  ref.watch(authStateProvider);
+  final loggedIn = ref.watch(authServiceProvider).currentUser != null;
+  if (!loggedIn) return Stream<int>.value(0);
+  return ref.watch(notificationServiceProvider).unreadCountStream();
 });
