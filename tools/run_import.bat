@@ -8,5 +8,5 @@ set "REPO=%~dp0.."
 set "LOG=%USERPROFILE%\.teranga\import.log"
 echo. >> "%LOG%"
 echo ===== %DATE% %TIME% ===== >> "%LOG%"
-"C:\Program Files\nodejs\node.exe" "%REPO%\tools\encar_import_local.js" 200 >> "%LOG%" 2>&1
+"C:\Program Files\nodejs\node.exe" "%REPO%\tools\encar_import_local.js" 500 >> "%LOG%" 2>&1
 endlocal
