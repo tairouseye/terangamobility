@@ -80,6 +80,40 @@ function computePriceFcfa(m) { if (!m || m <= 0) return null; const raw = m * KR
 const HEADERS = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36', 'Referer': 'https://www.encar.com/', 'Accept': 'application/json, text/plain, */*' };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+/// GET avec réessais : couvre les hoquets réseau (surtout au démarrage du PC à
+/// 09:00 quand le WiFi n'est pas encore prêt) et les 5xx/429/timeouts d'Encar.
+/// Ne réessaie PAS les autres 4xx (ex. 407 = blocage IP serveur : inutile).
+async function getWithRetry(url, { retries = 6, timeoutMs = 20000 } = {}) {
+  let lastErr;
+  for (let a = 0; a < retries; a++) {
+    try {
+      const ctrl = new AbortController();
+      const to = setTimeout(() => ctrl.abort(), timeoutMs);
+      const res = await fetch(url, { headers: HEADERS, signal: ctrl.signal });
+      clearTimeout(to);
+      if (res.status >= 500 || res.status === 429) throw new Error(`HTTP ${res.status}`);
+      return res; // 2xx ou autre 4xx : rendu tel quel (l'appelant décide)
+    } catch (e) {
+      lastErr = e;
+      if (a < retries - 1) await sleep(Math.min(30000, 1500 * 2 ** a)); // 1.5,3,6,12,24,30s
+    }
+  }
+  throw lastErr;
+}
+
+/// Attend que le réseau + Encar soient joignables (jusqu'à ~5 min au démarrage).
+async function waitForEncar() {
+  for (let i = 0; i < 10; i++) {
+    try {
+      const r = await fetch(listUrl(Q_GENERAL, 0), { headers: HEADERS });
+      if (r.ok) { await r.text(); return true; }
+    } catch (_) { /* réseau pas prêt */ }
+    console.log(`  … réseau/Encar pas prêt, nouvelle tentative dans 30s (${i + 1}/10)`);
+    await sleep(30000);
+  }
+  return false;
+}
+
 function listUrl(q, offset) {
   const sr = `|ModifiedDate|${offset}|${PAGE_SIZE}`;
   return `https://api.encar.com/search/car/list/general?count=false&q=${encodeURIComponent(q)}&sr=${encodeURIComponent(sr)}`;
@@ -89,7 +123,7 @@ function photosFrom(raw) {
   return raw.map((p) => p.location).filter(Boolean).map((loc) => (loc.startsWith('http') ? loc : `${PHOTO_BASE}${loc}`));
 }
 async function listPage(q, offset) {
-  const res = await fetch(listUrl(q, offset), { headers: HEADERS });
+  const res = await getWithRetry(listUrl(q, offset));
   if (!res.ok) throw new Error(`Liste Encar HTTP ${res.status}`);
   const json = await res.json();
   return (json.SearchResults ?? []).filter((it) => it.Id != null).map((it) => ({
@@ -98,7 +132,7 @@ async function listPage(q, offset) {
   }));
 }
 async function fetchDetail(item) {
-  const res = await fetch(`https://api.encar.com/v1/readside/vehicle/${item.id}`, { headers: HEADERS });
+  const res = await getWithRetry(`https://api.encar.com/v1/readside/vehicle/${item.id}`, { retries: 3 });
   if (!res.ok) return null;
   const d = await res.json();
   const cat = d.category ?? {}, spec = d.spec ?? {};
@@ -163,6 +197,13 @@ async function prune(keepRefs) {
 (async () => {
   const t0 = Date.now();
   console.log(`[import] cible ${TARGET_TOTAL} (${ELEC_TARGET} élec + ${JEEP_TARGET} Jeep + récentes), marques : ${[...LISTED].join(', ')}`);
+
+  // Le PC démarre parfois juste avant 09:00 : on attend que le réseau soit prêt.
+  if (!(await waitForEncar())) {
+    console.error('[import] Encar injoignable après ~5 min (réseau ?) — abandon, catalogue préservé.');
+    process.exit(1);
+  }
+
   const skip = new Set();
   const elec = await collect('élec', Q_ELEC, ELEC_TARGET, (r) => LISTED.has(r.brand), skip);
   const jeep = await collect('jeep', Q_JEEP, JEEP_TARGET, (r) => r.brand === 'Jeep', skip);
