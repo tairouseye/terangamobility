@@ -194,6 +194,13 @@ async function prune(keepRefs) {
   return parseInt(await res.text(), 10);
 }
 
+/// Rapproche les nouveaux véhicules des alertes « Prévenez-moi » et notifie.
+async function notifyAlerts() {
+  const res = await fetch(`${CFG.url}/rest/v1/rpc/notify_alert_matches`, { method: 'POST', headers: { apikey: CFG.key, Authorization: 'Bearer ' + CFG.key, 'Content-Type': 'application/json' }, body: '{}' });
+  if (!res.ok) throw new Error(`Alerts HTTP ${res.status} : ${(await res.text()).slice(0, 150)}`);
+  return parseInt(await res.text(), 10);
+}
+
 (async () => {
   const t0 = Date.now();
   console.log(`[import] cible ${TARGET_TOTAL} (${ELEC_TARGET} élec + ${JEEP_TARGET} Jeep + récentes), marques : ${[...LISTED].join(', ')}`);
@@ -223,5 +230,15 @@ async function prune(keepRefs) {
   } else {
     console.warn(`[import] prune SAUTÉ (seulement ${all.length} < ${PRUNE_MIN}) — catalogue existant préservé.`);
   }
+
+  // Alertes « Prévenez-moi » : notifie les utilisateurs dont un critère matche
+  // les nouveaux véhicules.
+  try {
+    const sent = await notifyAlerts();
+    console.log(`[import] alertes : ${sent} notification(s) envoyée(s).`);
+  } catch (e) {
+    console.error('[import] alertes :', e.message);
+  }
+
   console.log(`[import] terminé en ${((Date.now() - t0) / 1000).toFixed(0)}s.`);
 })().catch((e) => { console.error('[import] ÉCHEC :', e.message); process.exit(1); });

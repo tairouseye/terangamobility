@@ -9,6 +9,16 @@ import '../facebook_post_helper.dart';
 import '../vehicle_detail_screen.dart';
 import 'favorite_button.dart';
 
+/// Libellé d'indisponibilité (ou null si le véhicule est bien disponible).
+String? _statusLabel(VehicleListing v) {
+  if (v.isActive && v.isAvailable) return null;
+  return switch (v.availability) {
+    'sold' => 'Vendu',
+    'reserved' => 'Réservé',
+    _ => 'Plus disponible',
+  };
+}
+
 /// Carte vehicule reutilisable (catalogue, favoris...). Photo + infos + prix,
 /// coeur « J'aime » en surimpression, et action Facebook cote admin.
 class VehicleCard extends StatelessWidget {
@@ -30,6 +40,34 @@ class VehicleCard extends StatelessWidget {
             Stack(
               children: [
                 _Photo(vehicle: vehicle),
+                // Voile + badge quand le véhicule n'est plus disponible
+                // (retiré du catalogue, réservé ou vendu) — utile dans « Mes
+                // favoris » où l'on garde des véhicules qui ont pu partir.
+                if (_statusLabel(vehicle) case final label?) ...[
+                  Positioned.fill(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.55)),
+                    ),
+                  ),
+                  Positioned(
+                    top: 8,
+                    left: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: AppColors.danger,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(label,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 11.5,
+                              fontWeight: FontWeight.w800)),
+                    ),
+                  ),
+                ],
                 Positioned(
                   top: 6,
                   right: 6,

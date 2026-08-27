@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../models/vehicle_filter.dart';
+import '../../../providers/alerts_providers.dart';
+import '../../../providers/auth_providers.dart';
 import '../../../providers/vehicle_catalog_providers.dart';
 
 /// Feuille de filtres du catalogue véhicules :
@@ -31,6 +33,32 @@ class _VehicleFilterSheetState extends ConsumerState<VehicleFilterSheet> {
   void initState() {
     super.initState();
     _draft = ref.read(vehicleFilterProvider);
+  }
+
+  /// Enregistre la recherche courante comme alerte « Prévenez-moi ».
+  Future<void> _createAlert() async {
+    final messenger = ScaffoldMessenger.of(context);
+    if (ref.read(authServiceProvider).currentUser == null) {
+      messenger.showSnackBar(const SnackBar(
+          content: Text('Connectez-vous pour créer une alerte.')));
+      return;
+    }
+    try {
+      await ref.read(alertsServiceProvider).create(
+            brand: _draft.brand,
+            fuel: _draft.fuel,
+            priceMax: _draft.priceMax,
+            yearMin: _draft.year,
+          );
+      ref.invalidate(myAlertsProvider);
+      if (mounted) Navigator.of(context).pop();
+      messenger.showSnackBar(const SnackBar(
+          content:
+              Text('Alerte créée ✓ — vous serez prévenu des nouveautés.')));
+    } catch (_) {
+      messenger.showSnackBar(
+          const SnackBar(content: Text('Création impossible.')));
+    }
   }
 
   @override
@@ -199,6 +227,13 @@ class _VehicleFilterSheetState extends ConsumerState<VehicleFilterSheet> {
               child: Text(_draft.activeCount == 0
                   ? 'Voir tous les véhicules'
                   : 'Appliquer (${_draft.activeCount})'),
+            ),
+            const SizedBox(height: 8),
+            // « Prévenez-moi » : enregistre la recherche courante en alerte.
+            OutlinedButton.icon(
+              onPressed: _createAlert,
+              icon: const Icon(Icons.notifications_active, size: 18),
+              label: const Text('M\'alerter pour cette recherche'),
             ),
           ],
         ),

@@ -10,6 +10,7 @@ import '../../providers/auth_providers.dart';
 import '../../providers/favorites_providers.dart';
 import '../../providers/vehicle_catalog_providers.dart';
 import '../shared/app_footer.dart';
+import 'alerts_screen.dart';
 import 'favorites_screen.dart';
 import 'widgets/vehicle_card.dart';
 import 'widgets/vehicle_filter_sheet.dart';
@@ -89,6 +90,13 @@ class _VehicleCatalogScreenState extends ConsumerState<VehicleCatalogScreen> {
               ),
               onPressed: () => Navigator.of(context).push(MaterialPageRoute(
                   builder: (_) => const FavoritesScreen())),
+            ),
+          if (isLoggedIn)
+            IconButton(
+              tooltip: 'Mes alertes',
+              icon: const Icon(Icons.notifications_active_outlined),
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => const AlertsScreen())),
             ),
           PopupMenuButton<VehicleSort>(
             tooltip: 'Trier',
