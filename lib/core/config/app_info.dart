@@ -26,6 +26,14 @@ class AppInfo {
   static const String supportPhoneE164 = '221773435928';
   static const String supportEmail = 'gesprosn@gmail.com';
 
+  /// WhatsApp COMMERCIAL (contact véhicules/pièces, affiché aux clients).
+  static const String salesWhatsapp = '+221 77 282 17 82';
+  static const String salesWhatsappE164 = '221772821782';
+
+  /// Lien WhatsApp vers le commercial, message pré-rempli.
+  static String whatsappSales(String message) =>
+      'https://wa.me/$salesWhatsappE164?text=${Uri.encodeComponent(message)}';
+
   /// Lien WhatsApp (vers l'assistance) avec message pre-rempli.
   static String whatsappUrl({String? message}) {
     final text = Uri.encodeComponent(

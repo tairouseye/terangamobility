@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/analytics/fb_pixel.dart';
+import '../../core/config/app_info.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/encar_image.dart';
 import '../../core/utils/encar_price.dart';
@@ -320,6 +321,30 @@ class _Detail extends StatelessWidget {
                         style: TextStyle(fontSize: 11, color: AppColors.gris)),
                   ),
                 ],
+              ),
+              const SizedBox(height: 16),
+              // Contact direct : capte le lead là où l'audience est (WhatsApp).
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  onPressed: () {
+                    fbTrack('Contact', {
+                      'content_type': 'vehicle',
+                      'content_name': vehicle.title,
+                      'content_ids': [vehicle.reference],
+                    });
+                    openInNewTab(AppInfo.whatsappSales(
+                        'Bonjour, je suis intéressé par ce véhicule : '
+                        '${vehicle.title} (réf ${vehicle.reference}).\n'
+                        '${vehicleShareUrl(vehicle.reference)}'));
+                  },
+                  icon: const Icon(Icons.chat),
+                  label: const Text('Discuter sur WhatsApp'),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.vert,
+                    minimumSize: const Size.fromHeight(50),
+                  ),
+                ),
               ),
               // Controle admin : prix d'achat Encar estime (brut, sans marge).
               if (isAdmin && estimatedEncarPrice(vehicle.priceFcfa) != null)

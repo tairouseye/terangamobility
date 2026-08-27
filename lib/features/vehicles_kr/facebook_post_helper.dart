@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../core/config/app_info.dart';
 import '../../core/config/facebook_config.dart';
+import '../../core/config/supabase_config.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/download_file.dart';
 import '../../core/utils/encar_image.dart';
@@ -10,9 +12,11 @@ import '../../core/utils/formatters.dart';
 import '../../core/utils/open_tab.dart';
 import '../../models/vehicle_listing.dart';
 
-/// Lien profond partageable d'un vehicule.
+/// Lien de partage d'un vehicule : passe par la fonction `og` qui sert un
+/// apercu social riche (photo + modele + prix) aux robots Facebook/WhatsApp,
+/// puis redirige l'humain vers la fiche dans l'app.
 String vehicleShareUrl(String reference) =>
-    'https://terangamobility.gesprosn.org/#/vehicule/$reference';
+    '${SupabaseConfig.url}/functions/v1/og/$reference';
 
 /// Texte de post Facebook pret a coller.
 String fbCaption(VehicleListing v) {
@@ -33,7 +37,7 @@ String fbCaption(VehicleListing v) {
     '✅ Importé de Corée · Livraison Dakar',
     '',
     '👉 Détails & réservation : ${vehicleShareUrl(v.reference)}',
-    '📲 WhatsApp : +221 77 282 17 82',
+    '📲 WhatsApp : ${AppInfo.salesWhatsapp}',
     '',
     '#TerangaMobility #VoitureCorée #Dakar #Sénégal #${v.brand.replaceAll(' ', '')}',
   ];
