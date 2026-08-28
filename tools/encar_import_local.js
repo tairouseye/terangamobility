@@ -101,15 +101,21 @@ async function getWithRetry(url, { retries = 6, timeoutMs = 20000 } = {}) {
   throw lastErr;
 }
 
-/// Attend que le réseau + Encar soient joignables (jusqu'à ~5 min au démarrage).
+/// Attend que le réseau + Encar soient joignables (jusqu'à ~15 min : le PC met
+/// parfois plusieurs minutes à monter le WiFi après démarrage). Chaque essai a
+/// son propre timeout pour ne jamais rester bloqué.
 async function waitForEncar() {
-  for (let i = 0; i < 10; i++) {
+  const MAX = 30; // 30 × 30s ≈ 15 min
+  for (let i = 0; i < MAX; i++) {
     try {
-      const r = await fetch(listUrl(Q_GENERAL, 0), { headers: HEADERS });
-      if (r.ok) { await r.text(); return true; }
+      const ctrl = new AbortController();
+      const to = setTimeout(() => ctrl.abort(), 15000);
+      const r = await fetch(listUrl(Q_GENERAL, 0), { headers: HEADERS, signal: ctrl.signal });
+      clearTimeout(to);
+      if (r.ok) { await r.text().catch(() => {}); return true; }
     } catch (_) { /* réseau pas prêt */ }
-    console.log(`  … réseau/Encar pas prêt, nouvelle tentative dans 30s (${i + 1}/10)`);
-    await sleep(30000);
+    console.log(`  … réseau/Encar pas prêt, nouvelle tentative dans 30s (${i + 1}/${MAX})`);
+    if (i < MAX - 1) await sleep(30000);
   }
   return false;
 }
@@ -207,7 +213,7 @@ async function notifyAlerts() {
 
   // Le PC démarre parfois juste avant 09:00 : on attend que le réseau soit prêt.
   if (!(await waitForEncar())) {
-    console.error('[import] Encar injoignable après ~5 min (réseau ?) — abandon, catalogue préservé.');
+    console.error('[import] Encar injoignable après ~15 min (réseau ?) — abandon, catalogue préservé.');
     process.exit(1);
   }
 
